@@ -48,7 +48,8 @@ class Robot(object):
     # Update our model with the new state.
     def _update(self, new_state):
         for mod in new_state['modules']:
-            getattr(self, mod['alias'])._update(mod)
+            if 'value' in mod:
+                getattr(self, mod['alias'])._update(mod)
 
     # Push update from our model to the hardware
     def _push_once(self):

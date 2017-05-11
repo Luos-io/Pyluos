@@ -6,11 +6,13 @@ Event = namedtuple('Event', ('name', 'old_value', 'new_value'))
 class Module(object):
     possible_events = set()
 
-    def __init__(self, type, id, alias, msg_stack):
+    def __init__(self,
+                 type, id, alias,
+                 robot):
         self.id = id
         self._type = type
         self.alias = alias
-        self._msg_stack = msg_stack
+        self._delegate = robot
         self._value = None
         self._cb = defaultdict(list)
 
@@ -18,7 +20,8 @@ class Module(object):
         return ('<{self._type} '
                 'alias="{self.alias}" '
                 'id={self.id} '
-                '{state}>'.format(self=self, state=self._state_repr()))
+                '{state}>'.format(self=self,
+                                  state=self._state_repr()))
 
     def _state_repr(self):
         return ('state={}'.format(self._value)
@@ -34,7 +37,7 @@ class Module(object):
                 'value': new_val
             }
         }
-        self._msg_stack.put(cmd)
+        self._delegate._msg_stack.put(cmd)
 
     # Events cb handling
 
@@ -44,7 +47,8 @@ class Module(object):
     def remove_callback(self, event, cb):
         self._cb[event].remove(cb)
 
-    def _pub_events(self, events):
-        for event in events:
-            for cb in self._cb[event.name]:
-                cb(event)
+    def _pub_event(self, trigger, old_value, new_value):
+        event = Event(trigger, old_value, new_value)
+
+        for cb in self._cb[trigger]:
+            cb(event)

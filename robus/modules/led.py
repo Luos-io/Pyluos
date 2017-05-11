@@ -2,8 +2,8 @@ from .module import Module
 
 
 class Led(Module):
-    def __init__(self, id, alias, msg_stack):
-        Module.__init__(self, 'LED', id, alias, msg_stack)
+    def __init__(self, id, alias, robot):
+        Module.__init__(self, 'LED', id, alias, robot)
         self.color = (0, 0, 0)
 
     @property

@@ -1,11 +1,11 @@
-from .module import Module, Event
+from .module import Module
 
 
 class Button(Module):
     possible_events = {'changed', 'pressed', 'released'}
 
-    def __init__(self, id, alias, msg_stack):
-        Module.__init__(self, 'Button', id, alias, msg_stack)
+    def __init__(self, id, alias, robot):
+        Module.__init__(self, 'Button', id, alias, robot)
         self._value = 'OFF'
 
     @property
@@ -13,14 +13,12 @@ class Button(Module):
         return self._value
 
     def _update(self, new_state):
-        events = []
         new_state = 'ON' if new_state['value'] else 'OFF'
 
         if new_state != self._value:
-            events.append(Event('changed', self._value, new_state))
-            e = Event('pressed' if new_state == 'ON' else 'released',
-                      self._value, new_state)
-            events.append(e)
-            self._value = new_state
+            self._pub_event('changed', self._value, new_state)
 
-        self._pub_events(events)
+            evt = 'pressed' if new_state == 'ON' else 'released'
+            self._pub_event(evt, self._value, new_state)
+
+            self._value = new_state

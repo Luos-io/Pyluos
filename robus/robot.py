@@ -29,8 +29,9 @@ class Robot(object):
         self._msg_stack = Queue()
 
         self.modules = [
-            name2mod[mod['type']](mod['id'], mod['alias'],
-                                  self._msg_stack)
+            name2mod[mod['type']](id=mod['id'],
+                                  alias=mod['alias'],
+                                  robot=self)
 
             for mod in state['modules']
         ]
@@ -47,14 +48,16 @@ class Robot(object):
 
     def _poll_and_up(self):
         while True:
-            new_state = self._poll_once()
-            self._update(new_state)
+            self._update(self._poll_once())
 
     # Update our model with the new state.
     def _update(self, new_state):
-        for mod in new_state['modules']:
-            if 'value' in mod and hasattr(self, mod['alias']):
-                getattr(self, mod['alias'])._update(mod)
+        mod_need_update = [mod for mod in new_state['modules']
+                           if 'value' in mod and
+                           hasattr(self, mod['alias'])]
+
+        for mod in mod_need_update:
+            getattr(self, mod['alias'])._update(mod)
 
     # Push update from our model to the hardware
     def _push_once(self):

@@ -2,8 +2,8 @@ from .module import Module
 
 
 class Motor(Module):
-    def __init__(self, id, alias, msg_stack):
-        Module.__init__(self, 'Motor', id, alias, msg_stack)
+    def __init__(self, id, alias, robot):
+        Module.__init__(self, 'Motor', id, alias, robot)
         self.position = 0
 
     @property

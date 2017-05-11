@@ -2,7 +2,9 @@ import threading
 import websocket
 import json
 
-from .modules import (name2mod, msg_stack)
+from queue import Queue
+
+from .modules import name2mod
 
 
 class Robot(object):
@@ -24,8 +26,11 @@ class Robot(object):
         self._push_bg.start()
 
     def _setup(self, state):
+        self._msg_stack = Queue()
+
         self.modules = [
-            name2mod[mod['type']](mod['id'], mod['alias'])
+            name2mod[mod['type']](mod['id'], mod['alias'],
+                                  self._msg_stack)
 
             for mod in state['modules']
         ]
@@ -54,8 +59,8 @@ class Robot(object):
     # Push update from our model to the hardware
     def _push_once(self):
         data = {}
-        while not msg_stack.empty():
-            msg = msg_stack.get()
+        while not self._msg_stack.empty():
+            msg = self._msg_stack.get()
             data.update(msg)
 
         if data:
@@ -65,7 +70,7 @@ class Robot(object):
 
     def _push_update(self):
         while True:
-            msg = msg_stack.get()
+            msg = self._msg_stack.get()
             self._send({
                 'modules': msg
             })

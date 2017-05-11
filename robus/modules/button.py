@@ -4,8 +4,8 @@ from .module import Module, Event
 class Button(Module):
     possible_events = {'changed', 'pressed', 'released'}
 
-    def __init__(self, id, alias):
-        Module.__init__(self, 'Button', id, alias)
+    def __init__(self, id, alias, msg_stack):
+        Module.__init__(self, 'Button', id, alias, msg_stack)
         self._value = 'OFF'
 
     @property

@@ -1,7 +1,4 @@
-from queue import Queue
 from collections import defaultdict, namedtuple
-
-msg_stack = Queue()
 
 Event = namedtuple('Event', ('name', 'old_value', 'new_value'))
 
@@ -9,10 +6,11 @@ Event = namedtuple('Event', ('name', 'old_value', 'new_value'))
 class Module(object):
     possible_events = set()
 
-    def __init__(self, type, id, alias):
+    def __init__(self, type, id, alias, msg_stack):
         self.id = id
         self._type = type
         self.alias = alias
+        self._msg_stack = msg_stack
         self._value = None
         self._cb = defaultdict(list)
 
@@ -36,7 +34,7 @@ class Module(object):
                 'value': new_val
             }
         }
-        msg_stack.put(cmd)
+        self._msg_stack.put(cmd)
 
     # Events cb handling
 

@@ -4,8 +4,8 @@ from .module import Module, Event
 class Potard(Module):
     possible_events = {'moved'}
 
-    def __init__(self, id, alias):
-        Module.__init__(self, 'Potard', id, alias)
+    def __init__(self, id, alias, msg_stack):
+        Module.__init__(self, 'Potard', id, alias, msg_stack)
         self._value = 0
 
     @property

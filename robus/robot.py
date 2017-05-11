@@ -5,13 +5,16 @@ import json
 from queue import Queue
 
 from .modules import name2mod
+from .utils import resolve_hostname
 
 
 class Robot(object):
     _ws_port = 9342
 
     def __init__(self, host):
+        host = resolve_hostname(host, self._ws_port)
         url = 'ws://{}:{}'.format(host, self._ws_port)
+
         self._ws = websocket.create_connection(url)
 
         # We force a first poll to setup our model.

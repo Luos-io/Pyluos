@@ -4,7 +4,7 @@ from .module import Module
 class Motor(Module):
     def __init__(self, id, alias, robot):
         Module.__init__(self, 'Motor', id, alias, robot)
-        self.position = 0
+        self.position = 90
 
     @property
     def position(self):

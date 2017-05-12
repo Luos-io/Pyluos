@@ -99,6 +99,9 @@ class FakeRobot(WebSocketHandler):
     def handle_command(self, message):
         pass
 
+    def check_origin(self, origin):
+        return True
+
 
 if __name__ == '__main__':
     port = 9342

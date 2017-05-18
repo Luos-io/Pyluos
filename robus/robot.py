@@ -13,6 +13,7 @@ class Robot(object):
 
         # We force a first poll to setup our model.
         self._setup(self._poll_once())
+        self._running = True
 
         # Setup both poll/push synchronization loops.
         self._poll_bg = threading.Thread(target=self._poll_and_up)
@@ -21,6 +22,9 @@ class Robot(object):
         self._push_bg = threading.Thread(target=self._push_update)
         self._push_bg.daemon = True
         self._push_bg.start()
+
+    def close(self):
+        self._running = False
 
     def _setup(self, state):
         self._msg_stack = Queue()
@@ -44,7 +48,7 @@ class Robot(object):
         return self._io.read()
 
     def _poll_and_up(self):
-        while True:
+        while self._running:
             self._update(self._poll_once())
 
     # Update our model with the new state.
@@ -69,7 +73,7 @@ class Robot(object):
             })
 
     def _push_update(self):
-        while True:
+        while self._running:
             msg = self._msg_stack.get()
             self._send({
                 'modules': msg

@@ -1,21 +1,15 @@
 import threading
-import websocket
-import json
 
 from queue import Queue
 
+from .io import io_from_host
 from .modules import name2mod
-from .utils import resolve_hostname
 
 
 class Robot(object):
-    _ws_port = 9342
-
-    def __init__(self, host):
-        host = resolve_hostname(host, self._ws_port)
-        url = 'ws://{}:{}'.format(host, self._ws_port)
-
-        self._ws = websocket.create_connection(url)
+    def __init__(self, host, *args, **kwargs):
+        self._io = io_from_host(host=host,
+                                *args, **kwargs)
 
         # We force a first poll to setup our model.
         self._setup(self._poll_once())
@@ -47,7 +41,7 @@ class Robot(object):
 
     # Poll state from hardware.
     def _poll_once(self):
-        return json.loads(self._ws.recv())
+        return self._io.read()
 
     def _poll_and_up(self):
         while True:
@@ -82,4 +76,4 @@ class Robot(object):
             })
 
     def _send(self, msg):
-        self._ws.send(json.dumps(msg))
+        self._io.send(msg)

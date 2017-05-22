@@ -14,4 +14,4 @@ class Motor(Module):
     def position(self, new_pos):
         if new_pos != self._value:
             self._value = new_pos
-            self._push_value(new_pos)
+            self._push_value('value', new_pos)

@@ -1,6 +1,7 @@
 import threading
 
 from queue import Queue
+from collections import defaultdict
 
 from .io import io_from_host
 from .modules import name2mod
@@ -62,10 +63,12 @@ class Robot(object):
 
     # Push update from our model to the hardware
     def _push_once(self):
-        data = {}
+        data = defaultdict(dict)
         while not self._msg_stack.empty():
             msg = self._msg_stack.get()
-            data.update(msg)
+
+            key, val = msg.popitem()
+            data[key].update(val)
 
         if data:
             self._send({
@@ -75,6 +78,10 @@ class Robot(object):
     def _push_update(self):
         while self._running:
             msg = self._msg_stack.get()
+
+            # TODO: instead of pushing each time
+            # we have a message on the stack
+            # We could use a buffer.
             self._send({
                 'modules': msg
             })

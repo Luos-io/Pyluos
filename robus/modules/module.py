@@ -31,10 +31,10 @@ class Module(object):
     def _update(self, new_state):
         pass
 
-    def _push_value(self, new_val):
+    def _push_value(self, key, new_val):
         cmd = {
             self.alias: {
-                'value': new_val
+                key: new_val
             }
         }
         self._delegate._msg_stack.put(cmd)

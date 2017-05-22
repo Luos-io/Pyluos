@@ -14,4 +14,4 @@ class Led(Module):
     def color(self, new_color):
         if new_color != self._value:
             self._value = new_color
-            self._push_value(new_color)
+            self._push_value('value', new_color)

@@ -9,7 +9,7 @@ class DxlBus(Module):
     def __init__(self, id, alias, robot):
         Module.__init__(self, 'Dynamixel', id, alias, robot)
 
-        self._value = 0
+        self._pos = self._speed = None
 
         self._reg = defaultdict(lambda: None)
 
@@ -20,7 +20,11 @@ class DxlBus(Module):
 
     @property
     def present_position(self):
-        return self._value
+        return self._pos
+
+    @property
+    def present_speed(self):
+        return self._speed
 
     @property
     def goal_position(self):
@@ -63,8 +67,23 @@ class DxlBus(Module):
             self._push_value('compliant', new_compliancy)
 
     def _update(self, new_state):
-        new_pos = new_state['value']
+        if 'position' in new_state:
+            new_pos = new_state['position']
 
-        if new_pos != self._value:
-            self._pub_event('moved', self._value, new_pos)
-            self._value = new_pos
+            if new_pos != self._pos:
+                self._pub_event('moved', self._pos, new_pos)
+                self._pos = new_pos
+
+        if 'speed' in new_state:
+            new_speed = new_state['speed']
+
+            if new_speed != self._speed:
+                self._speed = new_speed
+
+    def _state_repr(self):
+        state = ''
+        if self._pos is not None:
+            state += 'position={}'.format(self._pos)
+        if self._speed is not None:
+            state += ' speed={}'.format(self._speed)
+        return state

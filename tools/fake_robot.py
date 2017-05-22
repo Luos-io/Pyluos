@@ -97,13 +97,14 @@ class FakeRobot(WebSocketHandler):
                     'alias': 'my_dxl_1',
                     'id': 8,
                     'type': 'dynamixel',
-                    'value': randint(0, 180),
+                    'position': randint(0, 180),
                 },
                 {
                     'alias': 'my_dxl_2',
                     'id': 9,
                     'type': 'dynamixel',
-                    'value': randint(0, 180),
+                    'position': randint(0, 180),
+                    'speed': randint(0, 100),
                 },
             ]
         }

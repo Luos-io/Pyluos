@@ -1,6 +1,7 @@
 import json
 
 from time import time
+from random import randint
 from threading import Timer
 
 from tornado.ioloop import IOLoop
@@ -91,6 +92,18 @@ class FakeRobot(WebSocketHandler):
                     'id': 7,
                     'type': 'distance',
                     'value': 12,
+                },
+                {
+                    'alias': 'my_dxl_1',
+                    'id': 8,
+                    'type': 'dynamixel',
+                    'value': randint(0, 180),
+                },
+                {
+                    'alias': 'my_dxl_2',
+                    'id': 9,
+                    'type': 'dynamixel',
+                    'value': randint(0, 180),
                 },
             ]
         }

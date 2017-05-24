@@ -15,7 +15,7 @@ class Serial(IOHandler):
         self._serial = _serial.Serial(host, baudrate)
 
     def recv(self):
-        return self._serial.read_all()
+        return self._serial.readline()
 
     def write(self, data):
-        self._serial.write(data)
+        self._serial.write(data + '\r'.encode())

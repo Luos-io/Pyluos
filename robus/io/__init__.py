@@ -10,7 +10,11 @@ class IOHandler(object):
         raise NotImplementedError
 
     def read(self):
-        return self.loads(self.recv())
+        while True:
+            try:
+                return self.loads(self.recv())
+            except (json.JSONDecodeError, UnicodeDecodeError) as e:
+                print('Warning: {}'.format(e))
 
     def recv(self):
         raise NotImplementedError
@@ -27,7 +31,7 @@ class IOHandler(object):
         return json.loads(data)
 
     def dumps(self, msg):
-        return json.dumps(msg)
+        return json.dumps(msg).encode()
 
 
 from .ws import Ws

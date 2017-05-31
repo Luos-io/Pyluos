@@ -61,6 +61,11 @@ class FakeRobot(WebSocketHandler):
         state = {
             'modules': [
                 {
+                    'alias': 'my_gate',
+                    'id': 1,
+                    'type': 'gate',
+                },
+                {
                     'alias': 'my_led',
                     'id': 2,
                     'type': 'led',

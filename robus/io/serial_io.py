@@ -11,7 +11,7 @@ class Serial(IOHandler):
         available_host = (p.device for p in comports())
         return host in available_host
 
-    def __init__(self, host, baudrate):
+    def __init__(self, host, baudrate=57600):
         self._serial = _serial.Serial(host, baudrate)
 
     def recv(self):

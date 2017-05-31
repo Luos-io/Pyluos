@@ -7,6 +7,7 @@ from collections import defaultdict
 
 from .io import io_from_host
 from .modules import name2mod
+from .metrics import Publisher
 
 
 class Robot(object):
@@ -28,6 +29,9 @@ class Robot(object):
         self._push_bg = threading.Thread(target=self._push_update)
         self._push_bg.daemon = True
         self._push_bg.start()
+
+        self._metrics_pub = Publisher(robot=self)
+        self._metrics_pub.start()
 
     @property
     def state(self):

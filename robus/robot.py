@@ -2,6 +2,7 @@ import time
 import threading
 
 from queue import Queue
+from datetime import datetime
 from collections import defaultdict
 
 from .io import io_from_host
@@ -27,6 +28,14 @@ class Robot(object):
         self._push_bg = threading.Thread(target=self._push_update)
         self._push_bg.daemon = True
         self._push_bg.start()
+
+    @property
+    def state(self):
+        return {
+            'gate': self.name,
+            'timestamp': datetime.now(),
+            'modules': ','.join([mod.alias for mod in self.modules])
+        }
 
     @property
     def name(self):

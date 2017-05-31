@@ -1,7 +1,7 @@
 from .distance import Distance
 from .button import Button
 from .potard import Potard
-from .motor import Motor
+from .servo import Servo
 from .relay import Relay
 from .dxl import DxlBus
 from .led import Led
@@ -13,7 +13,7 @@ __all__ = [
     'Button',
     'DxlBus',
     'Potard',
-    'Motor',
+    'Servo',
     'Relay',
     'Led',
 ]
@@ -23,7 +23,7 @@ name2mod = {
     'dynamixel': DxlBus,
     'button': Button,
     'potard': Potard,
-    'motor': Motor,
+    'servo': Servo,
     'relay': Relay,
     'led': Led,
 }

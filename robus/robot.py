@@ -24,18 +24,28 @@ class Robot(object):
         self._push_bg.daemon = True
         self._push_bg.start()
 
+    @property
+    def name(self):
+        return self._name
+
     def close(self):
         self._running = False
 
     def _setup(self, state):
+        gate = next(g for g in state['modules']
+                    if g['type'] == 'gate')
+        self._name = gate['alias']
+
+        modules = [mod for mod in state['modules']
+                   if mod['type'] in name2mod.keys()]
+
         self._msg_stack = Queue()
 
         self.modules = [
             name2mod[mod['type']](id=mod['id'],
                                   alias=mod['alias'],
                                   robot=self)
-
-            for mod in state['modules']
+            for mod in modules
         ]
         # We push our current state to make sure that
         # both our model and the hardware are synced.

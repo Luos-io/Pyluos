@@ -4,7 +4,7 @@ Pyrobus lets you easily connect, interact and program your [Robus](http://pollen
 
 The API was designed to be as simple as possible and let you focus on **bringing life to your ideas!**
 
-![Code Example](http://pollen-robotics.com/assets/img/robus/code-example.gif)
+<img src="http://pollen-robotics.com/assets/img/robus/code-example.gif" width=300px>
 
 *You can find more information on Robus on http://pollen-robotics.com.*
 

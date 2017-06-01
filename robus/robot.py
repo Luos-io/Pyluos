@@ -1,19 +1,25 @@
+import time
 import threading
 
 from queue import Queue
+from datetime import datetime
 from collections import defaultdict
 
 from .io import io_from_host
 from .modules import name2mod
+from .metrics import Publisher
 
 
 class Robot(object):
+    _heartbeat_timeout = 10  # in sec.
+
     def __init__(self, host, *args, **kwargs):
         self._io = io_from_host(host=host,
                                 *args, **kwargs)
 
         # We force a first poll to setup our model.
         self._setup(self._poll_once())
+        self._last_update = time.time()
         self._running = True
 
         # Setup both poll/push synchronization loops.
@@ -24,9 +30,25 @@ class Robot(object):
         self._push_bg.daemon = True
         self._push_bg.start()
 
+        self._metrics_pub = Publisher(robot=self)
+        self._metrics_pub.start()
+
+    @property
+    def state(self):
+        return {
+            'gate': self.name,
+            'timestamp': datetime.now(),
+            'modules': ','.join([mod.alias for mod in self.modules])
+        }
+
     @property
     def name(self):
         return self._name
+
+    @property
+    def alive(self):
+        dt = time.time() - self._last_update
+        return dt < self._heartbeat_timeout
 
     def close(self):
         self._running = False
@@ -70,6 +92,8 @@ class Robot(object):
 
         for mod in mod_need_update:
             getattr(self, mod['alias'])._update(mod)
+
+        self._last_update = time.time()
 
     # Push update from our model to the hardware
     def _push_once(self):

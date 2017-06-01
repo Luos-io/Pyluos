@@ -13,5 +13,6 @@ setup(name='robus',
       install_requires=['future',
                         'websocket-client',
                         'pyserial>3',
+                        'requests',
                         ],
       )

@@ -17,7 +17,7 @@ def json_handler(obj):
 
 class Publisher(object):
     def __init__(self, robot,
-                 url='http://Teahupoo.local:33600/post/robot-state.json',
+                 url='http://teahupoo.ddns.net/post/robot-state.json',
                  push_period=60):
 
         def pub_loop():

@@ -10,14 +10,14 @@ class Module(object):
                  type, id, alias,
                  robot):
         self.id = id
-        self._type = type
+        self.type = type
         self.alias = alias
         self._delegate = robot
         self._value = None
         self._cb = defaultdict(list)
 
     def __repr__(self):
-        return ('<{self._type} '
+        return ('<{self.type} '
                 'alias="{self.alias}" '
                 'id={self.id} '
                 '{state}>'.format(self=self,

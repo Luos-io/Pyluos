@@ -38,6 +38,7 @@ class Robot(object):
         return {
             'gate': self.name,
             'timestamp': datetime.now(),
+            'types': ','.join([mod.type for mod in self.modules]),
             'modules': ','.join([mod.alias for mod in self.modules])
         }
 

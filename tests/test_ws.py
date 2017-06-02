@@ -39,6 +39,8 @@ class TestWsRobot(unittest.TestCase):
                 self.assertTrue(hasattr(robot, mod.alias))
 
     def wait_for_server(self):
+        TIMEOUT = 30
+
         import socket
         import time
 
@@ -46,11 +48,14 @@ class TestWsRobot(unittest.TestCase):
 
         host, port = '127.0.0.1', Ws._port
 
-        while True:
+        start = time.time()
+        while (time.time() - start) < TIMEOUT:
             with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
                 if sock.connect_ex((host, port)) == 0:
                     break
             time.sleep(0.1)
+        else:
+            raise EnvironmentError('Could not connect to fake robot!')
 
 
 if __name__ == '__main__':

@@ -123,8 +123,15 @@ class FakeRobot(WebSocketHandler):
 
 
 if __name__ == '__main__':
-    port = 9342
-    FakeRobot.verbose = True
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--port', type=int, default=9342)
+    parser.add_argument('--verbose', action='store_true', default=False)
+    args = parser.parse_args()
+
+    port = args.port
+    FakeRobot.verbose = args.verbose
 
     loop = IOLoop()
     app = Application([
@@ -133,5 +140,6 @@ if __name__ == '__main__':
 
     app.listen(port)
     url = 'ws://{}:{}'.format('127.0.0.1', port)
-    print('Fake robot serving on {}'.format(url))
+    if args.verbose:
+        print('Fake robot serving on {}'.format(url))
     loop.start()

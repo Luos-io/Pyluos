@@ -1,3 +1,4 @@
+import sys
 import time
 import threading
 
@@ -8,6 +9,10 @@ from collections import defaultdict
 from .io import io_from_host
 from .modules import name2mod
 from .metrics import Publisher
+
+
+def run_from_unittest():
+    return 'unittest' in sys.modules
 
 
 class Robot(object):
@@ -30,8 +35,9 @@ class Robot(object):
         self._push_bg.daemon = True
         self._push_bg.start()
 
-        self._metrics_pub = Publisher(robot=self)
-        self._metrics_pub.start()
+        if not run_from_unittest():
+            self._metrics_pub = Publisher(robot=self)
+            self._metrics_pub.start()
 
     @property
     def state(self):
@@ -53,6 +59,7 @@ class Robot(object):
 
     def close(self):
         self._running = False
+        self._poll_bg.join()
 
     def _setup(self, state):
         gate = next(g for g in state['modules']

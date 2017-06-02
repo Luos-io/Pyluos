@@ -6,13 +6,14 @@ from contextlib import closing
 from robus import Robot
 
 
-class TestMockup(unittest.TestCase):
-    _multiprocess_shared_ = True
+class TestWsRobot(unittest.TestCase):
+    def setUp(self):
+        self.fake_robot = Popen(['python', '../tools/fake_robot.py'])
+        self.wait_for_server()
 
-    @classmethod
-    def setup_class(cls):
-        cls.fake_robot = Popen(['python', '../tools/fake_robot.py'])
-        cls.wait_for_server()
+    def tearDown(self):
+        self.fake_robot.terminate()
+        self.fake_robot.wait()
 
     def test_ws_host(self):
         from robus.io import Ws
@@ -30,19 +31,14 @@ class TestMockup(unittest.TestCase):
     def test_ws_reception(self):
         with closing(Robot('127.0.0.1')) as robot:
             self.assertTrue(robot.modules)
+            self.assertTrue(robot.name)
 
     def test_modules(self):
         with closing(Robot('127.0.0.1')) as robot:
             for mod in robot.modules:
                 self.assertTrue(hasattr(robot, mod.alias))
 
-    @classmethod
-    def teardown_class(cls):
-        cls.fake_robot.terminate()
-        cls.fake_robot.wait()
-
-    @classmethod
-    def wait_for_server(cls):
+    def wait_for_server(self):
         import socket
         import time
 

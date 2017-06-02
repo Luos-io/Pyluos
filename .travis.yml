@@ -31,3 +31,11 @@ after_success:
 
 after_failure:
     - pip uninstall -y pyrobus
+
+deploy:
+  provider: pypi
+  user: "pierre-rouanet"
+  password:
+    secure: NKPpG9eq1hrx4RYxUJRACqmXZNCo5DK1ZvO3WUmyovKgk6hTTcO4gj8WoaezOVzgD0Dei+0p9kSZsKWgZCu8ssy8QGpGYHeUT6NZVkm6pUXQrbVBkIKVMvhjEt5GreMu2e1AGl6zI1xhX6kTh7a2sxzGb4YZkM5adEfUVALehgsr0PapCePftpyKdK5i+d1rSF87cAC2HW8Riu/C/CNqXVL9dNhGuXs8DtHiTV7uRCKz0DXjGUClrUkSMhLTrtOJXw/8z5BClI9X6AcmzQzNrxMvFqTy9sw4fX12U+7GjA7R7KjArc9PeefyFjP+mpjvM0aob3s60LM8jANK42nrq5joKH5TKyQ9UTyqZMf4cc8GkzYToZlUUMHRVDO8ubuQ/LXbR8HPszNnF+3QaKYUXnKRdnjdhkHRukOrJzgyb1ZF4u1pK6WltxXZq3lM8e5Y8LsYSyeCWu5W0QMWMjWwn2bUtQWHAVmwoJW/+ps8uNEFeAAklotjxbSCTc1iJqmZnNZZZrxyychkNjx9zmUORXRWg3+zcymarH3vB0Ec7Xei1RgdPTl432v6EQLPDN9vKA4B5KBWsRkRmptpxxEZnKwKqdn7H+mg12JVy9+YggDr30tgCc+n3/NjdIinNOWha+uw2ZUIdiurNAd8yJm33esAy6uISuVfXg0jN/S3qKE=
+  on:
+    tags: true

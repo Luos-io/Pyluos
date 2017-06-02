@@ -21,6 +21,7 @@ install:
   - pip install -e ./
 
 script:
+  - pip install -e ./[tests]
   - nosetests --with-coverage --cover-erase --cover-package=robus -v -w tests/
 
 after_success:

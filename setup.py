@@ -15,4 +15,7 @@ setup(name='robus',
                         'pyserial>3',
                         'requests',
                         ],
+      extras_require={
+          'tests': ['tornado'],
+      },
       )

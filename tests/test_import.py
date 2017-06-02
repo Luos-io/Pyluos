@@ -3,10 +3,10 @@ import unittest
 
 class TestImport(unittest.TestCase):
     def test_import_general(self):
-        import robus
+        import pyrobus
 
     def test_import_robot(self):
-        from robus import Robot
+        from pyrobus import Robot
 
 
 if __name__ == '__main__':

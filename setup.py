@@ -4,10 +4,10 @@ import imp
 
 from setuptools import setup, find_packages
 
-version = imp.load_source('robus.version', 'robus/version.py')
+version = imp.load_source('pyrobus.version', 'pyrobus/version.py')
 
 
-setup(name='robus',
+setup(name='pyrobus',
       version=version.version,
       packages=find_packages(),
       install_requires=['future',

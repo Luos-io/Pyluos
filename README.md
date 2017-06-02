@@ -38,7 +38,7 @@ You can simply connect to your robot using one line.
 #### On WiFi
 
 ```python
-from robus import Robot
+from pyrobus import Robot
 
 robot = Robot('my_robot_hostname.local')
 ```
@@ -46,7 +46,7 @@ robot = Robot('my_robot_hostname.local')
 #### On serial
 
 ```python
-from robus import Robot
+from pyrobus import Robot
 
 robot = Robot('my_serial_port')
 ```
@@ -144,11 +144,11 @@ You can also send commands using:
 
 The robus modules are automatically publishing usage information. This is  intended to help us better understand how people use our products and what we could improve. They published the names and types of the modules that are connected every minute.
 
-The dedicated code is open-source and can be found [here](https://github.com/pollen/pyrobus/blob/master/robus/metrics.py).
+The dedicated code is open-source and can be found [here](https://github.com/pollen/pyrobus/blob/master/pyrobus/metrics.py).
 
 ## Contributing
 
-Pyrobus was developped by the [Pollen Robotics](http://pollen-robotics.com/) team.
+Pyrobus was developed by the [Pollen Robotics](http://pollen-robotics.com/) team.
 
 Pyrobus still needs lots of usage and testing to help it become more useful and reliable. If you are actively using Pyrobus, have suggestion or comments  please let us know!
 

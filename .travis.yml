@@ -22,12 +22,12 @@ install:
 
 script:
   - pip install -e ./[tests]
-  - nosetests --with-coverage --cover-erase --cover-package=robus -v -w tests/
+  - nosetests --with-coverage --cover-erase --cover-package=pyrobus -v -w tests/
 
 after_success:
     - coveralls
-    - flake8 --statistics --count --config=setup.cfg robus
-    - pip uninstall -y robus
+    - flake8 --statistics --count --config=setup.cfg pyrobus
+    - pip uninstall -y pyrobus
 
 after_failure:
-    - pip uninstall -y robus
+    - pip uninstall -y pyrobus

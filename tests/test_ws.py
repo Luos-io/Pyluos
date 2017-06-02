@@ -3,7 +3,7 @@ import unittest
 from subprocess import Popen
 from contextlib import closing
 
-from robus import Robot
+from pyrobus import Robot
 
 
 class TestWsRobot(unittest.TestCase):
@@ -16,7 +16,7 @@ class TestWsRobot(unittest.TestCase):
         self.fake_robot.wait()
 
     def test_ws_host(self):
-        from robus.io import Ws
+        from pyrobus.io import Ws
 
         self.assertTrue(Ws.is_host_compatible('127.0.0.1'))
         self.assertTrue(Ws.is_host_compatible('192.168.0.42'))
@@ -44,7 +44,7 @@ class TestWsRobot(unittest.TestCase):
         import socket
         import time
 
-        from robus.io import Ws
+        from pyrobus.io import Ws
 
         host, port = '127.0.0.1', Ws._port
 

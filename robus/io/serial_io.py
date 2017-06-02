@@ -14,6 +14,10 @@ class Serial(IOHandler):
     def __init__(self, host, baudrate=57600):
         self._serial = _serial.Serial(host, baudrate)
 
+        # Force a first readline to avoid
+        # to receive half a message
+        self._serial.readline()
+
     def recv(self):
         return self._serial.readline()
 

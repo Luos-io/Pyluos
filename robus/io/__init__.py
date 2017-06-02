@@ -10,11 +10,8 @@ class IOHandler(object):
         raise NotImplementedError
 
     def read(self):
-        while True:
-            try:
-                return self.loads(self.recv())
-            except (json.JSONDecodeError, UnicodeDecodeError) as e:
-                print('Warning: {}'.format(e))
+        data = self.recv()
+        return self.loads(data)
 
     def recv(self):
         raise NotImplementedError

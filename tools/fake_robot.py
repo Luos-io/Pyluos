@@ -3,7 +3,7 @@ from __future__ import division
 import json
 
 from time import time
-from random import randint
+from random import randint, choice
 from threading import Timer
 
 from tornado.ioloop import IOLoop
@@ -73,48 +73,46 @@ class FakeRobot(WebSocketHandler):
                     'type': 'led',
                 },
                 {
-                    'alias': 'my_motor',
+                    'alias': 'my_servo',
                     'id': 3,
-                    'type': 'motor',
+                    'type': 'servo',
                 },
                 {
                     'alias': 'my_button',
                     'id': 4,
                     'type': 'button',
-                    'value': 0,
+                    'value': choice((0, 1)),
                 },
                 {
                     'alias': 'my_potentiometer',
                     'id': 5,
                     'type': 'potard',
-                    'value': 50,
+                    'value': randint(0, 100),
                 },
-                {
-                    'alias': 'my_relay',
-                    'id': 6,
-                    'type': 'relay',
-                },
+                # {
+                #     'alias': 'my_relay',
+                #     'id': 6,
+                #     'type': 'relay',
+                # },
                 {
                     'alias': 'my_distance',
                     'id': 7,
                     'type': 'distance',
-                    'value': 12,
+                    'value': randint(0, 100),
                 },
                 {
                     'alias': 'my_dxl_1',
                     'id': 8,
                     'type': 'dynamixel',
-                    'position': randint(0, 180),
                 },
                 {
                     'alias': 'my_dxl_2',
                     'id': 9,
                     'type': 'dynamixel',
-                    'position': randint(0, 180),
-                    'speed': randint(0, 100),
                 },
             ]
         }
+
         self.write_message(json.dumps(state))
 
     def handle_command(self, message):

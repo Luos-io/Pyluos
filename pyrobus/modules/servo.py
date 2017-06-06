@@ -15,3 +15,12 @@ class Servo(Module):
         if new_pos != self._value:
             self._value = new_pos
             self._push_value('value', new_pos)
+
+    @property
+    def speed(self):
+        return self.position / 180 * 200 - 100
+
+    @speed.setter
+    def speed(self, new_speed):
+        pos = (new_speed + 100) / 200 * 180
+        self.position = pos

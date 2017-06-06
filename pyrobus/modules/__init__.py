@@ -20,7 +20,7 @@ __all__ = [
 
 name2mod = {
     'distance': Distance,
-    'dynamixel': DxlBus,
+    'dynamixel': Servo,
     'button': Button,
     'potard': Potard,
     'servo': Servo,

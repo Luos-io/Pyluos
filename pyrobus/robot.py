@@ -1,4 +1,6 @@
 import sys
+import zmq
+import json
 import time
 import threading
 
@@ -34,6 +36,11 @@ class Robot(object):
         self._push_bg = threading.Thread(target=self._push_update)
         self._push_bg.daemon = True
         self._push_bg.start()
+
+        c = zmq.Context()
+        s = c.socket(zmq.PUB)
+        s.connect('tcp://127.0.0.1:33000')
+        self._s = s
 
         if not run_from_unittest():
             self._metrics_pub = Publisher(robot=self)
@@ -90,7 +97,10 @@ class Robot(object):
 
     def _poll_and_up(self):
         while self._running:
-            self._update(self._poll_once())
+            state = self._poll_once()
+            self._update(state)
+
+            self._broadcast(state)
 
     # Update our model with the new state.
     def _update(self, new_state):
@@ -130,3 +140,12 @@ class Robot(object):
 
     def _send(self, msg):
         self._io.send(msg)
+
+    def _broadcast(self, state):
+        for mod in state['modules']:
+            if mod['type'] == 'servo':
+                servo = getattr(self, mod['alias'])
+                mod['value'] = servo.position
+
+        msg = '{} {}'.format(self.name, json.dumps(state))
+        self._s.send_string(msg)

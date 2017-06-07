@@ -14,6 +14,7 @@ setup(name='pyrobus',
                         'websocket-client',
                         'pyserial>3',
                         'requests',
+                        'pyzmq',
                         ],
       extras_require={
           'tests': ['tornado'],

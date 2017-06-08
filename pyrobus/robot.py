@@ -16,7 +16,7 @@ def run_from_unittest():
 
 
 class Robot(object):
-    _heartbeat_timeout = 10  # in sec.
+    _heartbeat_timeout = 5  # in sec.
 
     def __init__(self, host, *args, **kwargs):
         self._io = io_from_host(host=host,
@@ -55,7 +55,7 @@ class Robot(object):
     @property
     def alive(self):
         dt = time.time() - self._last_update
-        return dt < self._heartbeat_timeout
+        return self._running and dt < self._heartbeat_timeout
 
     def close(self):
         self._running = False

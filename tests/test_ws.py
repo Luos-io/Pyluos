@@ -25,16 +25,22 @@ class TestWsRobot(unittest.TestCase):
         self.assertFalse(Ws.is_host_compatible('/dev/ttyUSB0'))
 
     def test_ws_connection(self):
-        with closing(Robot('127.0.0.1')):
+        with closing(Robot(host)):
             pass
 
+    def test_life_cycle(self):
+        robot = Robot(host)
+        self.assertTrue(robot.alive)
+        robot.close()
+        self.assertFalse(robot.alive)
+
     def test_ws_reception(self):
-        with closing(Robot('127.0.0.1')) as robot:
+        with closing(Robot(host)) as robot:
             self.assertTrue(robot.modules)
             self.assertTrue(robot.name)
 
     def test_modules(self):
-        with closing(Robot('127.0.0.1')) as robot:
+        with closing(Robot(host)) as robot:
             for mod in robot.modules:
                 self.assertTrue(hasattr(robot, mod.alias))
 

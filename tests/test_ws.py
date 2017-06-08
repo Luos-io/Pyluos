@@ -6,6 +6,9 @@ from contextlib import closing
 from pyrobus import Robot
 
 
+host, port = '127.0.0.1', 9342
+
+
 class TestWsRobot(unittest.TestCase):
     def setUp(self):
         self.fake_robot = Popen(['python', '../tools/fake_robot.py'])
@@ -43,10 +46,6 @@ class TestWsRobot(unittest.TestCase):
 
         import socket
         import time
-
-        from pyrobus.io import Ws
-
-        host, port = '127.0.0.1', Ws._port
 
         start = time.time()
         while (time.time() - start) < TIMEOUT:

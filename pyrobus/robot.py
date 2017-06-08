@@ -143,7 +143,8 @@ class Robot(object):
 
     def _broadcast(self, state):
         for mod in state['modules']:
-            if mod['type'] == 'servo':
+            if ((mod['type'] in ('servo', 'dynamixel')) and
+               (hasattr(self, mod['alias']))):
                 servo = getattr(self, mod['alias'])
                 mod['value'] = servo.position
 

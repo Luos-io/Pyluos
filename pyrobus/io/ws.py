@@ -18,8 +18,6 @@ def resolve_hostname(hostname, port):
 
 
 class Ws(IOHandler):
-    _port = 9342
-
     @classmethod
     def is_host_compatible(cls, host):
         try:
@@ -28,9 +26,9 @@ class Ws(IOHandler):
         except socket.error:
             return host.endswith('.local')
 
-    def __init__(self, host):
-        host = resolve_hostname(host, self._port)
-        url = 'ws://{}:{}'.format(host, self._port)
+    def __init__(self, host, port=9342):
+        host = resolve_hostname(host, port)
+        url = 'ws://{}:{}'.format(host, port)
 
         self._ws = websocket.create_connection(url)
 

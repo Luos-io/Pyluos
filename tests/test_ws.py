@@ -1,7 +1,9 @@
 import unittest
 
+from time import sleep
 from subprocess import Popen
 from contextlib import closing
+from random import randint, random
 
 from pyrobus import Robot
 
@@ -45,6 +47,13 @@ class TestWsRobot(unittest.TestCase):
         with closing(Robot(host)) as robot:
             for mod in robot.modules:
                 self.assertTrue(hasattr(robot, mod.alias))
+
+    def test_spamming(self):
+        with closing(Robot(host)) as robot:
+            for _ in range(100000):
+                robot.my_servo.position = randint(0, 180)
+            sleep(robot._heartbeat_timeout + random())
+            self.assertTrue(robot.alive)
 
     def wait_for_server(self):
         TIMEOUT = 30

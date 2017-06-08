@@ -5,6 +5,8 @@ from contextlib import closing
 
 from pyrobus import Robot
 
+host, port = '127.0.0.1', 9342
+
 
 class TestWsRobot(unittest.TestCase):
     def setUp(self):

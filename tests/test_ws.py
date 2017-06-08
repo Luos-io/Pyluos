@@ -54,8 +54,6 @@ class TestWsRobot(unittest.TestCase):
 
         from pyrobus.io import Ws
 
-        host, port = '127.0.0.1', Ws._port
-
         start = time.time()
         while (time.time() - start) < TIMEOUT:
             with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:

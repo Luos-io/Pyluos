@@ -3,6 +3,7 @@ import time
 import threading
 
 from queue import Queue
+from copy import deepcopy
 from datetime import datetime
 from collections import defaultdict
 
@@ -31,9 +32,6 @@ class Robot(object):
         self._poll_bg = threading.Thread(target=self._poll_and_up)
         self._poll_bg.daemon = True
         self._poll_bg.start()
-        self._push_bg = threading.Thread(target=self._push_update)
-        self._push_bg.daemon = True
-        self._push_bg.start()
 
         if not run_from_unittest():
             self._metrics_pub = Publisher(robot=self)
@@ -69,7 +67,8 @@ class Robot(object):
         modules = [mod for mod in state['modules']
                    if mod['type'] in name2mod.keys()]
 
-        self._msg_stack = Queue()
+        self._old_cmd = defaultdict(lambda: defaultdict(int))
+        self._cmd = defaultdict(lambda: defaultdict(int))
 
         self.modules = [
             name2mod[mod['type']](id=mod['id'],
@@ -91,6 +90,7 @@ class Robot(object):
     def _poll_and_up(self):
         while self._running:
             self._update(self._poll_once())
+            self._push_once()
 
     # Update our model with the new state.
     def _update(self, new_state):
@@ -105,28 +105,18 @@ class Robot(object):
 
     # Push update from our model to the hardware
     def _push_once(self):
-        data = defaultdict(dict)
-        while not self._msg_stack.empty():
-            msg = self._msg_stack.get()
+        diff = defaultdict(dict)
 
-            key, val = msg.popitem()
-            data[key].update(val)
+        for mod, values in self._cmd.items():
+            for key, val in values.items():
+                if self._old_cmd[mod][key] != val:
+                    diff[mod][key] = val
 
-        if data:
+        if diff:
             self._send({
-                'modules': data
+                'modules': diff
             })
-
-    def _push_update(self):
-        while self._running:
-            msg = self._msg_stack.get()
-
-            # TODO: instead of pushing each time
-            # we have a message on the stack
-            # We could use a buffer.
-            self._send({
-                'modules': msg
-            })
+            self._old_cmd = deepcopy(self._cmd)
 
     def _send(self, msg):
         self._io.send(msg)

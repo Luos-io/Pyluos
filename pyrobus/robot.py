@@ -132,6 +132,9 @@ class Robot(object):
         self._io.send(msg)
 
     def _broadcast(self, state):
+        if not hasattr(self, '_s'):
+            return
+
         for mod in state['modules']:
             if ((mod['type'] in ('servo', 'dynamixel')) and
                (hasattr(self, mod['alias']))):

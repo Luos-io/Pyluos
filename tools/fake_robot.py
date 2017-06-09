@@ -46,7 +46,7 @@ class FakeRobot(WebSocketHandler):
             print('WebSocket connection open.')
 
         self.set_nodelay(True)
-        self.rt = RepeatedTimer(self.period, self.pub_state)
+        self.rt = RepeatedTimer(self.period, self.proxy_pub)
 
     def on_message(self, message):
         if self.verbose:
@@ -59,6 +59,9 @@ class FakeRobot(WebSocketHandler):
             print('WebSocket closed {}.'.format(self.close_reason))
 
         self.rt.stop()
+
+    def proxy_pub(self):
+        self.ioloop.add_callback(self.pub_state)
 
     def pub_state(self):
         state = {
@@ -131,10 +134,12 @@ if __name__ == '__main__':
     parser.add_argument('--verbose', action='store_true', default=False)
     args = parser.parse_args()
 
+    loop = IOLoop()
+
     port = args.port
     FakeRobot.verbose = args.verbose
+    FakeRobot.ioloop = loop
 
-    loop = IOLoop()
     app = Application([
         (r'/', FakeRobot)
     ])

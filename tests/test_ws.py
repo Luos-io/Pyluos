@@ -62,7 +62,7 @@ class TestWsRobot(unittest.TestCase):
                 robot.my_servo.position = p
 
             sleep(robot._heartbeat_timeout + random())
-            self.assertTrue(robot.i < 1)
+            self.assertTrue(robot.i < 10)
             self.assertTrue(robot.alive)
 
     def wait_for_server(self):

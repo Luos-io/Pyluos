@@ -45,6 +45,7 @@ class FakeRobot(WebSocketHandler):
         if self.verbose:
             print('WebSocket connection open.')
 
+        self.set_nodelay(True)
         self.rt = RepeatedTimer(self.period, self.pub_state)
 
     def on_message(self, message):

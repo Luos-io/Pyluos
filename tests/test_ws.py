@@ -3,7 +3,7 @@ import unittest
 from time import sleep
 from subprocess import Popen
 from contextlib import closing
-from random import randint, random
+from random import random
 
 from pyrobus import Robot
 
@@ -70,8 +70,6 @@ class TestWsRobot(unittest.TestCase):
 
         import socket
         import time
-
-        from pyrobus.io import Ws
 
         start = time.time()
         while (time.time() - start) < TIMEOUT:

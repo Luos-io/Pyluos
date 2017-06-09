@@ -50,9 +50,19 @@ class TestWsRobot(unittest.TestCase):
 
     def test_spamming(self):
         with closing(Robot(host)) as robot:
-            for _ in range(100000):
-                robot.my_servo.position = randint(0, 180)
+            robot.i = 0
+
+            def my_send(msg):
+                robot._io.send(msg)
+                robot.i += 1
+
+            robot._send = my_send
+
+            for p in range(180):
+                robot.my_servo.position = p
+
             sleep(robot._heartbeat_timeout + random())
+            self.assertTrue(robot.i < 1)
             self.assertTrue(robot.alive)
 
     def wait_for_server(self):

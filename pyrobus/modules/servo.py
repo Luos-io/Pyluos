@@ -1,3 +1,5 @@
+from ipywidgets import interact
+
 from .module import Module
 
 
@@ -24,3 +26,9 @@ class Servo(Module):
     def speed(self, new_speed):
         pos = (new_speed + 100) / 200 * 180
         self.position = pos
+
+    def ipywidget(self):
+        def move(position):
+            self.position = position
+
+        return interact(move, position=(0, 180, 1))

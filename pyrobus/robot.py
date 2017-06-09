@@ -35,14 +35,14 @@ class Robot(object):
         self._poll_bg.daemon = True
         self._poll_bg.start()
 
-        c = zmq.Context()
-        s = c.socket(zmq.PUB)
-        s.connect('tcp://127.0.0.1:33000')
-        self._s = s
-
         if not run_from_unittest():
             self._metrics_pub = Publisher(robot=self)
             self._metrics_pub.start()
+
+            c = zmq.Context()
+            s = c.socket(zmq.PUB)
+            s.connect('tcp://127.0.0.1:33000')
+            self._s = s
 
     @property
     def state(self):

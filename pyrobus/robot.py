@@ -4,7 +4,6 @@ import json
 import time
 import threading
 
-from queue import Queue
 from copy import deepcopy
 from datetime import datetime
 from collections import defaultdict

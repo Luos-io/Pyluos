@@ -37,6 +37,9 @@ class Module(object):
     # Events cb handling
 
     def add_callback(self, event, cb):
+        if event not in self.possible_events:
+            raise ValueError('Unknown callback: {} (poss={})'.format(event, self.possible_events))
+
         self._cb[event].append(cb)
 
     def remove_callback(self, event, cb):

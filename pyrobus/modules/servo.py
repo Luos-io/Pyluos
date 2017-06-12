@@ -29,7 +29,7 @@ class Servo(Module):
         pos = (new_speed + 100) / 200 * 180
         self.position = pos
 
-    def ipywidget(self):
+    def control(self):
         def move(position):
             self.position = position
 

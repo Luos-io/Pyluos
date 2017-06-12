@@ -18,7 +18,7 @@ class Led(Module):
             self._value = new_color
             self._push_value('value', new_color)
 
-    def ipywidget(self):
+    def control(self):
         def change_color(red, green, blue):
             self.color = (red, green, blue)
 

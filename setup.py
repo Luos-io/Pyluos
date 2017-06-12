@@ -15,6 +15,7 @@ setup(name='pyrobus',
                         'pyserial>3',
                         'requests',
                         'pyzmq',
+                        'ipywidgets',
                         ],
       extras_require={
           'tests': ['tornado'],

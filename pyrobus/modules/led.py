@@ -1,3 +1,5 @@
+from ipywidgets import interact
+
 from .module import Module
 
 
@@ -15,3 +17,12 @@ class Led(Module):
         if new_color != self._value:
             self._value = new_color
             self._push_value('value', new_color)
+
+    def ipywidget(self):
+        def change_color(red, green, blue):
+            self.color = (red, green, blue)
+
+        return interact(change_color,
+                        red=(0, 255, 1),
+                        green=(0, 255, 1),
+                        blue=(0, 255, 1))

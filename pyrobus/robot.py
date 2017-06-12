@@ -2,6 +2,7 @@ import sys
 import zmq
 import json
 import time
+import logging
 import threading
 
 from copy import deepcopy
@@ -11,6 +12,8 @@ from collections import defaultdict
 from .io import io_from_host
 from .modules import name2mod
 from .metrics import Publisher
+
+logger = logging.getLogger(__name__)
 
 
 def run_from_unittest():
@@ -23,9 +26,13 @@ class Robot(object):
     def __init__(self, host, *args, **kwargs):
         self._io = io_from_host(host=host,
                                 *args, **kwargs)
+        logger.warning('Connected to "{}".'.format(host))
 
         # We force a first poll to setup our model.
+        logger.warning('Waiting for first state...')
         self._setup(self._poll_once())
+        logger.warning('Robot setup.')
+
         self._last_update = time.time()
         self._running = True
 

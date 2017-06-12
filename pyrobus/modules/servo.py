@@ -1,3 +1,5 @@
+from __future__ import division
+
 from ipywidgets import interact
 
 from .module import Module

@@ -32,21 +32,10 @@ class TestWsRobot(unittest.TestCase):
         with closing(Robot(host)):
             pass
 
-    def test_life_cycle(self):
-        robot = Robot(host)
-        self.assertTrue(robot.alive)
-        robot.close()
-        self.assertFalse(robot.alive)
-
     def test_ws_reception(self):
         with closing(Robot(host)) as robot:
             self.assertTrue(robot.modules)
             self.assertTrue(robot.name)
-
-    def test_modules(self):
-        with closing(Robot(host)) as robot:
-            for mod in robot.modules:
-                self.assertTrue(hasattr(robot, mod.alias))
 
     def test_spamming(self):
         with closing(Robot(host)) as robot:

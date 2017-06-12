@@ -93,11 +93,11 @@ class FakeRobot(WebSocketHandler):
                     'type': 'potard',
                     'value': randint(0, 100),
                 },
-                # {
-                #     'alias': 'my_relay',
-                #     'id': 6,
-                #     'type': 'relay',
-                # },
+                {
+                    'alias': 'my_relay',
+                    'id': 6,
+                    'type': 'relay',
+                },
                 {
                     'alias': 'my_distance',
                     'id': 7,

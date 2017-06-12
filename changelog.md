@@ -1,5 +1,13 @@
 # Changelog
 
+#### Version 0.2.1
+
+Bugfix:
+* Fix a speed/position conversion in the servo module on Python 2.7.
+
+Misc:
+* Improve unit tests coverage.
+
 ### Version 0.2
 
 Features:

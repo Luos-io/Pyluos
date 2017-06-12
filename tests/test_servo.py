@@ -19,6 +19,10 @@ class TestWsRobot(unittest.TestCase):
 
     def test_speed_control(self):
         with closing(Robot(host)) as robot:
+            # Stop sync to make sure the fake robot
+            # does not change the position anymore.
+            robot.close()
+
             servo = robot.my_servo
 
             servo.speed = 0

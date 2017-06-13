@@ -2,7 +2,6 @@ import sys
 import zmq
 import json
 import time
-import logging
 import threading
 
 from copy import deepcopy
@@ -13,8 +12,6 @@ from .io import io_from_host
 from .modules import name2mod
 from .metrics import Publisher
 
-logger = logging.getLogger(__name__)
-
 
 def run_from_unittest():
     return 'unittest' in sys.modules
@@ -23,14 +20,17 @@ def run_from_unittest():
 class Robot(object):
     _heartbeat_timeout = 5  # in sec.
 
-    def __init__(self, host, *args, **kwargs):
+    def __init__(self, host, verbose=True, *args, **kwargs):
         self._io = io_from_host(host=host,
                                 *args, **kwargs)
-        logger.warning('Connected to "{}".'.format(host))
+
+        self._verbose = verbose
+
+        self._log('Connected to "{}".'.format(host))
 
         # We force a first poll to setup our model.
         self._setup()
-        logger.warning('Robot setup.')
+        self._log('Robot setup.')
 
         self._last_update = time.time()
         self._running = True
@@ -72,10 +72,10 @@ class Robot(object):
         self._poll_bg.join()
 
     def _setup(self):
-        logger.warning('Sending detection signal.')
+        self._log('Sending detection signal.')
         self._send({'detection': {}})
 
-        logger.warning('Waiting for first state...')
+        self._log('Waiting for first state...')
         state = self._poll_once()
 
         gate = next(g for g in state['modules']
@@ -154,3 +154,7 @@ class Robot(object):
 
         msg = '{} {}'.format(self.name, json.dumps(state))
         self._s.send_string(msg)
+
+    def _log(self, msg):
+        if self._verbose:
+            print(msg)

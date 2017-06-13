@@ -29,8 +29,7 @@ class Robot(object):
         logger.warning('Connected to "{}".'.format(host))
 
         # We force a first poll to setup our model.
-        logger.warning('Waiting for first state...')
-        self._setup(self._poll_once())
+        self._setup()
         logger.warning('Robot setup.')
 
         self._last_update = time.time()
@@ -72,7 +71,13 @@ class Robot(object):
         self._running = False
         self._poll_bg.join()
 
-    def _setup(self, state):
+    def _setup(self):
+        logger.warning('Sending detection signal.')
+        self._send({'detection': {}})
+
+        logger.warning('Waiting for first state...')
+        state = self._poll_once()
+
         gate = next(g for g in state['modules']
                     if g['type'] == 'gate')
         self._name = gate['alias']

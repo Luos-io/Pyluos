@@ -108,11 +108,13 @@ class FakeRobot(WebSocketHandler):
                     'alias': 'my_dxl_1',
                     'id': 8,
                     'type': 'dynamixel',
+                    'present_position': randint(-180, 180),
                 },
                 {
                     'alias': 'my_dxl_2',
                     'id': 9,
                     'type': 'dynamixel',
+                    'present_position': randint(-180, 180),
                 },
             ]
         }

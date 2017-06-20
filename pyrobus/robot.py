@@ -103,7 +103,8 @@ class Robot(object):
 
     # Poll state from hardware.
     def _poll_once(self):
-        return self._io.read()
+        self._state = self._io.read()
+        return self._state
 
     def _poll_and_up(self):
         while self._running:

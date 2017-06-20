@@ -20,7 +20,9 @@ def run_from_unittest():
 class Robot(object):
     _heartbeat_timeout = 5  # in sec.
 
-    def __init__(self, host, verbose=True, *args, **kwargs):
+    def __init__(self, host,
+                 verbose=True, test_mode=False,
+                 *args, **kwargs):
         self._io = io_from_host(host=host,
                                 *args, **kwargs)
 
@@ -40,7 +42,7 @@ class Robot(object):
         self._poll_bg.daemon = True
         self._poll_bg.start()
 
-        if not run_from_unittest():
+        if not (test_mode or run_from_unittest()):
             self._metrics_pub = Publisher(robot=self)
             self._metrics_pub.start()
 

@@ -22,6 +22,8 @@ class Publisher(object):
 
         def pub_loop():
             while True:
+                time.sleep(push_period)
+
                 if not robot.alive:
                     continue
 
@@ -37,8 +39,6 @@ class Publisher(object):
                 except Exception as e:
                     msg = 'Could not post robot state: {}'.format(str(e))
                     logger.info(msg)
-
-                time.sleep(push_period)
 
         self._pub = Thread(target=pub_loop)
         self._pub.daemon = True

@@ -37,3 +37,6 @@ class Ws(IOHandler):
 
     def write(self, data):
         self._ws.send(data)
+
+    def close(self):
+        self._ws.close()

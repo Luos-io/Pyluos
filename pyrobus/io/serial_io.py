@@ -23,3 +23,6 @@ class Serial(IOHandler):
 
     def write(self, data):
         self._serial.write(data + '\r'.encode())
+
+    def close(self):
+        self._serial.close()

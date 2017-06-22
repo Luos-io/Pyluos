@@ -72,6 +72,7 @@ class Robot(object):
     def close(self):
         self._running = False
         self._poll_bg.join()
+        self._io.close()
 
     def _setup(self):
         self._log('Sending detection signal.')

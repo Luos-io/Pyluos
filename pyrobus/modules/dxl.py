@@ -63,8 +63,4 @@ class Dynamixel(Module):
         def move(position):
             self.position = position
 
-<<<<<<< HEAD
         return interact(move, position=(-180.0, 180.0, 0.1))
-=======
-        return interact(move, position=(-180, 180, 1))
->>>>>>> 8615fecc41ae4f22ed6bcaeb9bedf3ffcd6bc527

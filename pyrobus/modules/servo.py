@@ -8,7 +8,7 @@ from .module import Module
 class Servo(Module):
     def __init__(self, id, alias, robot):
         Module.__init__(self, 'Servo', id, alias, robot)
-        self.position = 90
+        self._value = None
 
     @property
     def position(self):

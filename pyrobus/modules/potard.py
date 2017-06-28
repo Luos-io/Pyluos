@@ -10,10 +10,11 @@ class Potard(Module):
 
     @property
     def position(self):
+        """ Position in degrees. """
         return self._value
 
     def _update(self, new_state):
-        new_pos = new_state['value']
+        new_pos = new_state['position']
 
         if new_pos != self._value:
             self._pub_event('moved', self._value, new_pos)

@@ -25,11 +25,11 @@ class TestWsRobot(unittest.TestCase):
 
             servo = robot.my_servo
 
-            servo.speed = 0
-            self.assertEqual(servo.position, 90)
+            servo.target_speed = 0
+            self.assertEqual(servo.target_position, 90)
 
-            servo.position = 180
-            self.assertEqual(servo.speed, 100)
+            servo.target_position = 180
+            self.assertEqual(servo.target_speed, 100)
 
     def wait_for_server(self):
         TIMEOUT = 30

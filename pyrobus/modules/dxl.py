@@ -9,38 +9,41 @@ class Dynamixel(Module):
     def __init__(self, id, alias, robot):
         Module.__init__(self, 'Dynamixel', id, alias, robot)
 
-        self._present_position = None
-        self._goal_position = None
-        self._moving_speed = None
-        self._compliant = None
+        # Read
+        self._position = None
 
-    @property
-    def present_position(self):
-        return self._present_position
+        # Write
+        self._target_position = None
+        self._target_speed = None
+        self._compliant = None
+        self._wheel = None
 
     @property
     def position(self):
-        return self.present_position
+        """ Current position in degrees. """
+        return self._position
 
     @property
-    def goal_position(self):
-        return self._goal_position
+    def target_position(self):
+        """ Target position in degrees. """
+        return self._target_position
 
-    @goal_position.setter
-    def goal_position(self, new_pos):
-        if new_pos != self._goal_position:
-            self._goal_position = new_pos
-            self._push_value('goal_position', self._goal_position)
+    @target_position.setter
+    def target_position(self, new_pos):
+        if new_pos != self._target_position:
+            self._target_position = new_pos
+            self._push_value('target_position', self._target_position)
 
     @property
-    def moving_speed(self):
-        return self._moving_speed
+    def target_speed(self):
+        """ Speed in rpm. """
+        return self._target_speed
 
-    @moving_speed.setter
-    def moving_speed(self, new_speed):
-        if new_speed != self._moving_speed:
-            self._moving_speed = new_speed
-            self._push_value('moving_speed', self._moving_speed)
+    @target_speed.setter
+    def target_speed(self, new_speed):
+        if new_speed != self._target_speed:
+            self._target_speed = new_speed
+            self._push_value('target_speed', self._target_speed)
 
     @property
     def compliant(self):
@@ -52,15 +55,25 @@ class Dynamixel(Module):
             self._compliant = 1 if new_compliancy else 0
             self._push_value('compliant', self._compliant)
 
-    def _update(self, new_state):
-        new_pos = new_state['present_position']
+    @property
+    def wheel_mode(self):
+        return self._wheel == 1
 
-        if new_pos != self._present_position:
-            self._pub_event('moved', self._present_position, new_pos)
-            self._present_position = new_pos
+    @wheel_mode.setter
+    def wheel_mode(self, new_mode):
+        if new_mode != self._wheel:
+            self._wheel = 1 if new_mode else 0
+            self._push_value('wheel', self._wheel)
+
+    def _update(self, new_state):
+        new_pos = new_state['position']
+
+        if new_pos != self._position:
+            self._pub_event('moved', self._position, new_pos)
+            self._position = new_pos
 
     def control(self):
         def move(position):
-            self.position = position
+            self.target_position = position
 
         return interact(move, position=(-180.0, 180.0, 0.1))

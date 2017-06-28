@@ -11,10 +11,11 @@ class Distance(Module):
 
     @property
     def distance(self):
+        """ Distance in mm. """
         return self._value
 
     def _update(self, new_state):
-        new_dist = new_state['value']
+        new_dist = new_state['distance']
 
         if new_dist != self._value:
             self._pub_event('changed', self._value, new_dist)

@@ -151,14 +151,10 @@ class Robot(object):
             return
 
         for mod in state['modules']:
-            if ((mod['type'] in ('servo', 'dynamixel')) and
+            if ((mod['type'] == 'servo') and
                (hasattr(self, mod['alias']))):
                 servo = getattr(self, mod['alias'])
-
-                if mod['type'] == 'servo':
-                    mod['value'] = servo.target_position
-                else:
-                    mod['value'] = servo.position
+                mod['position'] = servo.target_position
 
         msg = '{} {}'.format(self.name, json.dumps(state))
         self._s.send_string(msg)

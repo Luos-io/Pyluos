@@ -1,5 +1,6 @@
 import unittest
 
+from threading import Event
 from subprocess import Popen
 from contextlib import closing
 
@@ -16,6 +17,18 @@ class TestWsRobot(unittest.TestCase):
     def tearDown(self):
         self.fake_robot.terminate()
         self.fake_robot.wait()
+
+    def test_first_command(self):
+        with closing(Robot(host)) as robot:
+            sent = Event()
+
+            def my_send(msg):
+                sent.set()
+
+            robot._send = my_send
+
+            robot.my_servo.target_position = 0
+            sent.wait()
 
     def test_speed_control(self):
         with closing(Robot(host)) as robot:

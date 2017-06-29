@@ -1,5 +1,16 @@
 # Changelog
 
+#### Version 0.3
+
+Features:
+* Start the detection at connection
+* Add multiple registers support for dynamixel
+* Properly close the robot/io
+
+Bugfix:
+* Improve communication robustness
+* flush io after crashes
+
 #### Version 0.2.1
 
 Bugfix:

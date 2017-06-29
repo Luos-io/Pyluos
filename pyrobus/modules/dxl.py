@@ -69,6 +69,9 @@ class Dynamixel(Module):
             self._wheel = 1 if new_mode else 0
             self._push_value('wheel', self._wheel)
 
+            if self._wheel == 0:
+                self._compliant = 1
+
     def _update(self, new_state):
         new_pos = new_state['position']
 

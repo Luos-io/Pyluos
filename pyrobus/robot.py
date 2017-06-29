@@ -88,8 +88,8 @@ class Robot(object):
         modules = [mod for mod in state['modules']
                    if mod['type'] in name2mod.keys()]
 
-        self._old_cmd = defaultdict(lambda: defaultdict(int))
-        self._cmd = defaultdict(lambda: defaultdict(int))
+        self._old_cmd = defaultdict(lambda: defaultdict(lambda: None))
+        self._cmd = defaultdict(lambda: defaultdict(lambda: None))
 
         self.modules = [
             name2mod[mod['type']](id=mod['id'],
@@ -151,10 +151,10 @@ class Robot(object):
             return
 
         for mod in state['modules']:
-            if ((mod['type'] in ('servo', 'dynamixel')) and
+            if ((mod['type'] == 'servo') and
                (hasattr(self, mod['alias']))):
                 servo = getattr(self, mod['alias'])
-                mod['value'] = servo.position
+                mod['position'] = servo.target_position
 
         msg = '{} {}'.format(self.name, json.dumps(state))
         self._s.send_string(msg)

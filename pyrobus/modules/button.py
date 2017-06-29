@@ -13,7 +13,7 @@ class Button(Module):
         return self._value
 
     def _update(self, new_state):
-        new_state = 'ON' if new_state['value'] else 'OFF'
+        new_state = 'ON' if new_state['state'] else 'OFF'
 
         if new_state != self._value:
             self._pub_event('changed', self._value, new_state)

@@ -1,6 +1,5 @@
 import unittest
 
-from threading import Event
 from subprocess import Popen
 from contextlib import closing
 
@@ -18,31 +17,26 @@ class TestWsRobot(unittest.TestCase):
         self.fake_robot.terminate()
         self.fake_robot.wait()
 
-    def test_first_command(self):
+    def test_init_command(self):
         with closing(Robot(host)) as robot:
-            sent = Event()
+            dxl = robot.my_dxl_1
 
-            def my_send(msg):
-                sent.set()
+            self.assertEqual(dxl.target_position, None)
+            self.assertEqual(dxl.target_speed, None)
+            self.assertEqual(dxl.compliant, None)
+            self.assertEqual(dxl.wheel_mode, None)
 
-            robot._send = my_send
-
-            robot.my_servo.target_position = 0
-            sent.wait()
-
-    def test_speed_control(self):
+    def test_switch_mode(self):
         with closing(Robot(host)) as robot:
-            # Stop sync to make sure the fake robot
-            # does not change the position anymore.
-            robot.close()
+            dxl = robot.my_dxl_1
 
-            servo = robot.my_servo
+            dxl.compliant = False
+            self.assertEqual(dxl.compliant, False)
 
-            servo.target_speed = 0
-            self.assertEqual(servo.target_position, 90)
+            dxl.wheel_mode = True
+            dxl.wheel_mode = False
 
-            servo.target_position = 180
-            self.assertEqual(servo.target_speed, 100)
+            self.assertEqual(dxl.compliant, True)
 
     def wait_for_server(self):
         TIMEOUT = 30

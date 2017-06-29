@@ -47,7 +47,9 @@ class Dynamixel(Module):
 
     @property
     def compliant(self):
-        return self._compliant == 1
+        return (self._compliant == 1
+                if self._compliant is not None else
+                None)
 
     @compliant.setter
     def compliant(self, new_compliancy):
@@ -57,7 +59,9 @@ class Dynamixel(Module):
 
     @property
     def wheel_mode(self):
-        return self._wheel == 1
+        return (self._wheel == 1
+                if self._wheel is not None else
+                None)
 
     @wheel_mode.setter
     def wheel_mode(self, new_mode):

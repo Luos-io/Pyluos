@@ -1,5 +1,4 @@
 import sys
-import zmq
 import json
 import time
 import threading
@@ -15,6 +14,13 @@ from .metrics import Publisher
 
 def run_from_unittest():
     return 'unittest' in sys.modules
+
+
+use_topographe = True
+try:
+    import zmq
+except ImportError:
+    use_topographe = False
 
 
 class Robot(object):
@@ -46,10 +52,11 @@ class Robot(object):
             self._metrics_pub = Publisher(robot=self)
             self._metrics_pub.start()
 
-            c = zmq.Context()
-            s = c.socket(zmq.PUB)
-            s.connect('tcp://127.0.0.1:33000')
-            self._s = s
+            if use_topographe:
+                c = zmq.Context()
+                s = c.socket(zmq.PUB)
+                s.connect('tcp://127.0.0.1:33000')
+                self._s = s
 
     @property
     def state(self):

@@ -1,5 +1,17 @@
 from collections import defaultdict, namedtuple
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+try:
+    from ipywidget import interact
+except ImportError:
+    def interact(*args, **kwargs):
+        logger.warning('You first have to install ipywidgets to use the control widgets.')
+        return None
+
+
 Event = namedtuple('Event', ('name', 'old_value', 'new_value'))
 
 

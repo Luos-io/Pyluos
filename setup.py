@@ -14,10 +14,10 @@ setup(name='pyrobus',
                         'websocket-client',
                         'pyserial>3',
                         'requests',
-                        'ipywidgets',
                         ],
       extras_require={
           'tests': ['tornado'],
           'topographe': ['pyzmq'],
+          'jupyter-integration': ['ipywidgets'],
       },
       )

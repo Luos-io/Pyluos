@@ -1,6 +1,4 @@
-from ipywidgets import interact
-
-from .module import Module
+from .module import Module, interact
 
 
 class Led(Module):

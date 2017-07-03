@@ -1,6 +1,11 @@
 # Changelog
 
-#### Version 0.3
+#### Version 0.3.1
+
+Misc:
+* Make zmq and ipywidgets optional dependencies to simplify installation.
+
+### Version 0.3
 
 Features:
 * Start the detection at connection

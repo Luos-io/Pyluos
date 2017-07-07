@@ -1,5 +1,14 @@
 # Changelog
 
+### Version 0.4
+
+Features:
+* Gates discovery
+  * USB: using a white list
+  * WiFi: using zeroconf
+* USB gate redirection to Websocket
+* Scratch broker
+
 #### Version 0.3.1
 
 Misc:

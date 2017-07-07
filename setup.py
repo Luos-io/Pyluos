@@ -20,5 +20,6 @@ setup(name='pyrobus',
           'topographe': ['pyzmq'],
           'jupyter-integration': ['ipywidgets'],
           'gate-discovery': ['zeroconf'],
+          'scratch': ['tornado', 'zeroconf'],
       },
       )

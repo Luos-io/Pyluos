@@ -14,12 +14,20 @@ setup(name='pyrobus',
                         'websocket-client',
                         'pyserial>3',
                         'requests',
+                        'tornado',
+                        'zeroconf',
                         ],
       extras_require={
-          'tests': ['tornado'],
+          'tests': [],
           'topographe': ['pyzmq'],
           'jupyter-integration': ['ipywidgets'],
-          'gate-discovery': ['zeroconf'],
-          'scratch': ['tornado', 'zeroconf'],
+      },
+      entry_points={
+          'console_scripts': [
+              'pyrobus-wifi-gate = pyrobus.tools.wifi_gate:main',
+              'pyrobus-usb-gate = pyrobus.tools.usb_gate:main',
+              'pyrobus-usb2ws = pyrobus.tools.usb2ws:main',
+              'pyrobus-scratch-broker = pyrobus.tools.scratch_broker:main',
+          ],
       },
       )

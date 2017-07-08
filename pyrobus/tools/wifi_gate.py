@@ -33,7 +33,7 @@ def discover():
         }
 
 
-if __name__ == '__main__':
+def main():
     import argparse
 
     parser = argparse.ArgumentParser()
@@ -43,3 +43,7 @@ if __name__ == '__main__':
     if args.cmd == 'discover':
         while True:
             print(discover())
+
+
+if __name__ == '__main__':
+    main()

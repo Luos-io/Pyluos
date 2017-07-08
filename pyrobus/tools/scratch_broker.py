@@ -10,8 +10,7 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application
 from tornado.websocket import WebSocketHandler
 
-import usb_gate
-import wifi_gate
+from pyrobus.tools import usb_gate, wifi_gate
 
 
 class Publisher(WebSocketHandler):
@@ -87,7 +86,7 @@ def free_port():
         return port
 
 
-if __name__ == '__main__':
+def main():
     usb_gates = {}
     redirect = {}
     usb2ws = {}
@@ -143,3 +142,7 @@ if __name__ == '__main__':
         update(gates)
 
         time.sleep(1.)
+
+
+if __name__ == '__main__':
+    main()

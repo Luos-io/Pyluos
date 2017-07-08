@@ -1,5 +1,10 @@
 # Changelog
 
+#### Version 0.4.1
+
+Features:
+* Install the discovery and scratch utilities as console scripts.
+
 ### Version 0.4
 
 Features:

@@ -1,3 +1,5 @@
+import os
+
 from subprocess import Popen
 
 from serial.tools.list_ports import comports
@@ -20,7 +22,9 @@ def discover():
 
 
 def redirect_to_ws(serial_port, ws_port):
-    return Popen(['python', 'usb2ws.py',
+    base_path = os.path.dirname(__file__)
+
+    return Popen(['python', os.path.join(base_path, 'usb2ws.py'),
                   '--serial-port', serial_port,
                   '--ws-port', str(ws_port)])
 

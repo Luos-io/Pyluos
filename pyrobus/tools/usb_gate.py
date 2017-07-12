@@ -7,6 +7,10 @@ from serial.tools.list_ports import comports
 white_list = {
     # Add here the USB gates you want to automatically be used
     # name: serial-port
+    'usb_gate_1': '/dev/cu.usbmodem2964691',
+    'usb_gate_2': '/dev/cu.usbmodem3203271',
+    'usb_gate_3': '/dev/cu.usbmodem3203471',
+    'usb_gate_4': '/dev/cu.usbmodem3205371',
     'my_usb_gate1': '/dev/cu.usbmodem3203731',
 }
 

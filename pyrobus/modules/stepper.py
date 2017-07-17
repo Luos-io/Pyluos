@@ -52,7 +52,7 @@ class Stepper(Module):
     def target_speed(self, new_speed):
         if new_speed != self._target_speed:
             self._target_speed = new_speed
-            self._push_value('target_speed', 1000000.0 / self._target_speed)
+            self._push_value('target_speed', self._target_speed)
 
     def home(self):
         self._push_value('home', 0, force=True)

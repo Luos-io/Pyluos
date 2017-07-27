@@ -105,12 +105,13 @@ class Robot(object):
                                   robot=self)
             for mod in modules
         ]
-        # We push our current state to make sure that
-        # both our model and the hardware are synced.
-        self._push_once()
 
         for mod in self.modules:
             setattr(self, mod.alias, mod)
+
+        # We push our current state to make sure that
+        # both our model and the hardware are synced.
+        self._push_once()
 
     # Poll state from hardware.
     def _poll_once(self):
@@ -178,7 +179,10 @@ class Robot(object):
             'modules': to_send
         })
 
-        self._cmd = deepcopy(remainings)
+        self._cmd = defaultdict(lambda: defaultdict(lambda: None))
+        for mod, vals in remainings.items():
+            for key, val in vals.items():
+                self._cmd[mod][key] = val
 
     def _send(self, msg):
         self._io.send(msg)

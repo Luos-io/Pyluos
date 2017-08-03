@@ -1,6 +1,7 @@
 import sys
 import json
 import time
+import random
 import threading
 
 from copy import deepcopy
@@ -104,12 +105,13 @@ class Robot(object):
                                   robot=self)
             for mod in modules
         ]
-        # We push our current state to make sure that
-        # both our model and the hardware are synced.
-        self._push_once()
 
         for mod in self.modules:
             setattr(self, mod.alias, mod)
+
+        # We push our current state to make sure that
+        # both our model and the hardware are synced.
+        self._push_once()
 
     # Poll state from hardware.
     def _poll_once(self):
@@ -136,19 +138,51 @@ class Robot(object):
         self._last_update = time.time()
 
     # Push update from our model to the hardware
+    def _split_messages(self, cmd):
+        alias = random.choice(list(cmd.keys()))
+        mod = getattr(self, alias)
+
+        cmd = deepcopy(cmd)
+
+        if mod.type == 'Servo':
+            to_send = {alias: cmd[alias]}
+            del cmd[alias]
+            rest = cmd
+
+        else:
+            servos = [
+                mod for mod in cmd.keys()
+                if getattr(self, mod).type == 'Servo'
+            ]
+            others = [
+                mod for mod in cmd.keys()
+                if getattr(self, mod).type != 'Servo'
+            ]
+            to_send = {
+                mod: cmd[mod]
+                for mod in others
+            }
+            rest = {
+                mod: cmd[mod]
+                for mod in servos
+            }
+
+        return to_send, rest
+
     def _push_once(self):
-        diff = defaultdict(dict)
+        if not self._cmd:
+            return
 
-        for mod, values in self._cmd.items():
-            for key, val in values.items():
-                if self._old_cmd[mod][key] != val:
-                    diff[mod][key] = val
+        to_send, remainings = self._split_messages(self._cmd)
 
-        if diff:
-            self._send({
-                'modules': diff
-            })
-            self._old_cmd = deepcopy(self._cmd)
+        self._send({
+            'modules': to_send
+        })
+
+        self._cmd = defaultdict(lambda: defaultdict(lambda: None))
+        for mod, vals in remainings.items():
+            for key, val in vals.items():
+                self._cmd[mod][key] = val
 
     def _send(self, msg):
         self._io.send(msg)

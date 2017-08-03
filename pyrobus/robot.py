@@ -37,6 +37,8 @@ class Robot(object):
 
         self._log('Connected to "{}".'.format(host))
 
+        self._send_lock = threading.Lock()
+
         # We force a first poll to setup our model.
         self._setup()
         self._log('Robot setup.')
@@ -185,7 +187,8 @@ class Robot(object):
                 self._cmd[mod][key] = val
 
     def _send(self, msg):
-        self._io.send(msg)
+        with self._send_lock:
+            self._io.send(msg)
 
     def _broadcast(self, state):
         if not hasattr(self, '_s'):

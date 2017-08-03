@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.5.1
+
+Remove the smart sent of commands to circumvent reception issues within Robus.
+
 ### Version 0.5
 
 Change the poll method for the serial port. It makes a huge impact on the CPU.

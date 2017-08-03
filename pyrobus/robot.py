@@ -204,6 +204,9 @@ class Robot(object):
         msg = '{} {}'.format(self.name, json.dumps(state))
         self._s.send_string(msg)
 
+    def change_alias(self, old, new):
+        self._send({'modules': {old: {'set_alias': new}}})
+
     def _log(self, msg):
         if self._verbose:
             print(msg)

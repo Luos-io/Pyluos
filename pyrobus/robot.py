@@ -204,8 +204,16 @@ class Robot(object):
         msg = '{} {}'.format(self.name, json.dumps(state))
         self._s.send_string(msg)
 
-    def change_alias(self, old, new):
+    def rename_module(self, old, new):
+        if not hasattr(self, old):
+            raise ValueError('No module named {}!'.format(old))
+
         self._send({'modules': {old: {'set_alias': new}}})
+
+        mod = getattr(self, old)
+        mod.alias = new
+        setattr(self, new, mod)
+        delattr(self, old)
 
     def _log(self, msg):
         if self._verbose:

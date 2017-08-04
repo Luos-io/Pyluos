@@ -1,5 +1,9 @@
 # Changelog
 
+### Version 0.6
+
+Add the possibility to rename modules.
+
 #### Version 0.5.1
 
 Remove the smart sent of commands to circumvent reception issues within Robus.

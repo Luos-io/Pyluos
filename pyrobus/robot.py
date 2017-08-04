@@ -26,6 +26,7 @@ except ImportError:
 
 class Robot(object):
     _heartbeat_timeout = 5  # in sec.
+    _max_alias_length = 15
 
     def __init__(self, host,
                  verbose=True, test_mode=False,
@@ -36,6 +37,8 @@ class Robot(object):
         self._verbose = verbose
 
         self._log('Connected to "{}".'.format(host))
+
+        self._send_lock = threading.Lock()
 
         # We force a first poll to setup our model.
         self._setup()
@@ -186,7 +189,8 @@ class Robot(object):
                 self._cmd[mod][key] = val
 
     def _send(self, msg):
-        self._io.send(msg)
+        with self._send_lock:
+            self._io.send(msg)
 
     def _broadcast(self, state):
         if not hasattr(self, '_s'):
@@ -200,6 +204,20 @@ class Robot(object):
 
         msg = '{} {}'.format(self.name, json.dumps(state))
         self._s.send_string(msg)
+
+    def rename_module(self, old, new):
+        if not hasattr(self, old):
+            raise ValueError('No module named {}!'.format(old))
+
+        if len(new) > self._max_alias_length:
+            raise ValueError('Alias length should be less than {}'.format(self._max_alias_length))
+
+        self._send({'modules': {old: {'set_alias': new}}})
+
+        mod = getattr(self, old)
+        mod.alias = new
+        setattr(self, new, mod)
+        delattr(self, old)
 
     def _log(self, msg):
         if self._verbose:

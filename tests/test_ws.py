@@ -1,24 +1,15 @@
 import unittest
 
 from time import sleep
-from subprocess import Popen
 from contextlib import closing
 from random import random
 
 from pyrobus import Robot
 
-host, port = '127.0.0.1', 9342
+import fakerobot
 
 
-class TestWsRobot(unittest.TestCase):
-    def setUp(self):
-        self.fake_robot = Popen(['python', '../tools/fake_robot.py'])
-        self.wait_for_server()
-
-    def tearDown(self):
-        self.fake_robot.terminate()
-        self.fake_robot.wait()
-
+class TestWsRobot(fakerobot.TestCase):
     def test_ws_host(self):
         from pyrobus.io import Ws
 
@@ -29,16 +20,16 @@ class TestWsRobot(unittest.TestCase):
         self.assertFalse(Ws.is_host_compatible('/dev/ttyUSB0'))
 
     def test_ws_connection(self):
-        with closing(Robot(host)):
+        with closing(Robot(fakerobot.host)):
             pass
 
     def test_ws_reception(self):
-        with closing(Robot(host)) as robot:
+        with closing(Robot(fakerobot.host)) as robot:
             self.assertTrue(robot.modules)
             self.assertTrue(robot.name)
 
     def test_spamming(self):
-        with closing(Robot(host)) as robot:
+        with closing(Robot(fakerobot.host)) as robot:
             robot.i = 0
 
             def my_send(msg):
@@ -53,21 +44,6 @@ class TestWsRobot(unittest.TestCase):
             sleep(robot._heartbeat_timeout + random())
             self.assertTrue(robot.i < 10)
             self.assertTrue(robot.alive)
-
-    def wait_for_server(self):
-        TIMEOUT = 30
-
-        import socket
-        import time
-
-        start = time.time()
-        while (time.time() - start) < TIMEOUT:
-            with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-                if sock.connect_ex((host, port)) == 0:
-                    break
-            time.sleep(0.1)
-        else:
-            raise EnvironmentError('Could not connect to fake robot!')
 
 
 if __name__ == '__main__':

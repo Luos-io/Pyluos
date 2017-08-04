@@ -26,6 +26,7 @@ except ImportError:
 
 class Robot(object):
     _heartbeat_timeout = 5  # in sec.
+    _max_alias_length = 15
 
     def __init__(self, host,
                  verbose=True, test_mode=False,
@@ -207,6 +208,9 @@ class Robot(object):
     def rename_module(self, old, new):
         if not hasattr(self, old):
             raise ValueError('No module named {}!'.format(old))
+
+        if len(new) > self._max_alias_length:
+            raise ValueError('Alias length should be less than {}'.format(self._max_alias_length))
 
         self._send({'modules': {old: {'set_alias': new}}})
 

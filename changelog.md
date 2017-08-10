@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.6.1
+
+Add a convenience discovery method in the Serial.
+
 ### Version 0.6
 
 Add the possibility to rename modules.

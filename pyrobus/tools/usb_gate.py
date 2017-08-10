@@ -2,7 +2,8 @@ import os
 
 from subprocess import Popen
 
-from serial.tools.list_ports import comports
+from ..io.serial_io import Serial
+
 
 white_list = {
     # Add here the USB gates you want to automatically be used
@@ -16,7 +17,7 @@ white_list = {
 
 
 def discover():
-    gates = [p.device for p in comports()]
+    gates = Serial.available_hosts()
     return {
         alias: port
 

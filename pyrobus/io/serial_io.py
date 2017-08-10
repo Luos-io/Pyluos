@@ -14,9 +14,12 @@ class Serial(IOHandler):
     poll_frequency = 100
 
     @classmethod
+    def available_hosts(cls):
+        return list(p.device for p in comports())
+
+    @classmethod
     def is_host_compatible(cls, host):
-        available_host = (p.device for p in comports())
-        return host in available_host
+        return host in cls.available_hosts()
 
     def __init__(self, host, baudrate=57600):
         self._serial = _serial.Serial(host, baudrate)

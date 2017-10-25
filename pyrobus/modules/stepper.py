@@ -18,7 +18,7 @@ class Stepper(Module):
 
     @property
     def position(self):
-        """ Current position in steps """
+        """ Current position in mm """
         return self._position
 
     @property
@@ -34,7 +34,7 @@ class Stepper(Module):
 
     @property
     def target_position(self):
-        """ Target position in steps. """
+        """ Target position in mm. """
         return self._target_position
 
     @target_position.setter
@@ -44,7 +44,7 @@ class Stepper(Module):
 
     @property
     def target_speed(self):
-        """ Speed in step per seconds. """
+        """ Speed in mm per seconds. """
         return self._target_speed
 
     @target_speed.setter

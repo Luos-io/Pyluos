@@ -1,6 +1,7 @@
 import sys
 import json
 import time
+import random
 import threading
 
 from copy import deepcopy
@@ -25,6 +26,7 @@ except ImportError:
 
 class Robot(object):
     _heartbeat_timeout = 5  # in sec.
+    _max_alias_length = 15
 
     def __init__(self, host,
                  verbose=True, test_mode=False,
@@ -35,6 +37,8 @@ class Robot(object):
         self._verbose = verbose
 
         self._log('Connected to "{}".'.format(host))
+
+        self._send_lock = threading.Lock()
 
         # We force a first poll to setup our model.
         self._setup()
@@ -104,16 +108,18 @@ class Robot(object):
                                   robot=self)
             for mod in modules
         ]
-        # We push our current state to make sure that
-        # both our model and the hardware are synced.
-        self._push_once()
 
         for mod in self.modules:
             setattr(self, mod.alias, mod)
 
+        # We push our current state to make sure that
+        # both our model and the hardware are synced.
+        self._push_once()
+
     # Poll state from hardware.
     def _poll_once(self):
         self._state = self._io.read()
+        self._state['timestamp'] = time.time()
         return self._state
 
     def _poll_and_up(self):
@@ -136,22 +142,55 @@ class Robot(object):
         self._last_update = time.time()
 
     # Push update from our model to the hardware
+    def _split_messages(self, cmd):
+        alias = random.choice(list(cmd.keys()))
+        mod = getattr(self, alias)
+
+        cmd = deepcopy(cmd)
+
+        if mod.type == 'Servo':
+            to_send = {alias: cmd[alias]}
+            del cmd[alias]
+            rest = cmd
+
+        else:
+            servos = [
+                mod for mod in cmd.keys()
+                if getattr(self, mod).type == 'Servo'
+            ]
+            others = [
+                mod for mod in cmd.keys()
+                if getattr(self, mod).type != 'Servo'
+            ]
+            to_send = {
+                mod: cmd[mod]
+                for mod in others
+            }
+            rest = {
+                mod: cmd[mod]
+                for mod in servos
+            }
+
+        return to_send, rest
+
     def _push_once(self):
-        diff = defaultdict(dict)
+        if not self._cmd:
+            return
 
-        for mod, values in self._cmd.items():
-            for key, val in values.items():
-                if self._old_cmd[mod][key] != val:
-                    diff[mod][key] = val
+        to_send, remainings = self._split_messages(self._cmd)
 
-        if diff:
-            self._send({
-                'modules': diff
-            })
-            self._old_cmd = deepcopy(self._cmd)
+        self._send({
+            'modules': to_send
+        })
+
+        self._cmd = defaultdict(lambda: defaultdict(lambda: None))
+        for mod, vals in remainings.items():
+            for key, val in vals.items():
+                self._cmd[mod][key] = val
 
     def _send(self, msg):
-        self._io.send(msg)
+        with self._send_lock:
+            self._io.send(msg)
 
     def _broadcast(self, state):
         if not hasattr(self, '_s'):
@@ -165,6 +204,20 @@ class Robot(object):
 
         msg = '{} {}'.format(self.name, json.dumps(state))
         self._s.send_string(msg)
+
+    def rename_module(self, old, new):
+        if not hasattr(self, old):
+            raise ValueError('No module named {}!'.format(old))
+
+        if len(new) > self._max_alias_length:
+            raise ValueError('Alias length should be less than {}'.format(self._max_alias_length))
+
+        self._send({'modules': {old: {'set_alias': new}}})
+
+        mod = getattr(self, old)
+        mod.alias = new
+        setattr(self, new, mod)
+        delattr(self, old)
 
     def _log(self, msg):
         if self._verbose:

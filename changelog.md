@@ -1,5 +1,35 @@
 # Changelog
 
+#### Version 0.6.1
+
+Add a convenience discovery method in the Serial.
+
+### Version 0.6
+
+Add the possibility to rename modules.
+
+#### Version 0.5.1
+
+Remove the smart sent of commands to circumvent reception issues within Robus.
+
+### Version 0.5
+
+Change the poll method for the serial port. It makes a huge impact on the CPU.
+
+#### Version 0.4.1
+
+Features:
+* Install the discovery and scratch utilities as console scripts.
+
+### Version 0.4
+
+Features:
+* Gates discovery
+  * USB: using a white list
+  * WiFi: using zeroconf
+* USB gate redirection to Websocket
+* Scratch broker
+
 #### Version 0.3.1
 
 Misc:

@@ -1,51 +1,42 @@
 import unittest
 
 from threading import Event
-from subprocess import Popen
 from contextlib import closing
 from random import randint, choice
 from string import ascii_lowercase
 
 from pyrobus import Robot
 
-host, port = '127.0.0.1', 9342
+import fakerobot
 
 
-class TestWsRobot(unittest.TestCase):
-    def setUp(self):
-        self.fake_robot = Popen(['python', '../tools/fake_robot.py'])
-        self.wait_for_server()
-
-    def tearDown(self):
-        self.fake_robot.terminate()
-        self.fake_robot.wait()
-
+class TestWsRobot(fakerobot.TestCase):
     def test_life_cycle(self):
-        robot = Robot(host)
+        robot = Robot(fakerobot.host)
         self.assertTrue(robot.alive)
         robot.close()
         self.assertFalse(robot.alive)
 
     def test_modules(self):
-        with closing(Robot(host)) as robot:
+        with closing(Robot(fakerobot.host)) as robot:
             for mod in robot.modules:
                 self.assertTrue(hasattr(robot, mod.alias))
 
     def test_cmd(self):
-        with closing(Robot(host)) as robot:
+        with closing(Robot(fakerobot.host)) as robot:
             pos = randint(0, 180)
             robot.my_servo.position = pos
             self.assertEqual(robot.my_servo.position, pos)
 
     def test_possible_events(self):
-        with closing(Robot(host)) as robot:
+        with closing(Robot(fakerobot.host)) as robot:
             for mod in robot.modules:
                 self.assertTrue(isinstance(mod.possible_events, set))
 
             self.assertTrue('pressed' in robot.my_button.possible_events)
 
     def test_add_evt_cb(self):
-        with closing(Robot(host)) as robot:
+        with closing(Robot(fakerobot.host)) as robot:
             robot.cb_trigger = Event()
 
             def dummy_cb(evt):
@@ -60,7 +51,7 @@ class TestWsRobot(unittest.TestCase):
         def dummy_cb(evt):
             pass
 
-        with closing(Robot(host)) as robot:
+        with closing(Robot(fakerobot.host)) as robot:
             mod = robot.my_potentiometer
             while True:
                 evt = ''.join(choice(ascii_lowercase)
@@ -72,7 +63,7 @@ class TestWsRobot(unittest.TestCase):
                 mod.add_callback(evt, dummy_cb)
 
     def test_servoing_evt(self):
-        with closing(Robot(host)) as robot:
+        with closing(Robot(fakerobot.host)) as robot:
             robot._synced = Event()
 
             def on_move(evt):
@@ -85,21 +76,6 @@ class TestWsRobot(unittest.TestCase):
             robot._synced.wait()
             self.assertEqual(robot.my_potentiometer.position,
                              robot.my_servo.position)
-
-    def wait_for_server(self):
-        TIMEOUT = 30
-
-        import socket
-        import time
-
-        start = time.time()
-        while (time.time() - start) < TIMEOUT:
-            with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-                if sock.connect_ex((host, port)) == 0:
-                    break
-            time.sleep(0.1)
-        else:
-            raise EnvironmentError('Could not connect to fake robot!')
 
 
 if __name__ == '__main__':

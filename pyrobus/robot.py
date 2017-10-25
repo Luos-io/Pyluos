@@ -99,7 +99,6 @@ class Robot(object):
         modules = [mod for mod in state['modules']
                    if mod['type'] in name2mod.keys()]
 
-        self._old_cmd = defaultdict(lambda: defaultdict(lambda: None))
         self._cmd = defaultdict(lambda: defaultdict(lambda: None))
 
         self.modules = [

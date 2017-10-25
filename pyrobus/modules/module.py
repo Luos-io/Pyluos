@@ -43,10 +43,7 @@ class Module(object):
     def _update(self, new_state):
         pass
 
-    def _push_value(self, key, new_val, force=False):
-        if force:
-            self._delegate._old_cmd[self.alias][key] = None
-
+    def _push_value(self, key, new_val):
         self._delegate._cmd[self.alias][key] = new_val
 
     # Events cb handling

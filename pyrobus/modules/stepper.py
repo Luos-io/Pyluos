@@ -39,9 +39,8 @@ class Stepper(Module):
 
     @target_position.setter
     def target_position(self, new_pos):
-        # We force it here because of the stop function
         self._target_position = new_pos
-        self._push_value('target_position', self._target_position, force=True)
+        self._push_value('target_position', self._target_position)
 
     @property
     def target_speed(self):
@@ -55,10 +54,10 @@ class Stepper(Module):
             self._push_value('target_speed', self._target_speed)
 
     def home(self):
-        self._push_value('home', 0, force=True)
+        self._push_value('home', 0)
 
     def stop(self):
-        self._push_value('stop', 0, force=True)
+        self._push_value('stop', 0)
 
     def _update(self, new_state):
         new_pos = new_state['position']

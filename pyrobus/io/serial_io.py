@@ -9,13 +9,18 @@ from serial.tools.list_ports import comports
 
 from . import IOHandler
 
+white_list = [
+    'Teensyduino'
+]
+
 
 class Serial(IOHandler):
     poll_frequency = 100
 
     @classmethod
     def available_hosts(cls):
-        return list(p.device for p in comports())
+        return list(p.device for p in comports()
+                    if p.manufacturer in white_list)
 
     @classmethod
     def is_host_compatible(cls, host):

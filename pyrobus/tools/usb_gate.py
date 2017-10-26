@@ -5,25 +5,8 @@ from subprocess import Popen
 from ..io.serial_io import Serial
 
 
-white_list = {
-    # Add here the USB gates you want to automatically be used
-    # name: serial-port
-    'usb_gate_1': '/dev/cu.usbmodem2964691',
-    'usb_gate_2': '/dev/cu.usbmodem3203271',
-    'usb_gate_3': '/dev/cu.usbmodem3203471',
-    'usb_gate_4': '/dev/cu.usbmodem3205371',
-    'my_usb_gate1': '/dev/cu.usbmodem3203731',
-}
-
-
 def discover():
-    gates = Serial.available_hosts()
-    return {
-        alias: port
-
-        for (alias, port) in white_list.items()
-        if port in gates
-    }
+    return Serial.available_hosts()
 
 
 def redirect_to_ws(serial_port, ws_port):

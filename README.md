@@ -6,8 +6,6 @@ Pyrobus lets you easily connect, interact and program your [Robus](http://pollen
 
 The API was designed to be as simple as possible and let you focus on **bringing life to your ideas!**
 
-<img src="http://pollen-robotics.com/assets/img/robus/code-example.gif" width=300px>
-
 *You can find more information on Robus on http://pollen-robotics.com.*
 
 ## Install Pyrobus
@@ -25,7 +23,7 @@ git clone http://github.com/pollen-robotics/pyrobus.git
 
 #### Compatibility
 
-Pyrobus is a pure-python library and works with Python 2.7 or 3.4 and later.
+Pyrobus is a pure-python library and works with Python >= 2.7 or 3.4 and later.
 
 ## Quickstart
 
@@ -33,7 +31,7 @@ Pyrobus API was designed to be as simple as possible so you can directly focus o
 
 ### Connecting
 
-You can simply connect to your robot using one line.
+Connecting to your robot is really easy. It actually takes only two lines of code.
 
 #### On WiFi
 
@@ -51,9 +49,11 @@ from pyrobus import Robot
 robot = Robot('my_serial_port')
 ```
 
+*If you don't know how to find the name of the usb/wifi gate you are using, you can report to the section [Finding  a gate](#finding-a-gate).*
+
 #### Accessing values
 
-Once connected the robot is automatically synced. You can access its plugged modules:
+Once connected the robot is automatically synced at a high frequency. You can list the plugged modules via:
 
 ```python
 print(robot.modules)
@@ -80,11 +80,13 @@ robot.motor_1.position = 45
 robot.led.color = (0, 255, 0)
 ```
 
+*The orders are in fact buffered and are actually sent a very short time after (few ms).*
+
 #### Linking sensor and effector in a loop
 
 You can also transparently link sensors and effectors (even from different robots) together.
 
-For instance:
+For instance, the following code will change the color of the led to red when there is something near the distance sensor and change it to blue otherwise:
 
 ```python
 while True:
@@ -94,7 +96,114 @@ while True:
     robot.led.color = (0, 0, 255)
 ```
 
-### Robus gate API
+## Module available
+
+### Button
+
+Read:
+* *state* (possible value 'ON' or 'OFF')
+
+### Distance
+
+Read:
+* *distance* (value in mm)
+
+### Dynamixel Motor
+
+Read:
+* *position* (in degrees)
+
+Write:
+* *target_position* (in degrees)
+* *target_speed* (maximum reachable speed in degrees per second)
+* *compliant* (True/False set the motor in compliant or stiff mode)
+* *wheel* (True/False set the motor in wheel or joint mode)
+
+### RGB Led
+
+Write:
+* *color* (R, G, B) channels. Each channel must be in [0, 255]
+
+### Potentiometer
+
+Read:
+* *position* (in degrees)
+
+### Relay
+
+Method:
+* *on()*
+* *off()*
+
+### Servo
+
+Write:
+* *target_position* (in degrees)
+
+### Stepper
+
+Read:
+* *position* (in mm)
+
+Write:
+* *target_position* (in mm)
+* *target_speed* (in mm/s)
+
+Method:
+* *home()*
+* *stop()*
+
+## Finding a gate
+
+If you don't know the name of a gate, you can easily find it using the ```pyrobus-usb-gate``` and ```pyrobus-wifi-gate``` command line utilities.
+
+There should be automatically installed when you install pyrobus. They should be available in your path. From the terminal, you can run:
+
+```pyrobus-wifi-gate discover```
+
+This will show the name of the wifi gate connected on the same WiFi. This uses the Zeroconf protocol.
+
+*Make sure to use either the IP or the hostname.local for WiFi gates.*
+
+Similarly, to find the name of the USB gate connected to your machine you can run:
+```pyrobus-usb-gate discover```
+
+You can then uses the found name to connect to it via pyrobus:
+
+```python
+from pyrobus import Robot
+robot = Robot('/dev/cu.usbmodem2964691')
+```
+
+## Module Hotplug
+
+At the moment, pyrobus does not support module hotplug. If you connect to a Robot and add a new module, they will not be automatically added to your Python object.
+
+You will need to close it and re-create it.
+
+```python
+from pyrobus import Robot
+
+robot = Robot('my_robot.local')
+
+# Now physically hotplug a new modules
+
+# The module will not show in:
+print(robot.modules)
+
+# First, closes the robot
+robot.close()
+
+# Re-creates it
+robot = Robot('my_robot.local')
+
+# Now the new module will show in:
+print(robot.modules)
+```
+
+*This may be made automatic in future versions. Yet, this is unclear how to do that in a really seamless interaction.*
+
+## Robus gate external API
 
 If you want to connect your robot to other services, you can directly use its API. This JSON API is served either via the serial communication or via a websocket for the WiFi module.
 
@@ -129,16 +238,18 @@ You can also send commands using:
 {
   "modules": {
     "my_led": {
-      "value": [0, 255, 0]
+      "color": [0, 255, 0]
     },
     "my_servo": {
-      "position": 45
+      "target_position": 45
     }
   }
 }
 ```
 
-*Warning: you should not flood the robot with commands (pyrobus limits the push of commands to about 10Hz by default).*
+You can find the list of all available registers in the [modules](#module-available) section.
+
+*Warning: you should not flood the robot with commands as the gates are not protected against this at the moment. They will simply crash and reboot. Pyrobus for instance limits the push of commands to about the same frequency as it gets update from the robot (~10Hz).*
 
 ## Metrics
 

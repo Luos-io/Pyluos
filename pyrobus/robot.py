@@ -27,9 +27,11 @@ except ImportError:
 class Robot(object):
     _heartbeat_timeout = 5  # in sec.
     _max_alias_length = 15
+    detect_freq = 0.5
 
     def __init__(self, host,
                  verbose=True, test_mode=False,
+                 auto_detect=True,
                  *args, **kwargs):
         self._io = io_from_host(host=host,
                                 *args, **kwargs)
@@ -38,6 +40,7 @@ class Robot(object):
 
         self._log('Connected to "{}".'.format(host))
 
+        self._auto_detect = auto_detect
         self._send_lock = threading.Lock()
 
         # We force a first poll to setup our model.
@@ -115,6 +118,19 @@ class Robot(object):
         # We push our current state to make sure that
         # both our model and the hardware are synced.
         self._push_once()
+
+        if self._auto_detect:
+            self.auto_detect()
+
+    def auto_detect(self):
+        def f():
+            while True:
+                time.sleep(1.0 / self.detect_freq)
+                self._send({'detection': {}})
+
+        t = threading.Thread(target=f)
+        t.daemon = True
+        t.start()
 
     # Poll state from hardware.
     def _poll_once(self):

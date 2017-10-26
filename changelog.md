@@ -1,5 +1,10 @@
 # Changelog
 
+### Version 0.7
+
+Add support for stepper motors.
+Improve USB gate discovery: now based on the manufacturer id.
+
 #### Version 0.6.1
 
 Add a convenience discovery method in the Serial.

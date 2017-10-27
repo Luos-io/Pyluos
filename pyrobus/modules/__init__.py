@@ -1,4 +1,5 @@
 from .distance import Distance
+from .encoder import Encoder
 from .stepper import Stepper
 from .dxl import Dynamixel
 from .button import Button
@@ -11,6 +12,7 @@ __all__ = [
     'name2mod',
     'Dynamixel',
     'Distance',
+    'Encoder',
     'Stepper',
     'Button',
     'Potard',
@@ -22,6 +24,7 @@ __all__ = [
 name2mod = {
     'dynamixel': Dynamixel,
     'distance': Distance,
+    'encoder': Encoder,
     'stepper': Stepper,
     'button': Button,
     'potard': Potard,

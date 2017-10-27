@@ -13,6 +13,9 @@ class Encoder(Module):
         """ Position in degrees """
         return self._value
 
+    def home(self):
+        self._push_value('home', 0)
+
     def _update(self, new_state):
         new_pos = new_state['position']
 

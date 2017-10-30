@@ -31,7 +31,7 @@ class Robot(object):
 
     def __init__(self, host,
                  verbose=True, test_mode=False,
-                 auto_detect=True,
+                 auto_detect=False,
                  *args, **kwargs):
         self._io = io_from_host(host=host,
                                 *args, **kwargs)
@@ -89,8 +89,7 @@ class Robot(object):
         self._io.close()
 
     def _setup(self):
-        self._log('Sending detection signal.')
-        self._send({'detection': {}})
+        self.update_detection()
 
         self._log('Waiting for first state...')
         state = self._poll_once()
@@ -126,11 +125,14 @@ class Robot(object):
         def f():
             while True:
                 time.sleep(1.0 / self.detect_freq)
-                self._send({'detection': {}})
-
+                self.update_detection()
         t = threading.Thread(target=f)
         t.daemon = True
         t.start()
+
+    def update_detection(self):
+        self._log('Sending detection signal.')
+        self._send({'detection': {}})
 
     # Poll state from hardware.
     def _poll_once(self):

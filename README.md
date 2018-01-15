@@ -1,6 +1,6 @@
 # Pyrobus
 
-[![Build Status](https://travis-ci.org/pollen/pyrobus.svg?branch=master)](https://travis-ci.org/pollen/pyrobus)
+[![Build Status](https://travis-ci.org/pollen-robotics/pyrobus.svg?branch=master)](https://travis-ci.org/pollen-robotics/pyrobus)
 
 Pyrobus lets you easily connect, interact and program your [Robus](http://pollen-robotics.com) based robots.
 

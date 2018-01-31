@@ -4,7 +4,7 @@ import string
 
 from contextlib import closing
 
-from pyrobus import Robot
+from pyluos import Robot
 
 import fakerobot
 

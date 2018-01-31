@@ -5,7 +5,7 @@ from contextlib import closing
 from random import randint, choice
 from string import ascii_lowercase
 
-from pyrobus import Robot
+from pyluos import Robot
 
 import fakerobot
 

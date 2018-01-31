@@ -4,14 +4,14 @@ from time import sleep
 from contextlib import closing
 from random import random
 
-from pyrobus import Robot
+from pyluos import Robot
 
 import fakerobot
 
 
 class TestWsRobot(fakerobot.TestCase):
     def test_ws_host(self):
-        from pyrobus.io import Ws
+        from pyluos.io import Ws
 
         self.assertTrue(Ws.is_host_compatible('127.0.0.1'))
         self.assertTrue(Ws.is_host_compatible('192.168.0.42'))

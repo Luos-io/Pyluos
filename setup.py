@@ -4,10 +4,10 @@ import imp
 
 from setuptools import setup, find_packages
 
-version = imp.load_source('pyrobus.version', 'pyrobus/version.py')
+version = imp.load_source('pyluos.version', 'pyluos/version.py')
 
 
-setup(name='pyrobus',
+setup(name='pyluos',
       version=version.version,
       packages=find_packages(),
       install_requires=['future',
@@ -24,10 +24,10 @@ setup(name='pyrobus',
       },
       entry_points={
           'console_scripts': [
-              'pyrobus-wifi-gate = pyrobus.tools.wifi_gate:main',
-              'pyrobus-usb-gate = pyrobus.tools.usb_gate:main',
-              'pyrobus-usb2ws = pyrobus.tools.usb2ws:main',
-              'pyrobus-scratch-broker = pyrobus.tools.scratch_broker:main',
+              'pyluos-wifi-gate = pyluos.tools.wifi_gate:main',
+              'pyluos-usb-gate = pyluos.tools.usb_gate:main',
+              'pyluos-usb2ws = pyluos.tools.usb2ws:main',
+              'pyluos-scratch-broker = pyluos.tools.scratch_broker:main',
           ],
       },
       )

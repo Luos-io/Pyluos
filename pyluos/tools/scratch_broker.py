@@ -10,7 +10,7 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application
 from tornado.websocket import WebSocketHandler
 
-from pyrobus.tools import usb_gate, wifi_gate
+from pyluos.tools import usb_gate, wifi_gate
 
 
 class Publisher(WebSocketHandler):

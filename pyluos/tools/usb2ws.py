@@ -4,7 +4,7 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application
 from tornado.websocket import WebSocketHandler
 
-from pyrobus.io.serial_io import Serial
+from pyluos.io.serial_io import Serial
 
 
 class SerialToWs(WebSocketHandler):

@@ -9,8 +9,8 @@ from serial.tools.list_ports import comports
 
 from . import IOHandler
 
-white_list = [
-    'Teensyduino'
+black_list = [
+    '/dev/cu.Bluetooth-Incoming-Port'
 ]
 
 
@@ -20,7 +20,7 @@ class Serial(IOHandler):
     @classmethod
     def available_hosts(cls):
         return list(p.device for p in comports()
-                    if p.manufacturer in white_list)
+                    if p.device not in black_list)
 
     @classmethod
     def is_host_compatible(cls, host):

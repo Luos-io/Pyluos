@@ -9,7 +9,7 @@ class TestSerialRobot(unittest.TestCase):
         pass
 
     def test_serial_host(self):
-        from pyrobus.io import Serial
+        from pyluos.io import Serial
 
         self.assertFalse(Serial.is_host_compatible('192.168.0.42'))
 

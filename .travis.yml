@@ -22,15 +22,15 @@ install:
 
 script:
   - pip install -e ./[tests]
-  - nosetests --with-coverage --cover-erase --cover-package=pyrobus -v -w tests/
+  - nosetests --with-coverage --cover-erase --cover-package=pyluos -v -w tests/
 
 after_success:
     - coveralls
-    - flake8 --statistics --count --config=setup.cfg pyrobus
-    - pip uninstall -y pyrobus
+    - flake8 --statistics --count --config=setup.cfg pyluos
+    - pip uninstall -y pyluos
 
 after_failure:
-    - pip uninstall -y pyrobus
+    - pip uninstall -y pyluos
 
 deploy:
   provider: pypi

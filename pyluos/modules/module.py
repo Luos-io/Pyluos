@@ -44,7 +44,7 @@ class Module(object):
         pass
 
     def _push_value(self, key, new_val):
-        self._delegate._cmd[self.alias][key] = new_val
+        self._delegate.update_cmd(self.alias, key, new_val)
 
     # Events cb handling
 

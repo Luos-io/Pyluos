@@ -96,12 +96,19 @@ while True:
     robot.led.color = (0, 0, 255)
 ```
 
-## Available module
+## Available modules
 
 ### Button
 
 Read:
 * *state* (possible value 'ON' or 'OFF')
+
+### Potentiometer
+
+Read:
+* *position* (in degrees)
+
+## Coming soon
 
 ### Distance
 
@@ -123,11 +130,6 @@ Write:
 
 Write:
 * *color* (R, G, B) channels. Each channel must be in [0, 255]
-
-### Potentiometer
-
-Read:
-* *position* (in degrees)
 
 ### Relay
 

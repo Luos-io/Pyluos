@@ -1,5 +1,9 @@
 # Changelog
 
+### Version 0.8
+
+Rename for *pyluos*
+
 ### Version 0.7
 
 Add support for stepper motors.

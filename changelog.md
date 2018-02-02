@@ -1,5 +1,9 @@
 # Changelog
 
+### Version 0.9
+
+Add support for L0 GPIO module.
+
 ### Version 0.8
 
 Rename for *pyluos*

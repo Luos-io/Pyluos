@@ -96,7 +96,22 @@ while True:
     robot.led.color = (0, 0, 255)
 ```
 
-## Available modules
+## Available module
+
+### L0 GPIO
+
+Read - Input Pins:
+* *p1* (analog input as u16)
+* *p8* (digital input high/low)
+* *p9* (digital input high/low)
+* *p10* (digital input high/low)
+* *p11* (digital input high/low)
+* *p12* (analog input as u16)
+
+Write - Output Pins:
+* *p2* (digital output high/low)
+* *p3* (digital output high/low)
+* *p4* (digital output high/low)
 
 ### Button
 

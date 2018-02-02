@@ -7,12 +7,12 @@ class L0GPIO(Module):
         Module.__init__(self, 'L0GPIO', id, alias, robot)
 
         # Input Pins
-        self.p1 = AnalogInputPin()
-        self.p8 = DigitalInputPin()
-        self.p9 = DigitalInputPin()
-        self.p10 = DigitalInputPin()
-        self.p11 = DigitalInputPin()
-        self.p12 = AnalogInputPin()
+        self.p1 = AnalogInputPin('p1')
+        self.p8 = DigitalInputPin('p8')
+        self.p9 = DigitalInputPin('p9')
+        self.p10 = DigitalInputPin('p10')
+        self.p11 = DigitalInputPin('p11')
+        self.p12 = AnalogInputPin('p12')
 
         # Output Pins
         self.p2 = DigitalOutputPin('p2', self)
@@ -32,9 +32,9 @@ class L0GPIO(Module):
         }
 
     def __repr__(self):
-        return '<{}: {}>'.format(
+        return '<"{}": {}>'.format(
             self.alias,
-            ' '.join(['{}: {}'.format(p, s) for p, s in self.pins.items()])
+            str(list(self.pins.values())),
         )
 
     def _update(self, new_state):

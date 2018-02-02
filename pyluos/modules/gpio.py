@@ -1,5 +1,6 @@
 class DigitalInputPin(object):
-    def __init__(self, default=False):
+    def __init__(self, alias, default=False):
+        self.alias = alias
         self._val = default
 
     def is_high(self):
@@ -12,13 +13,15 @@ class DigitalInputPin(object):
         self._val = (val == 1)
 
     def __repr__(self):
-        return '<Digital-Input-Pin: state="{}">'.format(
+        return '<"{}" Input state="{}">'.format(
+            self.alias,
             'high' if self.is_high() else 'low'
         )
 
 
 class AnalogInputPin(object):
-    def __init__(self, default=0):
+    def __init__(self, alias, default=0):
+        self.alias = alias
         self._val = default
 
     def read(self):
@@ -28,14 +31,15 @@ class AnalogInputPin(object):
         self._val = val
 
     def __repr__(self):
-        return '<Analog-Input-Pin: value="{}">'.format(
+        return '<"{}" Input value="{}">'.format(
+            self.alias,
             self.read()
         )
 
 
 class DigitalOutputPin(object):
-    def __init__(self, field, delegate, default=False):
-        self._field = field
+    def __init__(self, alias, delegate, default=False):
+        self.alias = alias
         self._delegate = delegate
         self._val = default
 
@@ -60,9 +64,10 @@ class DigitalOutputPin(object):
     def _push(self, val):
         if self._val != val:
             self._val = val
-            self._delegate._push_value(self._field, self._val)
+            self._delegate._push_value(self.alias, self._val)
 
     def __repr__(self):
-        return '<Digital-Output-Pin: state="{}">'.format(
+        return '<"{}" Output state="{}">'.format(
+            self.alias,
             'high' if self.is_high() else 'low'
         )

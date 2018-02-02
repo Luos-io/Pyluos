@@ -118,6 +118,13 @@ Write - Output Pins:
 Read:
 * *state* (possible value 'ON' or 'OFF')
 
+### Potentiometer
+
+Read:
+* *position* (in degrees)
+
+## Coming soon
+
 ### Distance
 
 Read:
@@ -138,11 +145,6 @@ Write:
 
 Write:
 * *color* (R, G, B) channels. Each channel must be in [0, 255]
-
-### Potentiometer
-
-Read:
-* *position* (in degrees)
 
 ### Relay
 

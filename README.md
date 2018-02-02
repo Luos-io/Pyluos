@@ -98,6 +98,21 @@ while True:
 
 ## Available module
 
+### L0 Generic IO
+
+Read - Input Pins:
+* *p1* (analog input as u16)
+* *p8* (digital input True or False)
+* *p9* (digital input True or False)
+* *p10* (digital input True or False)
+* *p11* (digital input True or False)
+* *p12* (analog input a u16)
+
+Write - Output Pins:
+* *p2* (digital input True or False)
+* *p3* (digital input True or False)
+* *p4* (digital input True or False)
+
 ### Button
 
 Read:

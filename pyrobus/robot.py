@@ -39,6 +39,7 @@ class Robot(object):
         self._log('Connected to "{}".'.format(host))
 
         self._send_lock = threading.Lock()
+        self._cmd_lock = threading.Lock()
 
         # We force a first poll to setup our model.
         self._setup()
@@ -172,20 +173,25 @@ class Robot(object):
 
         return to_send, rest
 
+    def update_cmd(self, alias, key, val):
+        with self._cmd_lock:
+            self._cmd[alias][key] = val
+
     def _push_once(self):
-        if not self._cmd:
-            return
+        with self._cmd_lock:
+            if not self._cmd:
+                return
 
-        to_send, remainings = self._split_messages(self._cmd)
+            to_send, remainings = self._split_messages(self._cmd)
 
-        self._send({
-            'modules': to_send
-        })
+            self._send({
+                'modules': to_send
+            })
 
-        self._cmd = defaultdict(lambda: defaultdict(lambda: None))
-        for mod, vals in remainings.items():
-            for key, val in vals.items():
-                self._cmd[mod][key] = val
+            self._cmd = defaultdict(lambda: defaultdict(lambda: None))
+            for mod, vals in remainings.items():
+                for key, val in vals.items():
+                    self._cmd[mod][key] = val
 
     def _send(self, msg):
         with self._send_lock:

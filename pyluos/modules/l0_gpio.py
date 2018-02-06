@@ -28,6 +28,7 @@ class L0GPIO(Module):
             'p6': self.p6,
             'p7': self.p7,
             'p8': self.p8,
+            'p9': self.p9,
         }
 
     def __repr__(self):

@@ -6,13 +6,13 @@ class L0GPIO(Module):
     def __init__(self, id, alias, robot):
         Module.__init__(self, 'L0GPIO', id, alias, robot)
 
-        # Input Pins
         self.p1 = AnalogInputPin('p1')
+        self.p9 = AnalogInputPin('p9')
+
+        self.p5 = DigitalInputPin('p5')
+        self.p6 = DigitalInputPin('p6')
+        self.p7 = DigitalInputPin('p7')
         self.p8 = DigitalInputPin('p8')
-        self.p9 = DigitalInputPin('p9')
-        self.p10 = DigitalInputPin('p10')
-        self.p11 = DigitalInputPin('p11')
-        self.p12 = AnalogInputPin('p12')
 
         # Output Pins
         self.p2 = DigitalOutputPin('p2', self)
@@ -24,11 +24,10 @@ class L0GPIO(Module):
             'p2': self.p2,
             'p3': self.p3,
             'p4': self.p4,
+            'p5': self.p5,
+            'p6': self.p6,
+            'p7': self.p7,
             'p8': self.p8,
-            'p9': self.p9,
-            'p10': self.p10,
-            'p11': self.p11,
-            'p12': self.p12,
         }
 
     def __repr__(self):
@@ -39,11 +38,11 @@ class L0GPIO(Module):
 
     def _update(self, new_state):
         self.p1._update(new_state['p1'])
+        self.p5._update(new_state['p5'])
+        self.p6._update(new_state['p6'])
+        self.p7._update(new_state['p7'])
         self.p8._update(new_state['p8'])
         self.p9._update(new_state['p9'])
-        self.p10._update(new_state['p10'])
-        self.p11._update(new_state['p11'])
-        self.p12._update(new_state['p12'])
 
     def control(self):
         def change_pin(p2, p3, p4):

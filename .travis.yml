@@ -13,7 +13,7 @@ before_install:
   - python --version
   - pip --version
   - pip install nose python-coveralls
-  - pip install flake8
+  - pip install flake8 twine
 
 install:
   # install your own package into the environment

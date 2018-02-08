@@ -1,5 +1,17 @@
 # Changelog
 
+#### Version 0.9.3
+
+Fix https://github.com/pollen-robotics/robus-gate/pull/11
+
+#### Version 0.9.2
+
+Hotfix pinout for the L0-GPIO driver.
+
+#### Version 0.9.1
+
+Hotfix pinout for the L0-GPIO driver.
+
 ### Version 0.9
 
 Add support for L0 GPIO module.

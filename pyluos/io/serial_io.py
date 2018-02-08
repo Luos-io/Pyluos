@@ -38,10 +38,6 @@ class Serial(IOHandler):
         self._poll_loop.daemon = True
         self._poll_loop.start()
 
-        # Force a first recv as the first message
-        # we received is often corrupted.
-        self.recv()
-
     def recv(self):
         self._msg_ready.wait()
         self._msg_ready.clear()

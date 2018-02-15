@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.9.4
+
+Add a workaround to wait for the auto-baudrate to be ready.
+
 #### Version 0.9.3
 
 Fix https://github.com/pollen-robotics/robus-gate/pull/11

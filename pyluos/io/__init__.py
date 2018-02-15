@@ -9,6 +9,13 @@ class IOHandler(object):
     def __init__(self, host):
         raise NotImplementedError
 
+    def is_ready(self):
+        try:
+            self.read()
+            return True
+        except (UnicodeDecodeError, json.decoder.JSONDecodeError):
+            return False
+
     def read(self):
         data = self.recv()
         return self.loads(data)

@@ -91,6 +91,9 @@ class Robot(object):
         self._send({'detection': {}})
 
         self._log('Waiting for first state...')
+        while not self._io.is_ready():
+            pass
+
         state = self._poll_once()
 
         gate = next(g for g in state['modules']

@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.9.5
+
+Add another workaround for the send detection which seems to be sometimes unreceived on the gate side.
+
 #### Version 0.9.4
 
 Add a workaround to wait for the auto-baudrate to be ready.

@@ -32,6 +32,9 @@ class Ws(IOHandler):
 
         self._ws = websocket.create_connection(url)
 
+    def is_ready(self):
+        return True
+
     def recv(self):
         return self._ws.recv()
 

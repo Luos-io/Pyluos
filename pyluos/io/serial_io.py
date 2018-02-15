@@ -1,5 +1,6 @@
 from __future__ import division
 
+import json
 import time
 import serial as _serial
 
@@ -37,6 +38,16 @@ class Serial(IOHandler):
         self._poll_loop = Thread(target=self._poll)
         self._poll_loop.daemon = True
         self._poll_loop.start()
+
+    def is_ready(self):
+        if self._serial.in_waiting == 0:
+            return False
+
+        try:
+            self.read()
+            return True
+        except (UnicodeDecodeError, json.decoder.JSONDecodeError):
+            return False
 
     def recv(self):
         self._msg_ready.wait()

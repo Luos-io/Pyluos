@@ -10,11 +10,7 @@ class IOHandler(object):
         raise NotImplementedError
 
     def is_ready(self):
-        try:
-            self.read()
-            return True
-        except (UnicodeDecodeError, json.decoder.JSONDecodeError):
-            return False
+        raise NotImplementedError
 
     def read(self):
         data = self.recv()

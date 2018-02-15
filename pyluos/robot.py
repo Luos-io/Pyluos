@@ -92,7 +92,7 @@ class Robot(object):
 
         self._log('Waiting for first state...')
         while not self._io.is_ready():
-            pass
+            self._send({'detection': {}})
 
         state = self._poll_once()
 

@@ -29,7 +29,7 @@ name2mod = {
     'generic_motor_controller': GenericMotorController,
     'dynamixel': Dynamixel,
     'distance': Distance,
-    'GenericIO': L0GPIO,
+    'l0_gpio': L0GPIO,
     'encoder': Encoder,
     'stepper': Stepper,
     'button': Button,

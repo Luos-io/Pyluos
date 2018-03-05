@@ -1,5 +1,18 @@
 # Changelog
 
+### Version 0.10.0
+
+Improve the L0-GPIO driver pinout:
+* P1: PWM
+* P2: PWM
+* P3: Digital Output
+* P4: Digital Output
+* P5: Digital Input
+* P6: Digital Input
+* P7: Digital Input
+* P8: Analog Input
+* P9: Analog Input
+
 #### Version 0.9.5
 
 Add another workaround for the send detection which seems to be sometimes unreceived on the gate side.

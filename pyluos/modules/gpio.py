@@ -74,10 +74,11 @@ class DigitalOutputPin(object):
 
 
 class Pwm(object):
-    def __init__(self, alias, delegate, default=0.0):
+    def __init__(self, alias, delegate, default=0.0, min=0.0, max=1.0):
         self.alias = alias
         self._delegate = delegate
         self._val = default
+        self._min, self._max = min, max
 
     @property
     def duty_cycle(self):
@@ -85,7 +86,7 @@ class Pwm(object):
 
     @duty_cycle.setter
     def duty_cycle(self, duty):
-        self._push(min(max(duty, 0.0), 1.0))
+        self._push(min(max(duty, self._min), self._max))
 
     def _push(self, val):
         if self._val != val:

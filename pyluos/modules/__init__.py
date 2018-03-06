@@ -1,5 +1,6 @@
 from .generic_motor_controller import GenericMotorController
 from .distance import Distance
+from .l0_servo import L0Servo
 from .encoder import Encoder
 from .stepper import Stepper
 from .l0_gpio import L0GPIO
@@ -19,6 +20,7 @@ __all__ = [
     'Stepper',
     'Button',
     'L0GPIO',
+    'L0Servo',
     'Potard',
     'Servo',
     'Relay',
@@ -30,6 +32,7 @@ name2mod = {
     'dynamixel': Dynamixel,
     'distance': Distance,
     'l0_gpio': L0GPIO,
+    'l0_servo': L0Servo,
     'encoder': Encoder,
     'stepper': Stepper,
     'button': Button,

@@ -2,7 +2,7 @@
 
 ### Version 0.10.0
 
-Improve the L0-GPIO driver pinout:
+Update the L0-GPIO driver pinout:
 * P1: PWM
 * P2: PWM
 * P3: Digital Output
@@ -12,6 +12,9 @@ Improve the L0-GPIO driver pinout:
 * P7: Digital Input
 * P8: Analog Input
 * P9: Analog Input
+
+Update the L0-Servo driver for using four PWM.
+Fix a possible bug when sending out of range color in the RGB led module.
 
 #### Version 0.9.5
 

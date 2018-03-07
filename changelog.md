@@ -1,5 +1,21 @@
 # Changelog
 
+### Version 0.10.0
+
+Update the L0-GPIO driver pinout:
+* P1: PWM
+* P2: PWM
+* P3: Digital Output
+* P4: Digital Output
+* P5: Digital Input
+* P6: Digital Input
+* P7: Digital Input
+* P8: Analog Input
+* P9: Analog Input
+
+Update the L0-Servo driver for using four PWM.
+Fix a possible bug when sending out of range color in the RGB led module.
+
 #### Version 0.9.5
 
 Add another workaround for the send detection which seems to be sometimes unreceived on the gate side.

@@ -1,3 +1,5 @@
+import json
+
 from threading import Thread
 
 from tornado.ioloop import IOLoop
@@ -30,7 +32,13 @@ class SerialToWs(WebSocketHandler):
 
     def _check_msg(self):
         while True:
-            self.send(self.serial.recv())
+            r = self.serial.recv()
+            try:
+                json.loads(r)
+            except:
+                print('Dump {}'.format(r))
+                continue
+            self.send(r)
 
     def check_origin(self, origin):
         return True

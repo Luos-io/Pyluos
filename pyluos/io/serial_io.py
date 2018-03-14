@@ -14,6 +14,11 @@ black_list = [
     '/dev/cu.Bluetooth-Incoming-Port'
 ]
 
+try:
+    JSONDecodeError = json.decoder.JSONDecodeError
+except AttributeError:
+    JSONDecodeError = ValueError
+
 
 class Serial(IOHandler):
     poll_frequency = 100
@@ -46,7 +51,7 @@ class Serial(IOHandler):
         try:
             self.read()
             return True
-        except (UnicodeDecodeError, json.decoder.JSONDecodeError):
+        except (UnicodeDecodeError, JSONDecodeError):
             return False
 
     def recv(self):

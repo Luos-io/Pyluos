@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.10.1
+
+Fix an incompatibility issue in serial for Python<3.4.
+
 ### Version 0.10.0
 
 Update the L0-GPIO driver pinout:

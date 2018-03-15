@@ -3,82 +3,59 @@ from __future__ import division
 from .module import Module, interact
 
 
-class Dynamixel(Module):
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'Dynamixel', id, alias, robot)
+class XL320(object):
+    def __init__(self, name, delegate):
+        self._name = name
+        self._delegate = delegate
+        self._target_pos = None
 
-        # Read
-        self._position = None
-
-        # Write
-        self._target_position = None
-        self._target_speed = None
-        self._compliant = None
-        self._wheel = None
+    @property
+    def name(self):
+        return self._name
 
     @property
     def position(self):
-        """ Current position in degrees. """
-        return self._position
+        return from_dxl_pos(self._position)
 
     @property
     def target_position(self):
-        """ Target position in degrees. """
-        return self._target_position
+        return self._target_pos
 
     @target_position.setter
     def target_position(self, new_pos):
-        if new_pos != self._target_position:
-            self._target_position = new_pos
-            self._push_value('target_position', self._target_position)
+        if new_pos != self._target_pos:
+            self._delegate._push_value(self.name, to_dxl_pos(new_pos))
+            self._target_pos = new_pos
 
-    @property
-    def target_speed(self):
-        """ Speed in rpm. """
-        return self._target_speed
 
-    @target_speed.setter
-    def target_speed(self, new_speed):
-        if new_speed != self._target_speed:
-            self._target_speed = new_speed
-            self._push_value('target_speed', self._target_speed)
+def to_dxl_pos(pos):
+    pos = min(max(pos, -150.0), 149.9)
+    return int((150.0 + pos) / 300.0 * 1024)
 
-    @property
-    def compliant(self):
-        return (self._compliant == 1
-                if self._compliant is not None else
-                None)
 
-    @compliant.setter
-    def compliant(self, new_compliancy):
-        if new_compliancy != self._compliant:
-            self._compliant = 1 if new_compliancy else 0
-            self._push_value('compliant', self._compliant)
+def from_dxl_pos(pos):
+    pos = min(max(pos, 0), 1023)
+    return (pos / 1024.0) * 300.0 - 150.0
 
-    @property
-    def wheel_mode(self):
-        return (self._wheel == 1
-                if self._wheel is not None else
-                None)
 
-    @wheel_mode.setter
-    def wheel_mode(self, new_mode):
-        if new_mode != self._wheel:
-            self._wheel = 1 if new_mode else 0
-            self._push_value('wheel', self._wheel)
+class Dynamixel(Module):
+    MAX_MOTOR = 20
 
-            if self._wheel == 0:
-                self._compliant = 1
+    def __init__(self, id, alias, robot):
+        Module.__init__(self, 'Dynamixel', id, alias, robot)
+        self._setup = False
+        self.motors = []
 
     def _update(self, new_state):
-        new_pos = new_state['position']
+        if not self._setup:
+            motors = ['m{}'.format(i) for i in range(self.MAX_MOTOR)]
+            motors = [m for m in motors if m in new_state]
+            for m in motors:
+                setattr(self, m, XL320(m, self))
+                self.motors.append(getattr(self, m))
 
-        if new_pos != self._position:
-            self._pub_event('moved', self._position, new_pos)
-            self._position = new_pos
+            self._setup = True
 
-    def control(self):
-        def move(position):
-            self.target_position = position
-
-        return interact(move, position=(-180.0, 180.0, 0.1))
+        for m in self.motors:
+            if m.name in new_state:
+                m._position = new_state[m.name]

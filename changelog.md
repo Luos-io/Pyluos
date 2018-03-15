@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.11.1
+
+Normalize potentiometer position to [-1;1].
+
 ### Version 0.11.0
 
 Add support for the new XL-320 driver. It reads *present_position* and exposes commands for *target_position*, *moving_speed*, and *compliant*.

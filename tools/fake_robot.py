@@ -91,7 +91,7 @@ class FakeRobot(WebSocketHandler):
                     'alias': 'my_potentiometer',
                     'id': 5,
                     'type': 'potard',
-                    'position': randint(-180, 180),
+                    'position': randint(0, 4096),
                 },
                 {
                     'alias': 'my_relay',

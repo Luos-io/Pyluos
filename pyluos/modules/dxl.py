@@ -1,6 +1,6 @@
 from __future__ import division
 
-from .module import Module, interact
+from .module import Module
 
 
 class XL320(object):
@@ -8,6 +8,8 @@ class XL320(object):
         self._name = name
         self._delegate = delegate
         self._target_pos = None
+        self._moving_speed = None
+        self._compliant = None
 
     @property
     def name(self):
@@ -27,6 +29,27 @@ class XL320(object):
             self._delegate._push_value(self.name, to_dxl_pos(new_pos))
             self._target_pos = new_pos
 
+    @property
+    def moving_speed(self):
+        return self._moving_speed
+
+    @moving_speed.setter
+    def moving_speed(self, speed):
+        if speed != self._moving_speed:
+            self._delegate._push_value(self.name.replace('m', 's'), to_dxl_speed(speed))
+            self._moving_speed = speed
+
+    @property
+    def compliant(self):
+        return self._compliant
+
+    @compliant.setter
+    def compliant(self, compliant):
+        compliant = True if compliant else False
+        if compliant != self._compliant:
+            self._delegate._push_value(self.name.replace('m', 'c'), compliant)
+            self._compliant = compliant
+
 
 def to_dxl_pos(pos):
     pos = min(max(pos, -150.0), 149.9)
@@ -36,6 +59,14 @@ def to_dxl_pos(pos):
 def from_dxl_pos(pos):
     pos = min(max(pos, 0), 1023)
     return (pos / 1024.0) * 300.0 - 150.0
+
+
+def to_dxl_speed(speed):
+    direction = 1024 if speed < 0 else 0
+    speed_factor = 0.111
+    max_value = 1023 * speed_factor * 6
+    speed = min(max(speed, -max_value), max_value)
+    return int(round(direction + abs(speed) / (6 * speed_factor), 0))
 
 
 class Dynamixel(Module):

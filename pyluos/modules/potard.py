@@ -17,5 +17,5 @@ class Potard(Module):
         new_pos = new_state['position']
 
         if new_pos != self._value:
-            self._pub_event('moved', self._value, new_pos)
             self._value = new_pos
+            self._pub_event('moved', self._value, self.position)

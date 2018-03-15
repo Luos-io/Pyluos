@@ -4,6 +4,7 @@ from .l0_servo import L0Servo
 from .encoder import Encoder
 from .stepper import Stepper
 from .l0_gpio import L0GPIO
+from .l0_dc_motor import L0DCMotor
 from .dxl import Dynamixel
 from .button import Button
 from .potard import Potard
@@ -25,6 +26,7 @@ __all__ = [
     'Servo',
     'Relay',
     'Led',
+    'L0DCMotor',
 ]
 
 name2mod = {
@@ -33,6 +35,7 @@ name2mod = {
     'distance': Distance,
     'l0_gpio': L0GPIO,
     'l0_servo': L0Servo,
+    'l0_dc_motor': L0DCMotor,
     'encoder': Encoder,
     'stepper': Stepper,
     'button': Button,

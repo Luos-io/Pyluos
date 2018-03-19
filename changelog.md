@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.13.0
+
+Improve button & l0-servo api.
+
 ### Version 0.12.0
 
 Add support for the L0 DC motor shield.

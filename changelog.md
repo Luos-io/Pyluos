@@ -1,5 +1,9 @@
 # Changelog
 
+### Version 0.12.0
+
+Add support for the L0 DC motor shield.
+
 #### Version 0.11.1
 
 Normalize potentiometer position to [-1;1].

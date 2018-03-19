@@ -23,7 +23,8 @@ class DCMotor(object):
 
         if s != self._speed:
             self._speed = s
-            self._delegate._push_value(self.name, self._speed)
+            field = self.name.replace('m', 's')
+            self._delegate._push_value(field, self._speed)
 
 
 class L0DCMotor(Module):

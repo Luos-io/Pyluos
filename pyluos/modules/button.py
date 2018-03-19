@@ -9,8 +9,8 @@ class Button(Module):
         self._value = 'OFF'
 
     @property
-    def state(self):
-        return self._value
+    def pressed(self):
+        return self._value == 'ON'
 
     def _update(self, new_state):
         new_state = 'ON' if new_state['state'] else 'OFF'

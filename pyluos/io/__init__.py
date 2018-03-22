@@ -13,8 +13,16 @@ class IOHandler(object):
         raise NotImplementedError
 
     def read(self):
-        data = self.recv()
-        return self.loads(data)
+        try:
+            data = self.recv()
+            return self.loads(data)
+        except Exception as e:
+            import time
+            msg = 'OUPS at {}: {}'.format(time.time(), str(e))
+            print(msg)
+            with open('/tmp/pyluos.log', 'a') as f:
+                f.write(msg)
+            return self.read()
 
     def recv(self):
         raise NotImplementedError

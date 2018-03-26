@@ -16,10 +16,6 @@ from .modules import name2mod
 from .metrics import Publisher
 
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-
 def run_from_unittest():
     return 'unittest' in sys.modules
 
@@ -47,15 +43,16 @@ class Robot(object):
             with open(log_conf) as f:
                 config = json.load(f)
             logging.config.dictConfig(config)
+            self.logger = logging.getLogger(__name__)
 
-        logger.info('Connected to "{}".'.format(host))
+        self.logger.info('Connected to "{}".'.format(host))
 
         self._send_lock = threading.Lock()
         self._cmd_lock = threading.Lock()
 
         # We force a first poll to setup our model.
         self._setup()
-        logger.info('Robot setup.')
+        self.logger.info('Robot setup.')
 
         self._last_update = time.time()
         self._running = True
@@ -99,10 +96,10 @@ class Robot(object):
         self._io.close()
 
     def _setup(self):
-        logger.info('Sending detection signal.')
+        self.logger.info('Sending detection signal.')
         self._send({'detection': {}})
 
-        logger.info('Waiting for first state...')
+        self.logger.info('Waiting for first state...')
         while not self._io.is_ready():
             self._send({'detection': {}})
 

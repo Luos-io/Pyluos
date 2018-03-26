@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.14.1
+
+Use local config for logging.
+
 ### Version 0.14.0
 
 Handles properly erorr in received messages.

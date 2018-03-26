@@ -1,8 +1,6 @@
 import json
 import logging
 
-logger = logging.getLogger(__name__)
-
 
 class IOHandler(object):
     @classmethod
@@ -20,7 +18,7 @@ class IOHandler(object):
             data = self.recv()
             return self.loads(data)
         except Exception as e:
-            logger.debug('Msg read failed: {}'.format(str(e)))
+            logging.getLogger(__name__).debug('Msg read failed: {}'.format(str(e)))
 
             if trials > 0:
                 return self.read(trials - 1)

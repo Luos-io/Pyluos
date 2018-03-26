@@ -1,4 +1,7 @@
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class IOHandler(object):
@@ -12,9 +15,17 @@ class IOHandler(object):
     def is_ready(self):
         raise NotImplementedError
 
-    def read(self):
-        data = self.recv()
-        return self.loads(data)
+    def read(self, trials=5):
+        try:
+            data = self.recv()
+            return self.loads(data)
+        except Exception as e:
+            logger.debug('Msg read failed: {}'.format(str(e)))
+
+            if trials > 0:
+                return self.read(trials - 1)
+            else:
+                raise e
 
     def recv(self):
         raise NotImplementedError

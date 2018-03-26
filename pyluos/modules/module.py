@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 try:
-    from ipywidget import interact
+    from ipywidgets import interact
 except ImportError:
     def interact(*args, **kwargs):
         logger.warning('You first have to install ipywidgets to use the control widgets.')

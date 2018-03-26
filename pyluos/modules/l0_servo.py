@@ -3,7 +3,7 @@ from .gpio import Pwm
 
 
 class PositionServo(object):
-    def __init__(self, alias, delegate, default= 0.0, min=0.0, max=180.0):
+    def __init__(self, alias, delegate, default=0.0, min=0.0, max=180.0):
         self._pos = None
         self._pwm = Pwm(alias, delegate, default, min, max)
 

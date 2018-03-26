@@ -4,6 +4,7 @@
 
 Handles properly erorr in received messages.
 Setup logging.
+Fix ipython widgets import.
 
 ### Version 0.13.0
 

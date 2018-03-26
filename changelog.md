@@ -1,6 +1,11 @@
 # Changelog
 
-#### Version 0.13.0
+### Version 0.14.0
+
+Handles properly erorr in received messages.
+Setup logging.
+
+### Version 0.13.0
 
 Improve button & l0-servo api.
 

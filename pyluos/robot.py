@@ -1,8 +1,11 @@
+import os
 import sys
 import json
 import time
 import random
+import logging
 import threading
+import logging.config
 
 from copy import deepcopy
 from datetime import datetime
@@ -11,6 +14,10 @@ from collections import defaultdict
 from .io import io_from_host
 from .modules import name2mod
 from .metrics import Publisher
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def run_from_unittest():
@@ -27,23 +34,28 @@ except ImportError:
 class Robot(object):
     _heartbeat_timeout = 5  # in sec.
     _max_alias_length = 15
+    _base_log_conf = os.path.join(os.path.dirname(__file__), 'logging_conf.json')
 
     def __init__(self, host,
-                 verbose=True, test_mode=False,
+                 log_conf=_base_log_conf,
+                 test_mode=False,
                  *args, **kwargs):
         self._io = io_from_host(host=host,
                                 *args, **kwargs)
 
-        self._verbose = verbose
+        if os.path.exists(log_conf):
+            with open(log_conf) as f:
+                config = json.load(f)
+            logging.config.dictConfig(config)
 
-        self._log('Connected to "{}".'.format(host))
+        logger.info('Connected to "{}".'.format(host))
 
         self._send_lock = threading.Lock()
         self._cmd_lock = threading.Lock()
 
         # We force a first poll to setup our model.
         self._setup()
-        self._log('Robot setup.')
+        logger.info('Robot setup.')
 
         self._last_update = time.time()
         self._running = True
@@ -87,10 +99,10 @@ class Robot(object):
         self._io.close()
 
     def _setup(self):
-        self._log('Sending detection signal.')
+        logger.info('Sending detection signal.')
         self._send({'detection': {}})
 
-        self._log('Waiting for first state...')
+        logger.info('Waiting for first state...')
         while not self._io.is_ready():
             self._send({'detection': {}})
 
@@ -226,7 +238,3 @@ class Robot(object):
         mod.alias = new
         setattr(self, new, mod)
         delattr(self, old)
-
-    def _log(self, msg):
-        if self._verbose:
-            print(msg)

@@ -21,6 +21,7 @@ setup(name='pyluos',
           'tests': [],
           'topographe': ['pyzmq'],
           'jupyter-integration': ['ipywidgets'],
+          'scratch': ['flask', 'Jinja2'],
       },
       entry_points={
           'console_scripts': [

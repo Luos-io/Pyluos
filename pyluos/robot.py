@@ -148,38 +148,6 @@ class Robot(object):
 
         self._last_update = time.time()
 
-    # Push update from our model to the hardware
-    def _split_messages(self, cmd):
-        alias = random.choice(list(cmd.keys()))
-        mod = getattr(self, alias)
-
-        cmd = deepcopy(cmd)
-
-        if mod.type == 'Servo':
-            to_send = {alias: cmd[alias]}
-            del cmd[alias]
-            rest = cmd
-
-        else:
-            servos = [
-                mod for mod in cmd.keys()
-                if getattr(self, mod).type == 'Servo'
-            ]
-            others = [
-                mod for mod in cmd.keys()
-                if getattr(self, mod).type != 'Servo'
-            ]
-            to_send = {
-                mod: cmd[mod]
-                for mod in others
-            }
-            rest = {
-                mod: cmd[mod]
-                for mod in servos
-            }
-
-        return to_send, rest
-
     def update_cmd(self, alias, key, val):
         with self._cmd_lock:
             self._cmd[alias][key] = val
@@ -189,16 +157,11 @@ class Robot(object):
             if not self._cmd:
                 return
 
-            to_send, remainings = self._split_messages(self._cmd)
-
             self._send({
-                'modules': to_send
+                'modules': self._cmd
             })
 
             self._cmd = defaultdict(lambda: defaultdict(lambda: None))
-            for mod, vals in remainings.items():
-                for key, val in vals.items():
-                    self._cmd[mod][key] = val
 
     def _send(self, msg):
         with self._send_lock:

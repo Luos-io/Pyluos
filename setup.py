@@ -28,7 +28,7 @@ setup(name='pyluos',
               'pyluos-wifi-gate = pyluos.tools.wifi_gate:main',
               'pyluos-usb-gate = pyluos.tools.usb_gate:main',
               'pyluos-usb2ws = pyluos.tools.usb2ws:main',
-              'pyluos-scratch-broker = pyluos.tools.scratch_broker:main',
+              'pyluos-usb2scratch = pyluos.tools.usb2scratch:main',
           ],
       },
       )

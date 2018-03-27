@@ -6,7 +6,6 @@ const blockIconURI = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pjwh
 
 class LuosClient {
     constructor (host, port) {
-        console.log('HELLO');
         this.cmd = {};
         this.state = {};
 
@@ -15,7 +14,6 @@ class LuosClient {
         this.ws.onmessage = this.onstate.bind(this);
     }
     onstate (msg) {
-        // console.log('STATE', msg.data);
         const data = JSON.parse(msg.data);
 
         const state = {};
@@ -25,13 +23,11 @@ class LuosClient {
         this.state = state;
 
         if (Object.keys(this.cmd).length !== 0) {
-            console.log('SEND:', this.cmd);
             this.send({modules: this.cmd});
             this.cmd = {};
         }
     }
     get (alias, reg) {
-        console.log(this.state, alias, reg);
         if (alias in this.state && reg in this.state[alias]) {
             return this.state[alias][reg];
         }

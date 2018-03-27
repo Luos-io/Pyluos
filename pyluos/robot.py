@@ -30,14 +30,19 @@ except ImportError:
 class Robot(object):
     _heartbeat_timeout = 5  # in sec.
     _max_alias_length = 15
-    _base_log_conf = os.path.join(os.path.dirname(__file__), 'logging_conf.json')
+    _base_log_conf = os.path.join(os.path.dirname(__file__),
+                                  'logging_conf.json')
 
     def __init__(self, host,
+                 IO=None,
                  log_conf=_base_log_conf,
                  test_mode=False,
                  *args, **kwargs):
-        self._io = io_from_host(host=host,
-                                *args, **kwargs)
+        if IO is not None:
+            self._io = IO(host=host, *args, **kwargs)
+        else:
+            self._io = io_from_host(host=host,
+                                    *args, **kwargs)
 
         if os.path.exists(log_conf):
             with open(log_conf) as f:
@@ -227,7 +232,10 @@ class Robot(object):
             raise ValueError('No module named {}!'.format(old))
 
         if len(new) > self._max_alias_length:
-            raise ValueError('Alias length should be less than {}'.format(self._max_alias_length))
+            raise ValueError(
+                'Alias length should be less than {}'
+                .format(self._max_alias_length)
+            )
 
         self._send({'modules': {old: {'set_alias': new}}})
 

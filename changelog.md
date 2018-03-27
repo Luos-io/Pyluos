@@ -3,6 +3,7 @@
 #### Version 0.14.2
 
 Remove metrics.
+Remove split messages for servo fix.
 
 #### Version 0.14.1
 

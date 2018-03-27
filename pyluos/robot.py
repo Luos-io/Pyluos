@@ -13,7 +13,6 @@ from collections import defaultdict
 
 from .io import io_from_host
 from .modules import name2mod
-from .metrics import Publisher
 
 
 def run_from_unittest():
@@ -62,15 +61,11 @@ class Robot(object):
         self._poll_bg.daemon = True
         self._poll_bg.start()
 
-        if not (test_mode or run_from_unittest()):
-            self._metrics_pub = Publisher(robot=self)
-            self._metrics_pub.start()
-
-            if use_topographe:
-                c = zmq.Context()
-                s = c.socket(zmq.PUB)
-                s.connect('tcp://127.0.0.1:33000')
-                self._s = s
+        if not (test_mode or run_from_unittest()) and use_topographe:
+            c = zmq.Context()
+            s = c.socket(zmq.PUB)
+            s.connect('tcp://127.0.0.1:33000')
+            self._s = s
 
     @property
     def state(self):

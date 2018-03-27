@@ -1,5 +1,6 @@
 {
     "version": 1,
+    "disable_existing_loggers": false,
     "formatters": {
         "simple": {
             "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -24,8 +25,10 @@
         }
     },
 
-    "root": {
-        "level": "DEBUG",
-        "handlers": ["console", "info_file_handler"]
+    "loggers": {
+        "pyluos": {
+            "level": "DEBUG",
+            "handlers": ["console", "info_file_handler"]
+        }
     }
 }

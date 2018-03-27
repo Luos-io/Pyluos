@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.14.2
+
+Remove metrics.
+
 #### Version 0.14.1
 
 Use local config for logging.

@@ -1,0 +1,2 @@
+include pyluos/logging_conf.json
+include pyluos/tools/scratch/extension.tpl.js

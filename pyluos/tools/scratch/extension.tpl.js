@@ -345,7 +345,8 @@ class Scratch3LuosBlocks {
     {% endif %}
     {% if potard %}
     potentiometerPosition (args) {
-        return this.robot.get(args.POTENTIOMETER, 'position');
+        const pos = this.robot.get(args.POTENTIOMETER, 'position');
+        return 300 * pos / 4096;
     }
     {% endif %}
     {% if led %}
@@ -364,12 +365,16 @@ class Scratch3LuosBlocks {
     {% endif %}
     {% if l0_servo %}
     setServoPosition (args) {
-        this.robot.set(args.SERVO, args.S.replace('s', 'p'), parseFloat(args.POS));
+        let pos = parseFloat(args.POS);
+        pos = Math.min(Math.max(pos, 0.0), 180.0);
+        this.robot.set(args.SERVO, args.S.replace('s', 'p'), pos);
     }
     {% endif %}
     {% if l0_dc_motor %}
     setDCSpeed (args) {
-        this.robot.set(args.DC, args.M.replace('m', 's'), parseFloat(args.SPEED));
+        let speed = parseFloat(args.SPEED);
+        speed = Math.min(Math.max(speed, -1.0), 1.0);
+        this.robot.set(args.DC, args.M.replace('m', 's'), speed);
     }
     {% endif %}
     {% if l0_gpio %}
@@ -387,7 +392,9 @@ class Scratch3LuosBlocks {
         return this.robot.get(args.GPIO, args.ANALOG_PIN);
     }
     gpioPwmDutyCycle (args) {
-        this.robot.set(args.GPIO, args.PWM_PIN, parseFloat(args.DUTY));
+        let duty = parseFloat(args.DUTY);
+        duty = Math.min(Math.max(duty, 0.0), 100.0);
+        this.robot.set(args.GPIO, args.PWM_PIN, duty);
     }
     {% endif %}
     {% if dynamixel %}
@@ -396,7 +403,6 @@ class Scratch3LuosBlocks {
         return 300 * (pos / 1024) - 150;
     }
     dxlTargetPosition (args) {
-        // TODO: pourquoi besoin du parseInt ?
         let pos = parseFloat(args.POS);
         pos = Math.min(Math.max(-150.0, pos), 150.0);
         pos = (150 + pos) / 300 * 1024;
@@ -405,7 +411,19 @@ class Scratch3LuosBlocks {
         this.robot.set(args.DXL, args.MOTOR, pos);
     }
     dxlMovingSpeed (args) {
-        this.robot.set(args.DXL, args.MOTOR.replace('m', 's'), parseInt(args.SPEED));
+        let speed = parseFloat(args.SPEED);
+
+        if speed < 0 {
+            let direction = 1024;
+        } else {
+            let direction = 0;
+        }
+        const speed_factor = 0.111;
+        const max_value = 1023 * speed_factor * 6;
+        speed = Math.min(Math.max(speed, -max_value), max_value);
+        speed = parseInt(Math.round(direction + Math.abs(speed) / (6 * speed_factor), 0));
+
+        this.robot.set(args.DXL, args.MOTOR.replace('m', 's'), );
     }
     dxlCompliant (args) {
         let compliant = args.COMPLIANT === 'compliant' ? true : false;

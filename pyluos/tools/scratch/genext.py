@@ -18,7 +18,7 @@ supported_modules = [
 
 def find_modules(state, type):
     return [
-        m['alias']
+        str(m['alias'])
         for m in state['modules']
         if m['type'] == type
     ]

@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.14.3
+
+Fix logging install.
+
 #### Version 0.14.2
 
 Remove metrics.

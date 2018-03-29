@@ -20,13 +20,14 @@ setup(name='pyluos',
           'tests': [],
           'topographe': ['pyzmq'],
           'jupyter-integration': ['ipywidgets'],
+          'scratch': ['flask', 'Jinja2'],
       },
       entry_points={
           'console_scripts': [
               'pyluos-wifi-gate = pyluos.tools.wifi_gate:main',
               'pyluos-usb-gate = pyluos.tools.usb_gate:main',
               'pyluos-usb2ws = pyluos.tools.usb2ws:main',
-              'pyluos-scratch-broker = pyluos.tools.scratch_broker:main',
+              'pyluos-usb2scratch = pyluos.tools.usb2scratch:main',
           ],
       },
       )

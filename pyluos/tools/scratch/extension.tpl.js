@@ -364,7 +364,7 @@ class Scratch3LuosBlocks {
     {% endif %}
     {% if l0_servo %}
     setServoPosition (args) {
-        this.robot.set(args.SERVO, args.S.replace('s', 'p'), args.POS);
+        this.robot.set(args.SERVO, args.S.replace('s', 'p'), parseFloat(args.POS));
     }
     {% endif %}
     {% if l0_dc_motor %}
@@ -387,7 +387,7 @@ class Scratch3LuosBlocks {
         return this.robot.get(args.GPIO, args.ANALOG_PIN);
     }
     gpioPwmDutyCycle (args) {
-        this.robot.set(args.GPIO, args.PWM_PIN, args.DUTY);
+        this.robot.set(args.GPIO, args.PWM_PIN, parseFloat(args.DUTY));
     }
     {% endif %}
     {% if dynamixel %}

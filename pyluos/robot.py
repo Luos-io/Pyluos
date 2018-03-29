@@ -47,8 +47,8 @@ class Robot(object):
             with open(log_conf) as f:
                 config = json.load(f)
             logging.config.dictConfig(config)
-            self.logger = logging.getLogger(__name__)
 
+        self.logger = logging.getLogger(__name__)
         self.logger.info('Connected to "{}".'.format(host))
 
         self._send_lock = threading.Lock()

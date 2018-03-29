@@ -1,5 +1,9 @@
 # Changelog
 
+### Version 0.15.0
+
+Add support for scratch extension generation.
+
 #### Version 0.14.3
 
 Fix logging install.

@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.15.1
+
+Fix manifest filename on case sensitive OS.
+
 ### Version 0.15.0
 
 Add support for scratch extension generation.

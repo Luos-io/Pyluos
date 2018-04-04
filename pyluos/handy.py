@@ -59,4 +59,4 @@ class Handy(object):
         while True:
             t = time.time()
             for i, f in enumerate(self.fingers):
-                f.flex = 50 + 50 * math.sin(1 * t + i * 3.14159 / 5)
+                f.flex = 50 + 50 * math.sin(1 * t + i * math.pi / 5)

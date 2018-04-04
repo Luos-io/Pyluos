@@ -19,11 +19,10 @@ class IOHandler(object):
             return self.loads(data)
         except Exception as e:
             logging.getLogger(__name__).debug('Msg read failed: {}'.format(str(e)))
-
-            if trials > 0:
-                return self.read(trials - 1)
-            else:
+            if trials == 0:
                 raise e
+
+        return self.read(trials)
 
     def recv(self):
         raise NotImplementedError

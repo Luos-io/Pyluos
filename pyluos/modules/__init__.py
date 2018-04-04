@@ -11,7 +11,9 @@ from .potard import Potard
 from .servo import Servo
 from .relay import Relay
 from .led import Led
+from .eddy import Eddy
 from .handy import Handy
+
 
 __all__ = [
     'name2mod',
@@ -28,6 +30,7 @@ __all__ = [
     'Relay',
     'Led',
     'L0DCMotor',
+    'Eddy',
     'Handy',
 ]
 
@@ -45,5 +48,6 @@ name2mod = {
     'servo': Servo,
     'relay': Relay,
     'led': Led,
-    'handy': Handy,
+    'eddy': Eddy,
+    'handy': Handy
 }

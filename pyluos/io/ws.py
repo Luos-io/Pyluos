@@ -1,3 +1,4 @@
+import os
 import socket
 import websocket
 
@@ -25,6 +26,16 @@ class Ws(IOHandler):
             return True
         except socket.error:
             return host.endswith('.local')
+
+    @classmethod
+    def available_hosts(cls):
+        hosts = ['pi-gate.local']
+
+        return [
+            ip
+            for ip in hosts
+            if os.system('ping -c 1 -W1 -t1 {} > /dev/null 2>&1'.format(ip)) == 0
+        ]
 
     def __init__(self, host, port=9342):
         host = resolve_hostname(host, port)

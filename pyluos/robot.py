@@ -2,16 +2,14 @@ import os
 import sys
 import json
 import time
-import random
 import logging
 import threading
 import logging.config
 
-from copy import deepcopy
 from datetime import datetime
 from collections import defaultdict
 
-from .io import io_from_host
+from .io import discover_hosts, io_from_host
 from .modules import name2mod
 
 
@@ -26,11 +24,29 @@ except ImportError:
     use_topographe = False
 
 
+known_host = {
+    'ergo': ['/dev/cu.usbserial-DN2AAOVK'],
+    'handy': ['/dev/cu.usbserial-DN2X236E'],
+    'eddy': ['pi-gate.local'],
+}
+
+
 class Robot(object):
     _heartbeat_timeout = 5  # in sec.
     _max_alias_length = 15
     _base_log_conf = os.path.join(os.path.dirname(__file__),
                                   'logging_conf.json')
+
+    @classmethod
+    def discover(cls):
+        hosts = discover_hosts()
+
+        possibilities = {
+            k: [h for h in v if h in hosts]
+            for k, v in known_host.items()
+        }
+
+        return possibilities
 
     def __init__(self, host,
                  IO=None,

@@ -3,6 +3,7 @@ from __future__ import division
 import json
 import time
 import serial as _serial
+import platform
 
 from threading import Event, Thread
 
@@ -10,14 +11,14 @@ from serial.tools.list_ports import comports
 
 from . import IOHandler
 
-black_list = [
-    '/dev/cu.Bluetooth-Incoming-Port'
-]
-
 try:
     JSONDecodeError = json.decoder.JSONDecodeError
 except AttributeError:
     JSONDecodeError = ValueError
+
+white_list = [
+    '/dev/ttyAMA0'
+]
 
 
 class Serial(IOHandler):
@@ -25,12 +26,25 @@ class Serial(IOHandler):
 
     @classmethod
     def available_hosts(cls):
-        return list(p.device for p in comports()
-                    if p.device not in black_list)
+        devices = comports()
+
+        if platform.system() in ('Linux', 'Darwin'):
+            devices = [
+                d for d in devices
+                if d.manufacturer == 'Pollen-Robotics'
+            ]
+
+        # TODO: si on veut pouvoir trouver le type de robot (Ergo, ED, Handy, etc)
+        # de maniere non-intrusive il faut qu'il soit present dans la description
+        # du device.
+        # Sinon, il va falloir faire un send detection + read (sur tous les devices)
+        # ce qui peut (va) poser des problemes des qu'il y a plus d'un robot branche.
+
+        return [d.device for d in devices]
 
     @classmethod
     def is_host_compatible(cls, host):
-        return host in cls.available_hosts()
+        return host in cls.available_hosts() or host in white_list
 
     def __init__(self, host, baudrate=57600):
         self._serial = _serial.Serial(host, baudrate)

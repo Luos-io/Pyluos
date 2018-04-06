@@ -1,5 +1,10 @@
 # Changelog
 
+### Version 0.16.0
+
+Add support for ErgoJr, Handy & Eddy.
+Robot auto-detection still WIP.
+
 #### Version 0.15.1
 
 Fix manifest filename on case sensitive OS.

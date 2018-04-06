@@ -19,11 +19,10 @@ class IOHandler(object):
             return self.loads(data)
         except Exception as e:
             logging.getLogger(__name__).debug('Msg read failed: {}'.format(str(e)))
-
-            if trials > 0:
-                return self.read(trials - 1)
-            else:
+            if trials == 0:
                 raise e
+
+        return self.read(trials)
 
     def recv(self):
         raise NotImplementedError
@@ -46,9 +45,16 @@ class IOHandler(object):
 from .ws import Ws
 from .serial_io import Serial
 
+IOs = [Serial, Ws]
+
 
 def io_from_host(host, *args, **kwargs):
-    for cls in [Ws, Serial]:
+    for cls in IOs:
         if cls.is_host_compatible(host):
             return cls(host=host, *args, **kwargs)
-    raise ValueError('No corresponding IO found.')
+
+    raise ValueError('No corresponding IO found (among {}).'.format(discover_hosts))
+
+
+def discover_hosts():
+    return sum([io.available_hosts() for io in IOs], [])

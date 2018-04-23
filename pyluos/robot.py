@@ -25,7 +25,7 @@ except ImportError:
 
 
 known_host = {
-    'ergo': ['/dev/cu.usbserial-DN2AAOVK'],
+    'ergo': ['/dev/cu.usbserial-DN2AAOVK', '/dev/cu.usbserial-DN2YEFLN'],
     'handy': ['/dev/cu.usbserial-DN2X236E'],
     'eddy': ['pi-gate.local'],
 }

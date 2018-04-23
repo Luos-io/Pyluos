@@ -11,7 +11,7 @@ class ErgoJr(object):
 
         self._robot = Robot(host)
 
-        self._dxl = self._robot.dxl_controller
+        self._dxl = self._robot.dxl
         while not self._dxl._setup:
             pass
         setattr(self, 'motors', self._dxl.motors)

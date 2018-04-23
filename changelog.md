@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.16.1
+
+Update ErgoJr definition.
+
 ### Version 0.16.0
 
 Add support for ErgoJr, Handy & Eddy.

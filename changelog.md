@@ -1,5 +1,9 @@
 # Changelog
 
+#### Version 0.16.2
+
+Prevent a crash when receiving an empty message.
+
 #### Version 0.16.1
 
 Update ErgoJr definition.

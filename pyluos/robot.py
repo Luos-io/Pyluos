@@ -160,6 +160,9 @@ class Robot(object):
 
     # Update our model with the new state.
     def _update(self, new_state):
+        if 'modules' not in new_state:
+            return
+
         mod_need_update = [mod for mod in new_state['modules']
                            if hasattr(self, mod['alias']) and
                            set(mod.keys()) != {'type', 'id', 'alias'}]

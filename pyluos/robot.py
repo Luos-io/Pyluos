@@ -121,12 +121,15 @@ class Robot(object):
 
         state = self._poll_once()
 
-        gate = next(g for g in state['modules']
-                    if g['type'] == 'gate')
-        self._name = gate['alias']
+        try:
+            gate = next(g for g in state['modules']
+                        if 'type' in g and g['type'] == 'gate')
+            self._name = gate['alias']
+        except StopIteration:
+            self._name = 'gate_unknown'
 
         modules = [mod for mod in state['modules']
-                   if mod['type'] in name2mod.keys()]
+                   if 'type' in mod and mod['type'] in name2mod.keys()]
 
         self._cmd = defaultdict(lambda: defaultdict(lambda: None))
 
@@ -135,6 +138,7 @@ class Robot(object):
                                   alias=mod['alias'],
                                   robot=self)
             for mod in modules
+            if 'type' in mod and 'id' in mod and 'alias' in mod
         ]
 
         for mod in self.modules:

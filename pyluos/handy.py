@@ -38,11 +38,11 @@ class Handy(object):
         self.thumb = Finger(self._robot.handy.m5)
 
         self.fingers = [
+            self.thumb,
             self.index,
             self.middle_finger,
             self.ring_finger,
             self.pinky,
-            self.thumb,
         ]
 
     def sync_wave(self):

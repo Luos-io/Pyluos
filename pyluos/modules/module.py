@@ -27,6 +27,9 @@ class Module(object):
         self._delegate = robot
         self._value = None
         self._cb = defaultdict(list)
+        self._led = True
+        self._L0_temperature = None
+        self._L0_voltage = None
 
     def __repr__(self):
         return ('<{self.type} '
@@ -41,10 +44,41 @@ class Module(object):
                 '')
 
     def _update(self, new_state):
-        pass
+        if 'L0_temperature' in new_state:
+            self._L0_temperature = new_state['L0_temperature']
+        if 'L0_voltage' in new_state:
+            self._L0_voltage = new_state['L0_voltage']
 
     def _push_value(self, key, new_val):
         self._delegate.update_cmd(self.alias, key, new_val)
+
+    @property
+    def L0_temperature(self):
+        self._push_value('L0_temperature', "")
+        return self._L0_temperature
+
+    @property
+    def L0_voltage(self):
+        self._push_value('L0_voltage', "")
+        return self._L0_voltage
+
+    @property
+    def led(self):
+        return self._led
+
+    @led.setter
+    def led(self, state):
+        if state != self._led:
+            self._push_value('led', state)
+            self._led = state
+
+    def led_toggle(self):
+        if self._led is True:
+            self._push_value('led', False)
+            self._led = False
+        else:
+            self._push_value('led', True)
+            self._led = True
 
     # Events cb handling
 

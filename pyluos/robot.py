@@ -116,8 +116,8 @@ class Robot(object):
         self._send({'detection': {}})
 
         self.logger.info('Waiting for first state...')
-        while not self._io.is_ready():
-            self._send({'detection': {}})
+        #while not self._io.is_ready():
+        #self._send({'detection': {}})
 
         state = self._poll_once()
 

@@ -11,9 +11,10 @@ class Potard(Module):
     @property
     def position(self):
         """ Position in degrees. """
-        return self._value / 2048.0 - 1.0
+        return self._value
 
     def _update(self, new_state):
+        Module._update(self, new_state)
         new_pos = new_state['position']
 
         if new_pos != self._value:

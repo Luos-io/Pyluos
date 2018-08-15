@@ -15,6 +15,7 @@ class Distance(Module):
         return self._value
 
     def _update(self, new_state):
+        Module._update(self, new_state)
         new_dist = new_state['distance']
 
         if new_dist != self._value:

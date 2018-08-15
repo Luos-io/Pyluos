@@ -4,7 +4,7 @@ from .l0_servo import L0Servo
 from .encoder import Encoder
 from .stepper import Stepper
 from .l0_gpio import L0GPIO
-from .l0_dc_motor import L0DCMotor
+from .dc_motor import DCMotor
 from .dxl import DynamixelMotor
 from .button import Button
 from .potentiometer import Potentiometer
@@ -29,7 +29,7 @@ __all__ = [
     'Servo',
     'Relay',
     'Led',
-    'L0DCMotor',
+    'DCMotor',
     'Eddy',
     'Handy',
 ]
@@ -40,7 +40,7 @@ name2mod = {
     'DistanceSensor': Distance,
     'L0GPIO': L0GPIO,
     'l0_servo': L0Servo,
-    'l0_dc_motor': L0DCMotor,
+    'DCMotor': DCMotor,
     'encoder': Encoder,
     'Stepper': Stepper,
     'Button': Button,

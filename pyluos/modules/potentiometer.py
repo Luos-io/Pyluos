@@ -1,11 +1,11 @@
 from .module import Module
 
 
-class Potard(Module):
+class Potentiometer(Module):
     possible_events = {'moved'}
 
     def __init__(self, id, alias, robot):
-        Module.__init__(self, 'Potard', id, alias, robot)
+        Module.__init__(self, 'Potentiometer', id, alias, robot)
         self._value = 0
 
     @property

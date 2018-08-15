@@ -7,7 +7,7 @@ from .l0_gpio import L0GPIO
 from .l0_dc_motor import L0DCMotor
 from .dxl import DynamixelMotor
 from .button import Button
-from .potard import Potard
+from .potentiometer import Potentiometer
 from .servo import Servo
 from .relay import Relay
 from .led import Led
@@ -25,7 +25,7 @@ __all__ = [
     'Button',
     'L0GPIO',
     'L0Servo',
-    'Potard',
+    'Potentiometer',
     'Servo',
     'Relay',
     'Led',
@@ -44,7 +44,7 @@ name2mod = {
     'encoder': Encoder,
     'Stepper': Stepper,
     'Button': Button,
-    'Potentiometer': Potard,
+    'Potentiometer': Potentiometer,
     'Servo': Servo,
     'Relay': Relay,
     'RgbLed': Led,

@@ -18,6 +18,9 @@ class Led(Module):
             self._value = new_color
             self._push_value('color', new_color)
 
+    def _update(self, new_state):
+        Module._update(self, new_state)
+
     def control(self):
         def change_color(red, green, blue):
             self.color = (red, green, blue)

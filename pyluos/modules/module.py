@@ -80,6 +80,12 @@ class Module(object):
             self._push_value('led', True)
             self._led = True
 
+    def rename(self, name):
+        self._push_value('rename', name)
+        self.alias = name
+        print("You should restart your network to avoid name propagation fault.")
+
+
     # Events cb handling
 
     def add_callback(self, event, cb):

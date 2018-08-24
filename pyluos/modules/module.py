@@ -2,7 +2,6 @@ from collections import defaultdict, namedtuple
 
 import logging
 
-
 try:
     from ipywidgets import interact
 except ImportError:
@@ -30,6 +29,7 @@ class Module(object):
         self._led = True
         self._L0_temperature = None
         self._L0_voltage = None
+        self._firmware_revision = "Unknown"
 
     def __repr__(self):
         return ('<{self.type} '
@@ -48,6 +48,8 @@ class Module(object):
             self._L0_temperature = new_state['L0_temperature']
         if 'L0_voltage' in new_state:
             self._L0_voltage = new_state['L0_voltage']
+        if 'revision' in new_state:
+            self._firmware_revision = new_state['revision']
 
     def _push_value(self, key, new_val):
         self._delegate.update_cmd(self.alias, key, new_val)
@@ -63,6 +65,11 @@ class Module(object):
         return self._L0_voltage
 
     @property
+    def firmware_revision(self):
+        self._push_value('revision', "")
+        return self._firmware_revision
+
+    @property
     def led(self):
         return self._led
 
@@ -71,6 +78,7 @@ class Module(object):
         if state != self._led:
             self._push_value('led', state)
             self._led = state
+
 
     def led_toggle(self):
         if self._led is True:

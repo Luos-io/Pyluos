@@ -2,9 +2,9 @@ from .module import Module, interact
 from .gpio import AnalogInputPin, DigitalInputPin, DigitalOutputPin, Pwm
 
 
-class L0GPIO(Module):
+class GPIO(Module):
     def __init__(self, id, alias, robot):
-        Module.__init__(self, 'L0GPIO', id, alias, robot)
+        Module.__init__(self, 'GPIO', id, alias, robot)
 
         self.analog_1 = AnalogInputPin('p1')
 

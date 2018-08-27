@@ -1,6 +1,7 @@
 from collections import defaultdict, namedtuple
 
 import logging
+import time
 
 try:
     from ipywidgets import interact
@@ -57,16 +58,19 @@ class Module(object):
     @property
     def L0_temperature(self):
         self._push_value('L0_temperature', "")
+        time.sleep(0.1)
         return self._L0_temperature
 
     @property
     def L0_voltage(self):
         self._push_value('L0_voltage', "")
+        time.sleep(0.1)
         return self._L0_voltage
 
     @property
     def firmware_revision(self):
         self._push_value('revision', "")
+        time.sleep(0.1)
         return self._firmware_revision
 
     @property

@@ -46,5 +46,5 @@ name2mod = {
     'Relay': Relay,
     'RgbLed': Led,
     'eddy': Eddy,
-    'handy': Handy
+    'Handy': Handy
 }

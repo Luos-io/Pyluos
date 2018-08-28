@@ -46,7 +46,7 @@ class Serial(IOHandler):
     def is_host_compatible(cls, host):
         return host in cls.available_hosts() or host in white_list
 
-    def __init__(self, host, baudrate=57600):
+    def __init__(self, host, baudrate=1000000):
         self._serial = _serial.Serial(host, baudrate)
         self._serial.flush()
 

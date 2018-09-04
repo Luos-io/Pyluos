@@ -10,7 +10,6 @@ from .potentiometer import Potentiometer
 from .servo import Servo
 from .relay import Relay
 from .led import Led
-from .eddy import Eddy
 from .handy import Handy
 
 
@@ -28,7 +27,6 @@ __all__ = [
     'Relay',
     'Led',
     'DCMotor',
-    'Eddy',
     'Handy',
 ]
 
@@ -45,6 +43,5 @@ name2mod = {
     'Servo': Servo,
     'Relay': Relay,
     'RgbLed': Led,
-    'eddy': Eddy,
     'Handy': Handy
 }

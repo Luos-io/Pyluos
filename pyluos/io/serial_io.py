@@ -31,7 +31,7 @@ class Serial(IOHandler):
         if platform.system() in ('Linux', 'Darwin'):
             devices = [
                 d for d in devices
-                if d.manufacturer == 'Pollen-Robotics'
+                if d.manufacturer == 'Luos-Robotics'
             ]
 
         # TODO: si on veut pouvoir trouver le type de robot (Ergo, ED, Handy, etc)

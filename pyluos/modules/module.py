@@ -93,6 +93,7 @@ class Module(object):
             self._led = True
 
     def rename(self, name):
+        # check if the string start with a number before sending
         self._push_value('rename', name)
         self.alias = name
         print("You should restart your network to avoid name propagation fault.")

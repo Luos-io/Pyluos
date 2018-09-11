@@ -8,6 +8,7 @@ from .potentiometer import Potentiometer
 from .servo import Servo
 from .led import Led
 from .handy import Handy
+from .imu import Imu
 
 
 __all__ = [

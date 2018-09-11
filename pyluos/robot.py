@@ -9,7 +9,7 @@ import logging.config
 from datetime import datetime
 from collections import defaultdict
 
-from .io import discover_hosts, io_from_host
+from .io import discover_hosts, io_from_host, Ws
 from .modules import name2mod
 
 
@@ -114,6 +114,10 @@ class Robot(object):
     def _setup(self):
         self.logger.info('Sending detection signal.')
         self._send({'detection': {}})
+        if isinstance(self._io, Ws):
+            import time
+            time.sleep(0.1)
+            self._send({'detection': {}})
 
         self.logger.info('Waiting for first state...')
         #while not self._io.is_ready():

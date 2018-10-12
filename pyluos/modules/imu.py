@@ -1,6 +1,7 @@
 from .module import Module, interact
 import collections
 from copy import copy
+import time
 
 compare = lambda x, y: collections.Counter(x) == collections.Counter(y)
 

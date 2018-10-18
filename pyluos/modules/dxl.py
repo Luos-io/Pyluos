@@ -55,7 +55,7 @@ class DynamixelMotor(Module):
 
     @wheel_mode.setter
     def wheel_mode(self, wheel_mode):
-        if compliant != self._compliant:
+        if wheel_mode != self._wheel_mode:
             self._push_value('wheel_mode', wheel_mode)
             self._wheel_mode = wheel_mode
 

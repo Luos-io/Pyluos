@@ -24,10 +24,9 @@ class DynamixelMotor(Module):
 
     @target_position.setter
     def target_position(self, target_position):
-        if target_position != self._target_position:
+        if target_position != self._target_position and self._compliant == False:
             self._push_value('target_position', target_position)
             self._target_position = target_position
-            self._compliant = True
 
     @property
     def moving_speed(self):

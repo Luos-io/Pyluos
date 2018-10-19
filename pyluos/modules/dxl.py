@@ -44,9 +44,8 @@ class DynamixelMotor(Module):
 
     @compliant.setter
     def compliant(self, compliant):
-        if compliant != self._compliant:
-            self._push_value('compliant', compliant)
-            self._compliant = compliant
+        self._push_value('compliant', compliant)
+        self._compliant = compliant
 
     @property
     def wheel_mode(self):

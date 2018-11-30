@@ -9,6 +9,7 @@ from .servo import Servo
 from .led import Led
 from .handy import Handy
 from .imu import Imu
+from .power_switch import PowerSwitch
 
 
 __all__ = [
@@ -24,6 +25,7 @@ __all__ = [
     'DCMotor',
     'Handy',
     'Imu' ,
+    'PowerSwitch',
 ]
 
 name2mod = {
@@ -37,5 +39,6 @@ name2mod = {
     'Servo': Servo,
     'RgbLed': Led,
     'Handy': Handy,
-    'Imu': Imu
+    'Imu': Imu,
+    'PowerSwitch' : PowerSwitch,
 }

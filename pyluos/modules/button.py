@@ -14,12 +14,12 @@ class Button(Module):
 
     def _update(self, new_state):
         Module._update(self, new_state)
-        new_state = 'ON' if new_state['io_state'] else 'OFF'
+        if 'io_state' in new_state:
+            new_state = 'ON' if new_state['io_state'] else 'OFF'
+            if new_state != self._value:
+                self._pub_event('changed', self._value, new_state)
 
-        if new_state != self._value:
-            self._pub_event('changed', self._value, new_state)
+                evt = 'pressed' if new_state == 'ON' else 'released'
+                self._pub_event(evt, self._value, new_state)
 
-            evt = 'pressed' if new_state == 'ON' else 'released'
-            self._pub_event(evt, self._value, new_state)
-
-            self._value = new_state
+                self._value = new_state

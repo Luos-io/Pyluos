@@ -15,8 +15,8 @@ class Potentiometer(Module):
 
     def _update(self, new_state):
         Module._update(self, new_state)
-        new_pos = new_state['position']
-
-        if new_pos != self._value:
-            self._value = new_pos
-            self._pub_event('moved', self._value, self.position)
+        if 'position' in new_state:
+            new_pos = new_state['position']
+            if new_pos != self._value:
+                self._value = new_pos
+                self._pub_event('moved', self._value, self.position)

@@ -16,13 +16,13 @@ class Distance(Module):
 
     def _update(self, new_state):
         Module._update(self, new_state)
-        new_dist = new_state['distance']
+        if 'distance' in new_state:
+            new_dist = new_state['distance']
+            if new_dist != self._value:
+                self._pub_event('changed', self._value, new_dist)
 
-        if new_dist != self._value:
-            self._pub_event('changed', self._value, new_dist)
+                if abs(new_dist - self._value) > self.threshold:
+                    self._pub_event('filter_changed',
+                                    self._value, new_dist)
 
-            if abs(new_dist - self._value) > self.threshold:
-                self._pub_event('filter_changed',
-                                self._value, new_dist)
-
-            self._value = new_dist
+                self._value = new_dist

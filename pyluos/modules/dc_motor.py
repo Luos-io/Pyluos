@@ -27,4 +27,3 @@ class DCMotor(Module):
             self.power_ratio = power_ratio
 
         return interact(move, power_ratio=(-100.0, 100.0, 1.0))
-

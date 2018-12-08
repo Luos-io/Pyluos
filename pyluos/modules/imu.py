@@ -36,7 +36,7 @@ class Imu(Module):
         self._heading = 0
 
     def _convert_config(self):
-        return int(''.join(['1' if c else '0' for c in self._config]), 2) # Tableaux lu a l'envert
+        return int(''.join(['1' if c else '0' for c in self._config]), 2) # Table read reversly
 
 
     def bit(self, i, enable):

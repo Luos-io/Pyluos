@@ -16,8 +16,8 @@ class Distance(Module):
 
     def _update(self, new_state):
         Module._update(self, new_state)
-        if 'distance' in new_state:
-            new_dist = new_state['distance']
+        if 'trans_position' in new_state:
+            new_dist = new_state['trans_position']
             if new_dist != self._value:
                 self._pub_event('changed', self._value, new_dist)
 

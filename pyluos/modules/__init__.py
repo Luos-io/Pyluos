@@ -11,6 +11,7 @@ from .handy import Handy
 from .imu import Imu
 from .power_switch import PowerSwitch
 from .light_sensor import LightSensor
+from .controlled_motor import ControlledMotor
 
 
 __all__ = [
@@ -27,7 +28,8 @@ __all__ = [
     'Handy',
     'Imu' ,
     'PowerSwitch',
-    'LightSensor'
+    'LightSensor',
+    'ControlledMotor'
 ]
 
 name2mod = {
@@ -43,5 +45,6 @@ name2mod = {
     'Handy': Handy,
     'Imu': Imu,
     'PowerSwitch' : PowerSwitch,
-    'LightSensor' : LightSensor
+    'LightSensor' : LightSensor,
+    'ControlledMotor' : ControlledMotor
 }

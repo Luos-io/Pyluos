@@ -62,8 +62,8 @@ class Handy(Module):
             self.thumb = thumb
 
         return interact(change_pos,
-                        index=lambda: self.m1.target_position,
-                        middle=lambda: self.m2.target_position,
-                        ring=lambda: self.m3.target_position,
-                        pinky=lambda: self.m4.target_position,
-                        thumb=lambda: self.m5.target_position)
+                        index=(0.0, 100.0, 1.0),
+                        middle=(0.0, 100.0, 1.0),
+                        ring=(0.0, 100.0, 1.0),
+                        pinky=(0.0, 100.0, 1.0),
+                        thumb=(0.0, 100.0, 1.0))

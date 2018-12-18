@@ -9,6 +9,7 @@ from .servo import Servo
 from .led import Led
 from .handy import Handy
 from .imu import Imu
+from .stepper import Stepper
 from .power_switch import PowerSwitch
 from .light_sensor import LightSensor
 from .controlled_motor import ControlledMotor
@@ -27,6 +28,7 @@ __all__ = [
     'DCMotor',
     'Handy',
     'Imu' ,
+    'Stepper',
     'PowerSwitch',
     'LightSensor',
     'ControlledMotor'
@@ -44,6 +46,7 @@ name2mod = {
     'RgbLed': Led,
     'Handy': Handy,
     'Imu': Imu,
+    'Stepper' : Stepper,
     'PowerSwitch' : PowerSwitch,
     'LightSensor' : LightSensor,
     'ControlledMotor' : ControlledMotor

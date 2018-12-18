@@ -31,6 +31,7 @@ class Module(object):
         self._L0_temperature = None
         self._L0_voltage = None
         self._firmware_revision = "Unknown"
+        self._uuid = [0, 0, 0]
 
     def __repr__(self):
         return ('<{self.type} '
@@ -51,6 +52,8 @@ class Module(object):
             self._L0_voltage = new_state['L0_voltage']
         if 'revision' in new_state:
             self._firmware_revision = new_state['revision']
+        if 'uuid' in new_state:
+            self._uuid = new_state['uuid']
 
     def _push_value(self, key, new_val):
         self._delegate.update_cmd(self.alias, key, new_val)
@@ -72,6 +75,12 @@ class Module(object):
         self._push_value('revision', "")
         time.sleep(0.3)
         return self._firmware_revision
+
+    @property
+    def uuid(self):
+        self._push_value('uuid', "")
+        time.sleep(0.3)
+        return self._uuid
 
     @property
     def led(self):

@@ -52,7 +52,7 @@ class Imu(Module):
         bak = copy(self._config)
         self._config[Imu._QUAT] = True if enable != 0  else False
         if bak != self._config:
-            self._push_value('imu_enable', self._convert_config())
+            self._push_value('parameters', self._convert_config())
             time.sleep(0.1)
 
     @property
@@ -65,7 +65,7 @@ class Imu(Module):
         bak = copy(self._config)
         self._config[Imu._ACCELL] = True if enable != 0  else False
         if bak != self._config:
-            self._push_value('imu_enable', self._convert_config())
+            self._push_value('parameters', self._convert_config())
             time.sleep(0.1)
 
     @property
@@ -78,7 +78,7 @@ class Imu(Module):
         bak = copy(self._config)
         self._config[Imu._GYRO] = True if enable != 0  else False
         if bak != self._config:
-            self._push_value('imu_enable', self._convert_config())
+            self._push_value('parameters', self._convert_config())
             time.sleep(0.1)
 
     @property
@@ -91,7 +91,7 @@ class Imu(Module):
         bak = copy(self._config)
         self._config[Imu._COMPASS] = True if enable != 0  else False
         if bak != self._config:
-            self._push_value('imu_enable', self._convert_config())
+            self._push_value('parameters', self._convert_config())
             time.sleep(0.1)
 
     @property
@@ -104,7 +104,7 @@ class Imu(Module):
         bak = copy(self._config)
         self._config[Imu._EULER] = True if enable != 0  else False
         if bak != self._config:
-            self._push_value('imu_enable', self._convert_config())
+            self._push_value('parameters', self._convert_config())
             time.sleep(0.1)
 
     @property
@@ -117,7 +117,7 @@ class Imu(Module):
         bak = copy(self._config)
         self._config[Imu._ROT_MAT] = True if enable != 0  else False
         if bak != self._config:
-            self._push_value('imu_enable', self._convert_config())
+            self._push_value('parameters', self._convert_config())
             time.sleep(0.1)
 
     @property
@@ -130,7 +130,7 @@ class Imu(Module):
         bak = copy(self._config)
         self._config[Imu._PEDO] = True if enable != 0  else False
         if bak != self._config:
-            self._push_value('imu_enable', self._convert_config())
+            self._push_value('parameters', self._convert_config())
             time.sleep(0.1)
 
     @property
@@ -152,7 +152,7 @@ class Imu(Module):
         bak = copy(self._config)
         self._config[Imu._LINEAR_ACCEL] = True if enable != 0  else False
         if bak != self._config:
-            self._push_value('imu_enable', self._convert_config())
+            self._push_value('parameters', self._convert_config())
             time.sleep(0.1)
 
     @property
@@ -165,7 +165,7 @@ class Imu(Module):
         bak = copy(self._config)
         self._config[Imu._GRAVITY_VECTOR] = True if enable != 0  else False
         if bak != self._config:
-            self._push_value('imu_enable', self._convert_config())
+            self._push_value('parameters', self._convert_config())
             time.sleep(0.1)
 
     @property
@@ -180,7 +180,7 @@ class Imu(Module):
         if bak != self._config:
             print (bak)
             print (self._config)
-            self._push_value('imu_enable', self._convert_config())
+            self._push_value('parameters', self._convert_config())
             time.sleep(0.1)
 
 
@@ -221,7 +221,7 @@ class Imu(Module):
             self.linear_acceleration = linear_accel
             self.gravity_vector = gravity_vector
             self.heading = heading
-            self._push_value('imu_enable', self._convert_config())
+            self._push_value('parameters', self._convert_config())
 
         return interact(change_config,
                         accel=self._config[Imu._ACCELL],

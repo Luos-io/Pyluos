@@ -5,12 +5,17 @@ import time
 
 try:
     from ipywidgets import interact
+    from ipywidgets import widgets
 except ImportError:
     def interact(*args, **kwargs):
         msg = 'You first have to install ipywidgets to use the control widgets.'
         logging.getLogger(__name__).warning(msg)
         return None
 
+    def widgets(*args, **kwargs):
+        msg = 'You first have to install ipywidgets to use the control widgets.'
+        logging.getLogger(__name__).warning(msg)
+        return None
 
 Event = namedtuple('Event', ('name', 'old_value', 'new_value'))
 

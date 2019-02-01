@@ -13,6 +13,7 @@ from .stepper import Stepper
 from .power_switch import PowerSwitch
 from .light_sensor import LightSensor
 from .controlled_motor import ControlledMotor
+from .void import Void
 
 
 __all__ = [
@@ -31,7 +32,8 @@ __all__ = [
     'Stepper',
     'PowerSwitch',
     'LightSensor',
-    'ControlledMotor'
+    'ControlledMotor',
+    'Void'
 ]
 
 name2mod = {
@@ -49,5 +51,6 @@ name2mod = {
     'Stepper' : Stepper,
     'PowerSwitch' : PowerSwitch,
     'LightSensor' : LightSensor,
-    'ControlledMotor' : ControlledMotor
+    'ControlledMotor' : ControlledMotor,
+    'Void' : Void
 }

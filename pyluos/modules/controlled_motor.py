@@ -84,7 +84,7 @@ class ControlledMotor(Module):
 
     @property
     def speedPid(self):
-        return self._positionPid
+        return self._speedPid
 
     @speedPid.setter
     def speedPid(self, new_pid):

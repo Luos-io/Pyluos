@@ -32,7 +32,7 @@ class Module(object):
         self._delegate = robot
         self._value = None
         self._cb = defaultdict(list)
-        self._led = True
+        self._led = False
         self._L0_temperature = None
         self._L0_voltage = None
         self._firmware_revision = "Unknown"

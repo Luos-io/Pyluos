@@ -1,3 +1,4 @@
+from .gate import Gate
 from .generic_motor_controller import GenericMotorController
 from .distance import Distance
 from .l0_gpio import GPIO
@@ -18,6 +19,7 @@ from .void import Void
 
 __all__ = [
     'name2mod',
+    'Gate',
     'GenericMotorController',
     'DynamixelMotor',
     'Distance',
@@ -37,6 +39,7 @@ __all__ = [
 ]
 
 name2mod = {
+    'Gate': Gate,
     'GenericMotor': GenericMotorController,
     'DynamixelMotor': DynamixelMotor,
     'DistanceSensor': Distance,

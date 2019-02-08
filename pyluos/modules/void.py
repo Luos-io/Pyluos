@@ -8,3 +8,6 @@ class Void(Module):
 
     def _update(self, new_state):
         Module._update(self, new_state)
+
+    def dxl_detect(self):
+        self._push_value('reinit', 0)

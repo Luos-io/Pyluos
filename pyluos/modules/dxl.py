@@ -16,8 +16,8 @@ class DynamixelMotor(Module):
     def _update(self, new_state):
         Module._update(self, new_state)
 
-        if 'position' in new_state:
-            self.position = new_state['position']
+        if 'rot_position' in new_state:
+            self.position = new_state['rot_position']
         if 'temperature' in new_state:
             self.temperature = new_state['temperature']
 

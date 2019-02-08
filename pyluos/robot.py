@@ -119,20 +119,22 @@ class Robot(object):
             time.sleep(0.1)
             self._send({'detection': {}})
 
-        self.logger.info('Waiting for first state...')
-        #while not self._io.is_ready():
-        #self._send({'detection': {}})
+        self.logger.info('Waiting for route table...')
 
         state = self._poll_once()
+        while ('route_table' not in state):
+            state = self._poll_once()
+
+        print (state)
 
         try:
-            gate = next(g for g in state['modules']
+            gate = next(g for g in state['route_table']
                         if 'type' in g and g['type'] == 'gate')
             self._name = gate['alias']
         except StopIteration:
             self._name = 'gate_unknown'
 
-        modules = [mod for mod in state['modules']
+        modules = [mod for mod in state['route_table']
                    if 'type' in mod and mod['type'] in name2mod.keys()]
 
         self._cmd = defaultdict(lambda: defaultdict(lambda: None))
@@ -171,12 +173,9 @@ class Robot(object):
         if 'modules' not in new_state:
             return
 
-        mod_need_update = [mod for mod in new_state['modules']
-                           if hasattr(self, mod['alias']) and
-                           set(mod.keys()) != {'type', 'id', 'alias'}]
-
-        for mod in mod_need_update:
-            getattr(self, mod['alias'])._update(mod)
+        for alias, mod in new_state['modules'].items():
+            if hasattr(self, alias):
+                getattr(self, alias)._update(mod)
 
         self._last_update = time.time()
 

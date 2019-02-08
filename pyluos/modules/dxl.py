@@ -5,6 +5,7 @@ class DynamixelMotor(Module):
         Module.__init__(self, 'DynamixelMotor', id, alias, robot)
         # Read
         self.position = None
+        self.temperature = None
 
         # Write
         self._target_position = None
@@ -17,6 +18,8 @@ class DynamixelMotor(Module):
 
         if 'position' in new_state:
             self.position = new_state['position']
+        if 'temperature' in new_state:
+            self.temperature = new_state['temperature']
 
     @property
     def target_position(self):

@@ -60,6 +60,9 @@ class DynamixelMotor(Module):
             self._push_value('wheel_mode', wheel_mode)
             self._wheel_mode = wheel_mode
 
+    def register(self, register, val):
+        new_val = [register, val]
+        self._push_value('register', new_val)
     # notebook things
     def control(self):
         def change_position(target_position):

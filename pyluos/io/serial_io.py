@@ -4,6 +4,12 @@ import json
 import time
 import serial as _serial
 import platform
+import sys
+if sys.version_info >= (3, 0):
+    import queue
+else:
+    import Queue as queue
+
 
 from threading import Event, Thread
 
@@ -33,8 +39,7 @@ class Serial(IOHandler):
         self._serial = _serial.Serial(host, baudrate)
         self._serial.flush()
 
-        self._msg = None
-        self._msg_ready = Event()
+        self._msg = queue.Queue(100)
         self._running = True
 
         self._poll_loop = Thread(target=self._poll)
@@ -52,9 +57,7 @@ class Serial(IOHandler):
             return False
 
     def recv(self):
-        self._msg_ready.wait()
-        self._msg_ready.clear()
-        return self._msg
+        return self._msg.get()
 
     def write(self, data):
         self._serial.write(data + '\r'.encode())
@@ -66,14 +69,12 @@ class Serial(IOHandler):
         self._serial.close()
 
     def _poll(self):
-        def extract_last_line(s):
-            j = s.rfind(b'\n')
-
+        def extract_line(s):
+            j = s.find(b'\n')
             if j == -1:
                 return b'', s
 
-            i = s[:j].rfind(b'\n') + 1
-            return s[i:j], s[j + 1:]
+            return s[:j], s[j + 1:]
 
         period = 1 / self.poll_frequency
         buff = b''
@@ -86,7 +87,10 @@ class Serial(IOHandler):
                 continue
 
             s = self._serial.read(to_read)
-            line, buff = extract_last_line(buff + s)
-            if len(line):
-                self._msg = line
-                self._msg_ready.set()
+            buff = buff + s
+
+            while (True):
+                line, buff = extract_line(buff)
+                if not len(line):
+                    break
+                self._msg.put(line)

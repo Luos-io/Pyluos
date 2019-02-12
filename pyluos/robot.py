@@ -125,8 +125,6 @@ class Robot(object):
         while ('route_table' not in state):
             state = self._poll_once()
 
-        print (state)
-
         try:
             gate = next(g for g in state['route_table']
                         if 'type' in g and g['type'] == 'gate')

@@ -108,8 +108,8 @@ class ControlledMotor(Module):
 
     @encoder_res.setter
     def encoder_res(self, s):
-        self._resolution = s
         if s != self._resolution:
+            self._resolution = s
             self._push_value("resolution", s)
 
     @property
@@ -118,8 +118,8 @@ class ControlledMotor(Module):
 
     @reduction.setter
     def reduction(self, s):
-        self._reduction = s
         if s != self._reduction:
+            self._reduction = s
             self._push_value("reduction", s)
 
     @property

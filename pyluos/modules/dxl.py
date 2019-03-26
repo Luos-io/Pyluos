@@ -60,6 +60,9 @@ class DynamixelMotor(Module):
             self._push_value('wheel_mode', wheel_mode)
             self._wheel_mode = wheel_mode
 
+    def set_id(self, id):
+        self._push_value('set_id', id)
+
     def detect(self):
         self._push_value('reinit', 0)
 

@@ -128,8 +128,8 @@ class ControlledMotor(Module):
 
     @wheel_size.setter
     def wheel_size(self, s):
-        self._dimension = s
         if s != self._dimension:
+            self._dimension = s
             self._push_value("dimension", s)
 
 #************************** target modes *****************************

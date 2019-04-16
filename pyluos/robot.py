@@ -200,12 +200,6 @@ class Robot(object):
         if not hasattr(self, '_s'):
             return
 
-        for mod in state['modules']:
-            if ((mod['type'] == 'servo') and
-               (hasattr(self, mod['alias']))):
-                servo = getattr(self, mod['alias'])
-                mod['position'] = servo.target_position
-
         msg = '{} {}'.format(self.name, json.dumps(state))
         self._s.send_string(msg)
 

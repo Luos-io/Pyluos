@@ -1,5 +1,4 @@
 from .module import Module, interact
-import ipywidgets as widgets
 from copy import copy
 import time
 
@@ -53,8 +52,7 @@ class Stepper(Module):
     @stepPerTurn.setter
     def stepPerTurn(self, s):
         self._resolution = s
-        if s != self._resolution:
-            self._push_value("resolution", s)
+        self._push_value("resolution", s)
 
     @property
     def wheel_size(self):
@@ -63,8 +61,7 @@ class Stepper(Module):
     @wheel_size.setter
     def wheel_size(self, s):
         self._dimension = s
-        if s != self._dimension:
-            self._push_value("dimension", s)
+        self._push_value("dimension", s)
 
 #************************** target modes *****************************
 
@@ -78,9 +75,8 @@ class Stepper(Module):
         bak = copy(self._config)
         self._config[Stepper._MODE_COMPLIANT] = True if enable != 0  else False
         self._compliant = enable
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     # rotation speed
     @property
@@ -89,36 +85,30 @@ class Stepper(Module):
 
     @target_rot_speed.setter
     def target_rot_speed(self, s):
-        if s != self._target_rot_speed:
-            self._target_rot_speed = s
-            self._push_value("target_rot_speed", s)
-            return
+        self._target_rot_speed = s
+        self._push_value("target_rot_speed", s)
 
     # rotation position
     @property
     def target_rot_position(self):
         if (self._config[Stepper._MODE_ROT_POSITION] != True):
             print("rotation position mode is not enabled in the module please use 'robot.module.rot_position_mode(True)' to enable it")
-            return
         return self._target_rot_position
 
     @target_rot_position.setter
     def target_rot_position(self, s):
         if (self._config[Stepper._MODE_ROT_POSITION] != True):
             print("rotation position mode is not enabled in the module please use 'robot.module.rot_position_mode(True)' to enable it")
-            return
-        if s != self._target_rot_position:
-            self._target_rot_position = s
-            self._push_value("target_rot_position", s)
+        self._target_rot_position = s
+        self._push_value("target_rot_position", s)
 
     def rot_position_mode(self, enable):
         bak = copy(self._config)
         self._config[Stepper._MODE_ROT_POSITION] = True if enable != 0  else False
         if (enable == True) :
             self._config[Stepper._MODE_TRANS_POSITION] = False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     # translation speed
     @property
@@ -129,39 +119,32 @@ class Stepper(Module):
     def target_trans_speed(self, s):
         if (self._dimension == 0) :
             print("you have to setup a wheel_size before using translation command")
-            return
-        if s != self._target_trans_speed:
-            self._target_trans_speed = s
-            self._push_value("target_trans_speed", s)
+        self._target_trans_speed = s
+        self._push_value("target_trans_speed", s)
 
     # translation position
     @property
     def target_trans_position(self):
         if (self._config[Stepper._MODE_TRANS_POSITION] != True):
             print("translation speed mode is not enabled in the module please use 'robot.module.trans_speed_mode(True)' to enable it")
-            return
         return self._target_trans_position
 
     @target_trans_position.setter
     def target_trans_position(self, s):
         if (self._config[Stepper._MODE_TRANS_POSITION] != True):
             print("translation speed mode is not enabled in the module please use 'robot.module.trans_speed_mode(True)' to enable it")
-            return
-        if s != self._target_trans_position:
-            self._target_trans_position = s
-            self._push_value("target_trans_position", s)
+        self._target_trans_position = s
+        self._push_value("target_trans_position", s)
 
     def trans_position_mode(self, enable):
         if (self._dimension == 0) :
             print("you have to setup a wheel_size before using translation command")
-            return
         bak = copy(self._config)
         self._config[Stepper._MODE_TRANS_POSITION] = True if enable != 0  else False
         if (enable == True) :
             self._config[Stepper._MODE_ROT_POSITION] = False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
 #************************** controls and updates *****************************
 
@@ -187,13 +170,9 @@ class Stepper(Module):
 
         w = interact(change_config,
                         compliant_mode = self._config[Stepper._MODE_COMPLIANT],
-                        rot_speed = widgets.FloatSlider(value = self._target_rot_speed, min = -720.0, max = 720.0, step = 1.0),
+                        rot_speed = (-700, 700, 1),
                         rot_position_mode = self._config[Stepper._MODE_ROT_POSITION],
                         rot_position = (-360.0, 360.0, 1.0),
-                        trans_speed = widgets.FloatSlider(value = self._target_trans_speed, min = -1000.0, max = 1000.0, step = 1.0, disabled=(self._dimension != 0)),
+                        trans_speed = (-1000, 1000, 1),
                         trans_position_mode = self._config[Stepper._MODE_TRANS_POSITION],
-                        trans_position = widgets.FloatSlider(value = self._target_trans_position,
-                                                             min = -1000.0,
-                                                             max = 1000.0,
-                                                             step = 1.0,
-                                                             disabled=((self._dimension != 0) and self._config[Stepper._MODE_TRANS_POSITION])))
+                        trans_position = (-1000, 1000, 1))

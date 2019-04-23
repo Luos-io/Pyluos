@@ -19,6 +19,7 @@ class Load(Module):
     def tare(self):
         # measure and offset
         self._push_value("reinit", None)
+        time.sleep(1.0)
 
     @property
     def offset(self):

@@ -13,7 +13,7 @@ setup(name='pyluos',
       install_requires=['future',
                         'websocket-client',
                         'pyserial>3',
-                        'tornado',
+                        'SimpleWebSocketServer',
                         'zeroconf',
                         ],
       extras_require={

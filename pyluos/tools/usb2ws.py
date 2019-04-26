@@ -1,47 +1,53 @@
-import json
-
 from threading import Thread
 
-from tornado.ioloop import IOLoop
-from tornado.web import Application
-from tornado.websocket import WebSocketHandler
+from SimpleWebSocketServer import WebSocket, SimpleWebSocketServer
 
 from pyluos.io.serial_io import Serial
 
 
-class SerialToWs(WebSocketHandler):
-    def open(self):
+class SerialToWs(WebSocket):
+    def handleConnected(self):
         print('Connection opened.')
         self.serial = Serial(self.serial_port)
-        Thread(target=self._check_msg).start()
 
-    def on_close(self):
+        self.t = Thread(target=self._check_msg)
+        self.t.daemon = True
+        self.t.start()
+
+    def handleClose(self):
         if self.verbose:
             print('Connection closed.')
         self.serial.close()
 
-    def on_message(self, message):
+    def handleMessage(self):
+        message = self.data
+
         if self.verbose:
             print('WS->Ser: {}'.format(message))
-        self.serial.write(message.encode())
+
+        try:
+            message = message.encode()
+            self.serial.write(message)
+
+        except UnicodeDecodeError:
+            print("bite")
+            pass
+
 
     def send(self, message):
         if self.verbose:
             print('Ser->WS: {}'.format(message))
-        self.ioloop.add_callback(lambda: self.write_message(message))
+        self.sendMessage(message)
 
     def _check_msg(self):
         while True:
             r = self.serial.recv()
             try:
-                json.loads(r)
-            except:
-                print('Dump {}'.format(r))
-                continue
-            self.send(r)
+                self.send(r)
+            except UnicodeDecodeError:
+                print('MERDE', r)
 
-    def check_origin(self, origin):
-        return True
+        print('LOOP OVER!')
 
 
 def main():
@@ -53,18 +59,11 @@ def main():
     parser.add_argument('--verbose', action='store_true', default=False)
     args = parser.parse_args()
 
-    loop = IOLoop()
-
     SerialToWs.serial_port = args.serial_port
     SerialToWs.verbose = args.verbose
-    SerialToWs.ioloop = loop
 
-    app = Application([
-        (r'/', SerialToWs)
-    ])
-
-    app.listen(args.ws_port)
-    loop.start()
+    io_server = SimpleWebSocketServer('', args.ws_port, SerialToWs)
+    io_server.serveforever()
 
 
 if __name__ == '__main__':

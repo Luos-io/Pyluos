@@ -89,8 +89,10 @@ class Serial(IOHandler):
             s = self._serial.read(to_read)
             buff = buff + s
 
-            while (True):
+            while self._running:
                 line, buff = extract_line(buff)
                 if not len(line):
                     break
+                if self._msg.full():
+                    self._msg.get()
                 self._msg.put(line)

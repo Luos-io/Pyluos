@@ -137,7 +137,7 @@ class ControlledMotor(Module):
     # compliant
     @property
     def compliant(self):
-        self._compliant
+        return self._config[ControlledMotor._MODE_COMPLIANT]
 
     @compliant.setter
     def compliant(self, enable):

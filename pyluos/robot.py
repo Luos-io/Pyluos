@@ -114,11 +114,6 @@ class Robot(object):
     def _setup(self):
         self.logger.info('Sending detection signal.')
         self._send({'detection': {}})
-        if isinstance(self._io, Ws):
-            import time
-            time.sleep(0.1)
-            self._send({'detection': {}})
-
         self.logger.info('Waiting for route table...')
 
         state = self._poll_once()

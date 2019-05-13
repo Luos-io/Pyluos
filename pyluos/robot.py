@@ -163,6 +163,11 @@ class Robot(object):
 
     # Update our model with the new state.
     def _update(self, new_state):
+        if 'dead_module' in new_state :
+            #we have lost a module put a flag on this module
+            alias = new_state['dead_module']
+            if hasattr(self, alias):
+                getattr(self, alias)._kill()
         if 'modules' not in new_state:
             return
 

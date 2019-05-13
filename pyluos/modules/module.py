@@ -37,6 +37,7 @@ class Module(object):
         self._L0_voltage = None
         self._firmware_revision = "Unknown"
         self._uuid = [0, 0, 0]
+        self._killed = False
 
     def __repr__(self):
         return ('<{self.type} '
@@ -60,8 +61,15 @@ class Module(object):
         if 'uuid' in new_state:
             self._uuid = new_state['uuid']
 
+    def _kill(self):
+        self._killed = True
+        print ("module", self.alias, "have been excluded from the network due to no responses.")
+
     def _push_value(self, key, new_val):
-        self._delegate.update_cmd(self.alias, key, new_val)
+        if (self._killed) :
+            print("module", self.alias,"is excluded.")
+        else :
+            self._delegate.update_cmd(self.alias, key, new_val)
 
     @property
     def L0_temperature(self):

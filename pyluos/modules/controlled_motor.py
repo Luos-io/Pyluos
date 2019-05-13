@@ -74,10 +74,10 @@ class ControlledMotor(Module):
             self.compliant = True
             self.rot_position_mode(True)
             self.rot_speed_mode(False)
-            time.sleep(0.1)
+            time.sleep(0.2)
             self._positionPid = new_pid
             self._push_value('pid', new_pid)
-            time.sleep(0.1)
+            time.sleep(0.2)
             self._config = bak
             self._push_value('parameters', self._convert_config())
             time.sleep(0.1)
@@ -93,10 +93,10 @@ class ControlledMotor(Module):
             self.compliant = True
             self.rot_position_mode(False)
             self.rot_speed_mode(True)
-            time.sleep(0.1)
+            time.sleep(0.2)
             self._speedPid = new_pid
             self._push_value('pid', new_pid)
-            time.sleep(0.1)
+            time.sleep(0.2)
             self._config = bak
             self._push_value('parameters', self._convert_config())
             time.sleep(0.1)

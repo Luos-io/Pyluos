@@ -69,7 +69,10 @@ class Module(object):
         if (self._killed) :
             print("module", self.alias,"is excluded.")
         else :
-            self._delegate.update_cmd(self.alias, key, new_val)
+            if isinstance(new_val, float) :
+                self._delegate.update_cmd(self.alias, key, float(str("%.3f" % new_val)))
+            else :
+                self._delegate.update_cmd(self.alias, key, new_val)
 
     @property
     def L0_temperature(self):

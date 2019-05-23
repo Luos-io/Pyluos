@@ -79,7 +79,7 @@ class ControlledMotor(Module):
         time.sleep(0.2)
         self._config = bak
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     @property
     def speedPid(self):
@@ -97,7 +97,7 @@ class ControlledMotor(Module):
         time.sleep(0.2)
         self._config = bak
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
 
     @property
@@ -139,7 +139,7 @@ class ControlledMotor(Module):
         self._config[ControlledMotor._MODE_COMPLIANT] = True if enable != 0  else False
         self._compliant = enable
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     # power
     @property
@@ -166,7 +166,7 @@ class ControlledMotor(Module):
             self._config[ControlledMotor._MODE_TRANS_SPEED] = False
             self._config[ControlledMotor._MODE_TRANS_POSITION] = False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     # rotation speed
     @property
@@ -190,7 +190,7 @@ class ControlledMotor(Module):
             self._config[ControlledMotor._MODE_TRANS_SPEED] = False
             self._config[ControlledMotor._MODE_POWER] = False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     # rotation position
     @property
@@ -214,7 +214,7 @@ class ControlledMotor(Module):
             self._config[ControlledMotor._MODE_TRANS_POSITION] = False
             self._config[ControlledMotor._MODE_POWER] = False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     # translation speed
     @property
@@ -238,7 +238,7 @@ class ControlledMotor(Module):
             self._config[ControlledMotor._MODE_ROT_SPEED] = False
             self._config[ControlledMotor._MODE_POWER] = False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     # translation position
     @property
@@ -262,7 +262,7 @@ class ControlledMotor(Module):
             self._config[ControlledMotor._MODE_ROT_POSITION] = False
             self._config[ControlledMotor._MODE_POWER] = False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 #************************** report modes *****************************
 
     # rotation position
@@ -277,7 +277,7 @@ class ControlledMotor(Module):
     def rot_position(self, enable):
         self._config[ControlledMotor._ROTATION_POSITION] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     # rotation speed
     @property
@@ -291,7 +291,7 @@ class ControlledMotor(Module):
     def rot_speed(self, enable):
         self._config[ControlledMotor._ROTATION_SPEED] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     # translation position
     @property
@@ -305,7 +305,7 @@ class ControlledMotor(Module):
     def trans_position(self, enable):
         self._config[ControlledMotor._TRANSLATION_POSITION] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     # translation speed
     @property
@@ -319,7 +319,7 @@ class ControlledMotor(Module):
     def trans_speed(self, enable):
         self._config[ControlledMotor._TRANSLATION_SPEED] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     # current
     @property
@@ -333,7 +333,7 @@ class ControlledMotor(Module):
     def current(self, enable):
         self._config[ControlledMotor._CURRENT] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
 #************************** controls and updates *****************************
 

@@ -81,25 +81,25 @@ class Module(object):
     @property
     def L0_temperature(self):
         self._push_value('L0_temperature', "")
-        time.sleep(0.3)
+        time.sleep(0.03)
         return self._L0_temperature
 
     @property
     def L0_voltage(self):
         self._push_value('L0_voltage', "")
-        time.sleep(0.3)
+        time.sleep(0.03)
         return self._L0_voltage
 
     @property
     def firmware_revision(self):
         self._push_value('revision', "")
-        time.sleep(0.3)
+        time.sleep(0.03)
         return self._firmware_revision
 
     @property
     def uuid(self):
         self._push_value('uuid', "")
-        time.sleep(0.3)
+        time.sleep(0.03)
         return self._uuid
 
     @property

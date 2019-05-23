@@ -75,7 +75,7 @@ class Stepper(Module):
         self._config[Stepper._MODE_COMPLIANT] = True if enable != 0  else False
         self._compliant = enable
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     # rotation speed
     @property
@@ -106,7 +106,7 @@ class Stepper(Module):
         if (enable == True) :
             self._config[Stepper._MODE_TRANS_POSITION] = False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     # translation speed
     @property
@@ -141,7 +141,7 @@ class Stepper(Module):
         if (enable == True) :
             self._config[Stepper._MODE_ROT_POSITION] = False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
 #************************** controls and updates *****************************
 

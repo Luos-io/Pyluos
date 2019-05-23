@@ -51,7 +51,7 @@ class Imu(Module):
     def quaternion(self, enable):
         self._config[Imu._QUAT] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     @property
     def acceleration(self):
@@ -62,7 +62,7 @@ class Imu(Module):
     def acceleration(self, enable):
         self._config[Imu._ACCELL] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     @property
     def gyro(self):
@@ -73,7 +73,7 @@ class Imu(Module):
     def gyro(self, enable):
         self._config[Imu._GYRO] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     @property
     def compass(self):
@@ -84,7 +84,7 @@ class Imu(Module):
     def compass(self, enable):
         self._config[Imu._COMPASS] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     @property
     def euler(self):
@@ -95,7 +95,7 @@ class Imu(Module):
     def euler(self, enable):
         self._config[Imu._EULER] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     @property
     def rotational_matrix(self):
@@ -106,7 +106,7 @@ class Imu(Module):
     def rotational_matrix(self, enable):
         self._config[Imu._ROT_MAT] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     @property
     def pedometer(self):
@@ -117,7 +117,7 @@ class Imu(Module):
     def pedometer(self, enable):
         self._config[Imu._PEDO] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     @property
     def walk_time(self):
@@ -137,7 +137,7 @@ class Imu(Module):
     def linear_acceleration(self, enable):
         self._config[Imu._LINEAR_ACCEL] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     @property
     def gravity_vector(self):
@@ -148,7 +148,7 @@ class Imu(Module):
     def gravity_vector(self, enable):
         self._config[Imu._GRAVITY_VECTOR] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     @property
     def heading(self):
@@ -159,7 +159,7 @@ class Imu(Module):
     def heading(self, enable):
         self._config[Imu._HEADING] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
-        time.sleep(0.1)
+        time.sleep(0.01)
 
 
     def _update(self, new_state):

@@ -14,10 +14,8 @@ class DCMotor(Module):
     @power_ratio.setter
     def power_ratio(self, s):
         s = min(max(s, -100.0), 100.0)
-
-        if s != self._value:
-            self._value = s
-            self._push_value("power_ratio",s)
+        self._value = s
+        self._push_value("power_ratio",s)
 
     def _update(self, new_state):
         Module._update(self, new_state)

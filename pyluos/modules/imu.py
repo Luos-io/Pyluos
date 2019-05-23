@@ -49,11 +49,9 @@ class Imu(Module):
 
     @quaternion.setter
     def quaternion(self, enable):
-        bak = copy(self._config)
         self._config[Imu._QUAT] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     @property
     def acceleration(self):
@@ -62,11 +60,9 @@ class Imu(Module):
 
     @acceleration.setter
     def acceleration(self, enable):
-        bak = copy(self._config)
         self._config[Imu._ACCELL] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     @property
     def gyro(self):
@@ -75,11 +71,9 @@ class Imu(Module):
 
     @gyro.setter
     def gyro(self, enable):
-        bak = copy(self._config)
         self._config[Imu._GYRO] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     @property
     def compass(self):
@@ -88,11 +82,9 @@ class Imu(Module):
 
     @compass.setter
     def compass(self, enable):
-        bak = copy(self._config)
         self._config[Imu._COMPASS] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     @property
     def euler(self):
@@ -101,11 +93,9 @@ class Imu(Module):
 
     @euler.setter
     def euler(self, enable):
-        bak = copy(self._config)
         self._config[Imu._EULER] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     @property
     def rotational_matrix(self):
@@ -114,11 +104,9 @@ class Imu(Module):
 
     @rotational_matrix.setter
     def rotational_matrix(self, enable):
-        bak = copy(self._config)
         self._config[Imu._ROT_MAT] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     @property
     def pedometer(self):
@@ -127,11 +115,9 @@ class Imu(Module):
 
     @pedometer.setter
     def pedometer(self, enable):
-        bak = copy(self._config)
         self._config[Imu._PEDO] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     @property
     def walk_time(self):
@@ -149,11 +135,9 @@ class Imu(Module):
 
     @linear_acceleration.setter
     def linear_acceleration(self, enable):
-        bak = copy(self._config)
         self._config[Imu._LINEAR_ACCEL] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     @property
     def gravity_vector(self):
@@ -162,11 +146,9 @@ class Imu(Module):
 
     @gravity_vector.setter
     def gravity_vector(self, enable):
-        bak = copy(self._config)
         self._config[Imu._GRAVITY_VECTOR] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     @property
     def heading(self):
@@ -175,13 +157,9 @@ class Imu(Module):
 
     @heading.setter
     def heading(self, enable):
-        bak = copy(self._config)
         self._config[Imu._HEADING] = True if enable != 0  else False
-        if bak != self._config:
-            print (bak)
-            print (self._config)
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
 
     def _update(self, new_state):

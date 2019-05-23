@@ -8,10 +8,8 @@ class Handy(Module):
 
     def power_ratio(self, s, name):
         s = min(max(s, 0.0), 100.0)
-
-        if s != self.fingers[name]:
-            self.fingers[name] = s
-            self._push_value(name,s)
+        self.fingers[name] = s
+        self._push_value(name,s)
 
     @property
     def index(self):

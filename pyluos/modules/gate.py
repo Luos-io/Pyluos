@@ -15,9 +15,8 @@ class Gate(Module):
 
     @delay_ms.setter
     def delay_ms(self, s):
-        if s != self._value:
-            self._value = s
-            self._push_value("delay",s)
+        self._value = s
+        self._push_value("delay",s)
 
     def control(self):
         def delay(delay):

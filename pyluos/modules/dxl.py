@@ -27,7 +27,7 @@ class DynamixelMotor(Module):
 
     @target_position.setter
     def target_position(self, target_position):
-        if target_position != self._target_position and self._compliant == False:
+        if self._compliant == False:
             self._push_value('target_rot_position', target_position)
             self._target_position = target_position
 
@@ -37,9 +37,8 @@ class DynamixelMotor(Module):
 
     @moving_speed.setter
     def moving_speed(self, moving_speed):
-        if moving_speed != self._moving_speed:
-            self._push_value('target_rot_speed', moving_speed)
-            self._moving_speed = moving_speed
+        self._push_value('target_rot_speed', moving_speed)
+        self._moving_speed = moving_speed
 
     @property
     def compliant(self):
@@ -56,9 +55,8 @@ class DynamixelMotor(Module):
 
     @wheel_mode.setter
     def wheel_mode(self, wheel_mode):
-        if wheel_mode != self._wheel_mode:
-            self._push_value('wheel_mode', wheel_mode)
-            self._wheel_mode = wheel_mode
+        self._push_value('wheel_mode', wheel_mode)
+        self._wheel_mode = wheel_mode
 
     def set_id(self, id):
         self._push_value('set_id', id)

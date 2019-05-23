@@ -72,7 +72,6 @@ class Stepper(Module):
 
     @compliant.setter
     def compliant(self, enable):
-        bak = copy(self._config)
         self._config[Stepper._MODE_COMPLIANT] = True if enable != 0  else False
         self._compliant = enable
         self._push_value('parameters', self._convert_config())
@@ -103,7 +102,6 @@ class Stepper(Module):
         self._push_value("target_rot_position", s)
 
     def rot_position_mode(self, enable):
-        bak = copy(self._config)
         self._config[Stepper._MODE_ROT_POSITION] = True if enable != 0  else False
         if (enable == True) :
             self._config[Stepper._MODE_TRANS_POSITION] = False
@@ -139,7 +137,6 @@ class Stepper(Module):
     def trans_position_mode(self, enable):
         if (self._dimension == 0) :
             print("you have to setup a wheel_size before using translation command")
-        bak = copy(self._config)
         self._config[Stepper._MODE_TRANS_POSITION] = True if enable != 0  else False
         if (enable == True) :
             self._config[Stepper._MODE_ROT_POSITION] = False

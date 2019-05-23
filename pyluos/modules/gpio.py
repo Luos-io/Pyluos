@@ -62,9 +62,8 @@ class DigitalOutputPin(object):
             self.set_high()
 
     def _push(self, val):
-        if self._val != val:
-            self._val = val
-            self._delegate._push_value(self.alias, self._val)
+        self._val = val
+        self._delegate._push_value(self.alias, self._val)
 
     def __repr__(self):
         return '<"{}" Output state="{}">'.format(
@@ -89,6 +88,5 @@ class Pwm(object):
         self._push(min(max(duty, self._min), self._max))
 
     def _push(self, val):
-        if self._val != val:
-            self._val = val
-            self._delegate._push_value(self.alias, self._val)
+        self._val = val
+        self._delegate._push_value(self.alias, self._val)

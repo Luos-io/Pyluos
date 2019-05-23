@@ -69,18 +69,17 @@ class ControlledMotor(Module):
 
     @positionPid.setter
     def positionPid(self, new_pid):
-        if new_pid != self._positionPid:
-            bak = copy(self._config)
-            self.compliant = True
-            self.rot_position_mode(True)
-            self.rot_speed_mode(False)
-            time.sleep(0.2)
-            self._positionPid = new_pid
-            self._push_value('pid', new_pid)
-            time.sleep(0.2)
-            self._config = bak
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        bak = copy(self._config)
+        self.compliant = True
+        self.rot_position_mode(True)
+        self.rot_speed_mode(False)
+        time.sleep(0.2)
+        self._positionPid = new_pid
+        self._push_value('pid', new_pid)
+        time.sleep(0.2)
+        self._config = bak
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     @property
     def speedPid(self):
@@ -88,18 +87,17 @@ class ControlledMotor(Module):
 
     @speedPid.setter
     def speedPid(self, new_pid):
-        if new_pid != self._speedPid:
-            bak = copy(self._config)
-            self.compliant = True
-            self.rot_position_mode(False)
-            self.rot_speed_mode(True)
-            time.sleep(0.2)
-            self._speedPid = new_pid
-            self._push_value('pid', new_pid)
-            time.sleep(0.2)
-            self._config = bak
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        bak = copy(self._config)
+        self.compliant = True
+        self.rot_position_mode(False)
+        self.rot_speed_mode(True)
+        time.sleep(0.2)
+        self._speedPid = new_pid
+        self._push_value('pid', new_pid)
+        time.sleep(0.2)
+        self._config = bak
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
 
     @property
@@ -108,9 +106,8 @@ class ControlledMotor(Module):
 
     @encoder_res.setter
     def encoder_res(self, s):
-        if s != self._resolution:
-            self._resolution = s
-            self._push_value("resolution", s)
+        self._resolution = s
+        self._push_value("resolution", s)
 
     @property
     def reduction(self):
@@ -118,9 +115,8 @@ class ControlledMotor(Module):
 
     @reduction.setter
     def reduction(self, s):
-        if s != self._reduction:
-            self._reduction = s
-            self._push_value("reduction", s)
+        self._reduction = s
+        self._push_value("reduction", s)
 
     @property
     def wheel_size(self):
@@ -128,9 +124,8 @@ class ControlledMotor(Module):
 
     @wheel_size.setter
     def wheel_size(self, s):
-        if s != self._dimension:
-            self._dimension = s
-            self._push_value("dimension", s)
+        self._dimension = s
+        self._push_value("dimension", s)
 
 #************************** target modes *****************************
 
@@ -141,12 +136,10 @@ class ControlledMotor(Module):
 
     @compliant.setter
     def compliant(self, enable):
-        bak = copy(self._config)
         self._config[ControlledMotor._MODE_COMPLIANT] = True if enable != 0  else False
         self._compliant = enable
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     # power
     @property
@@ -166,16 +159,14 @@ class ControlledMotor(Module):
         self._push_value("power_ratio",s)
 
     def power_mode(self, enable):
-        bak = copy(self._config)
         self._config[ControlledMotor._MODE_POWER] = True if enable != 0  else False
         if (enable == True) :
             self._config[ControlledMotor._MODE_ROT_SPEED] = False
             self._config[ControlledMotor._MODE_ROT_POSITION] = False
             self._config[ControlledMotor._MODE_TRANS_SPEED] = False
             self._config[ControlledMotor._MODE_TRANS_POSITION] = False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     # rotation speed
     @property
@@ -194,14 +185,12 @@ class ControlledMotor(Module):
         self._push_value("target_rot_speed", s)
 
     def rot_speed_mode(self, enable):
-        bak = copy(self._config)
         self._config[ControlledMotor._MODE_ROT_SPEED] = True if enable != 0  else False
         if (enable == True) :
             self._config[ControlledMotor._MODE_TRANS_SPEED] = False
             self._config[ControlledMotor._MODE_POWER] = False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     # rotation position
     @property
@@ -220,14 +209,12 @@ class ControlledMotor(Module):
         self._push_value("target_rot_position", s)
 
     def rot_position_mode(self, enable):
-        bak = copy(self._config)
         self._config[ControlledMotor._MODE_ROT_POSITION] = True if enable != 0  else False
         if (enable == True) :
             self._config[ControlledMotor._MODE_TRANS_POSITION] = False
             self._config[ControlledMotor._MODE_POWER] = False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     # translation speed
     @property
@@ -246,14 +233,12 @@ class ControlledMotor(Module):
         self._push_value("target_trans_speed", s)
 
     def trans_speed_mode(self, enable):
-        bak = copy(self._config)
         self._config[ControlledMotor._MODE_TRANS_SPEED] = True if enable != 0  else False
         if (enable == True) :
             self._config[ControlledMotor._MODE_ROT_SPEED] = False
             self._config[ControlledMotor._MODE_POWER] = False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     # translation position
     @property
@@ -272,14 +257,12 @@ class ControlledMotor(Module):
         self._push_value("target_trans_position", s)
 
     def trans_position_mode(self, enable):
-        bak = copy(self._config)
         self._config[ControlledMotor._MODE_TRANS_POSITION] = True if enable != 0  else False
         if (enable == True) :
             self._config[ControlledMotor._MODE_ROT_POSITION] = False
             self._config[ControlledMotor._MODE_POWER] = False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 #************************** report modes *****************************
 
     # rotation position
@@ -292,11 +275,9 @@ class ControlledMotor(Module):
 
     @rot_position.setter
     def rot_position(self, enable):
-        bak = copy(self._config)
         self._config[ControlledMotor._ROTATION_POSITION] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     # rotation speed
     @property
@@ -308,11 +289,9 @@ class ControlledMotor(Module):
 
     @rot_speed.setter
     def rot_speed(self, enable):
-        bak = copy(self._config)
         self._config[ControlledMotor._ROTATION_SPEED] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     # translation position
     @property
@@ -324,11 +303,9 @@ class ControlledMotor(Module):
 
     @trans_position.setter
     def trans_position(self, enable):
-        bak = copy(self._config)
         self._config[ControlledMotor._TRANSLATION_POSITION] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     # translation speed
     @property
@@ -340,11 +317,9 @@ class ControlledMotor(Module):
 
     @trans_speed.setter
     def trans_speed(self, enable):
-        bak = copy(self._config)
         self._config[ControlledMotor._TRANSLATION_SPEED] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
     # current
     @property
@@ -356,11 +331,9 @@ class ControlledMotor(Module):
 
     @current.setter
     def current(self, enable):
-        bak = copy(self._config)
         self._config[ControlledMotor._CURRENT] = True if enable != 0  else False
-        if bak != self._config:
-            self._push_value('parameters', self._convert_config())
-            time.sleep(0.1)
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.1)
 
 #************************** controls and updates *****************************
 

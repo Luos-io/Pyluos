@@ -17,9 +17,8 @@ class Servo(Module):
 
     @position.setter
     def position(self, new_pos):
-        if new_pos != self._angle:
-            self._angle = new_pos
-            self._push_value('target_rot_position', new_pos)
+        self._angle = new_pos
+        self._push_value('target_rot_position', new_pos)
 
     @property
     def max_angle(self):
@@ -27,10 +26,9 @@ class Servo(Module):
 
     @max_angle.setter
     def max_angle(self, new):
-        if new != self._max_angle:
-            self._max_angle = new
-            param = [self._max_angle, self._min_pulse, self._max_pulse]
-            self._push_value('parameters', param)
+        self._max_angle = new
+        param = [self._max_angle, self._min_pulse, self._max_pulse]
+        self._push_value('parameters', param)
 
     @property
     def min_pulse(self):
@@ -38,10 +36,9 @@ class Servo(Module):
 
     @min_pulse.setter
     def min_pulse(self, new):
-        if new != self._min_pulse:
-            self._min_pulse = new
-            param = [self._max_angle, self._min_pulse, self._max_pulse]
-            self._push_value('parameters', param)
+        self._min_pulse = new
+        param = [self._max_angle, self._min_pulse, self._max_pulse]
+        self._push_value('parameters', param)
 
     @property
     def max_pulse(self):
@@ -49,10 +46,9 @@ class Servo(Module):
 
     @max_pulse.setter
     def max_pulse(self, new):
-        if new != self._max_pulse:
-            self._max_pulse = new
-            param = [self._max_angle, self._min_pulse, self._max_pulse]
-            self._push_value('parameters', param)
+        self._max_pulse = new
+        param = [self._max_angle, self._min_pulse, self._max_pulse]
+        self._push_value('parameters', param)
 
     def _update(self, new_state):
         Module._update(self, new_state)

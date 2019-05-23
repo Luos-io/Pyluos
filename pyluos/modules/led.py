@@ -14,10 +14,8 @@ class Led(Module):
     @color.setter
     def color(self, new_color):
         new_color = [int(min(max(c, 0), 255)) for c in new_color]
-
-        if new_color != self._value:
-            self._value = new_color
-            self._push_value('color', new_color)
+        self._value = new_color
+        self._push_value('color', new_color)
 
     @property
     def time(self):
@@ -25,8 +23,8 @@ class Led(Module):
 
     @time.setter
     def time(self, new_time):
-            self._time = new_time
-            self._push_value('time', new_time)
+        self._time = new_time
+        self._push_value('time', new_time)
 
     def _update(self, new_state):
         Module._update(self, new_state)

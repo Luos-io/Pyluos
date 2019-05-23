@@ -13,10 +13,8 @@ class GenericMotorController(Module):
     @power_ratio.setter
     def power_ratio(self, new_power):
         new_power = min(max(new_power, -100.0), 100.0)
-
-        if new_power != self._power:
-            self._power = new_power
-            self._push_value('power_ratio', new_power)
+        self._power = new_power
+        self._push_value('power_ratio', new_power)
 
     def control(self):
         def set_power(power):

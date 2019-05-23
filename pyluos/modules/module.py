@@ -29,6 +29,7 @@ class Module(object):
         self.id = id
         self.type = type
         self.alias = alias
+        self.refresh_freq = 0.0
         self._delegate = robot
         self._value = None
         self._cb = defaultdict(list)
@@ -38,6 +39,7 @@ class Module(object):
         self._firmware_revision = "Unknown"
         self._uuid = [0, 0, 0]
         self._killed = False
+        self._last_update = time.time()
 
     def __repr__(self):
         return ('<{self.type} '
@@ -52,6 +54,8 @@ class Module(object):
                 '')
 
     def _update(self, new_state):
+        self.refresh_freq = ((200.0 * self.refresh_freq) + (1.0 / (time.time() - self._last_update))) / 201.0
+        self._last_update = time.time()
         if 'L0_temperature' in new_state:
             self._L0_temperature = new_state['L0_temperature']
         if 'L0_voltage' in new_state:

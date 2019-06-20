@@ -71,8 +71,8 @@ class ControlledMotor(Module):
     def positionPid(self, new_pid):
         bak = copy(self._config)
         self.compliant = True
-        self.rot_position_mode(True)
-        self.rot_speed_mode(False)
+        self.rot_position_mode = True
+        self.rot_speed_mode = False
         time.sleep(0.2)
         self._positionPid = new_pid
         self._push_value('pid', new_pid)
@@ -89,8 +89,8 @@ class ControlledMotor(Module):
     def speedPid(self, new_pid):
         bak = copy(self._config)
         self.compliant = True
-        self.rot_position_mode(False)
-        self.rot_speed_mode(True)
+        self.rot_position_mode = False
+        self.rot_speed_mode = True
         time.sleep(0.2)
         self._speedPid = new_pid
         self._push_value('pid', new_pid)
@@ -145,19 +145,24 @@ class ControlledMotor(Module):
     @property
     def power_ratio(self):
         if (self._config[ControlledMotor._MODE_POWER] != True):
-            print("power mode is not enabled in the module please use 'robot.module.power_mode(True)' to enable it")
+            print("power mode is not enabled in the module please use 'robot.module.power_mode = True' to enable it")
             return
         return self._target_power
 
     @power_ratio.setter
     def power_ratio(self, s):
         if (self._config[ControlledMotor._MODE_POWER] != True):
-            print("power mode is not enabled in the module please use 'robot.module.power_mode(True)' to enable it")
+            print("power mode is not enabled in the module please use 'robot.module.power_mode = True' to enable it")
         s = min(max(s, -100.0), 100.0)
         #if s != self._target_power:
         self._target_power = s
         self._push_value("power_ratio",s)
 
+    @property
+    def power_mode(self):
+        return self._config[ControlledMotor._MODE_POWER]
+
+    @power_mode.setter
     def power_mode(self, enable):
         self._config[ControlledMotor._MODE_POWER] = True if enable != 0  else False
         if (enable == True) :
@@ -172,18 +177,23 @@ class ControlledMotor(Module):
     @property
     def target_rot_speed(self):
         if (self._config[ControlledMotor._MODE_ROT_SPEED] != True):
-            print("rotation speed mode is not enabled in the module please use 'robot.module.rot_speed_mode(True)' to enable it")
+            print("rotation speed mode is not enabled in the module please use 'robot.module.rot_speed_mode = True' to enable it")
             return
         return self._target_rot_speed
 
     @target_rot_speed.setter
     def target_rot_speed(self, s):
         if (self._config[ControlledMotor._MODE_ROT_SPEED] != True):
-            print("rotation speed mode is not enabled in the module please use 'robot.module.rot_speed_mode(True)' to enable it")
+            print("rotation speed mode is not enabled in the module please use 'robot.module.rot_speed_mode = True' to enable it")
         #if s != self._target_rot_speed:
         self._target_rot_speed = s
         self._push_value("target_rot_speed", s)
 
+    @property
+    def rot_speed_mode(self):
+        return self._config[ControlledMotor._MODE_ROT_SPEED]
+
+    @rot_speed_mode.setter
     def rot_speed_mode(self, enable):
         self._config[ControlledMotor._MODE_ROT_SPEED] = True if enable != 0  else False
         if (enable == True) :
@@ -196,18 +206,23 @@ class ControlledMotor(Module):
     @property
     def target_rot_position(self):
         if (self._config[ControlledMotor._MODE_ROT_POSITION] != True):
-            print("rotation position mode is not enabled in the module please use 'robot.module.rot_position_mode(True)' to enable it")
+            print("rotation position mode is not enabled in the module please use 'robot.module.rot_position_mode = True' to enable it")
             return
         return self._target_rot_position
 
     @target_rot_position.setter
     def target_rot_position(self, s):
         if (self._config[ControlledMotor._MODE_ROT_POSITION] != True):
-            print("rotation position mode is not enabled in the module please use 'robot.module.rot_position_mode(True)' to enable it")
+            print("rotation position mode is not enabled in the module please use 'robot.module.rot_position_mode = True' to enable it")
         #if s != self._target_rot_position:
         self._target_rot_position = s
         self._push_value("target_rot_position", s)
 
+    @property
+    def rot_position_mode(self):
+        return self._config[ControlledMotor._MODE_ROT_POSITION]
+
+    @rot_position_mode.setter
     def rot_position_mode(self, enable):
         self._config[ControlledMotor._MODE_ROT_POSITION] = True if enable != 0  else False
         if (enable == True) :
@@ -220,18 +235,23 @@ class ControlledMotor(Module):
     @property
     def target_trans_speed(self):
         if (self._config[ControlledMotor._MODE_TRANS_SPEED] != True):
-            print("translation speed mode is not enabled in the module please use 'robot.module.trans_speed_mode(True)' to enable it")
+            print("translation speed mode is not enabled in the module please use 'robot.module.trans_speed_mode = True' to enable it")
             return
         return self._target_trans_speed
 
     @target_trans_speed.setter
     def target_trans_speed(self, s):
         if (self._config[ControlledMotor._MODE_TRANS_SPEED] != True):
-            print("translation speed mode is not enabled in the module please use 'robot.module.trans_speed_mode(True)' to enable it")
+            print("translation speed mode is not enabled in the module please use 'robot.module.trans_speed_mode = True' to enable it")
         #if s != self._target_trans_speed:
         self._target_trans_speed = s
         self._push_value("target_trans_speed", s)
 
+    @property
+    def trans_speed_mode(self):
+        return self._config[ControlledMotor._MODE_TRANS_SPEED]
+
+    @trans_speed_mode.setter
     def trans_speed_mode(self, enable):
         self._config[ControlledMotor._MODE_TRANS_SPEED] = True if enable != 0  else False
         if (enable == True) :
@@ -244,18 +264,23 @@ class ControlledMotor(Module):
     @property
     def target_trans_position(self):
         if (self._config[ControlledMotor._MODE_TRANS_POSITION] != True):
-            print("translation speed mode is not enabled in the module please use 'robot.module.trans_pos_mode(True)' to enable it")
+            print("translation speed mode is not enabled in the module please use 'robot.module.trans_pos_mode = True' to enable it")
             return
         return self._target_trans_position
 
     @target_trans_position.setter
     def target_trans_position(self, s):
         if (self._config[ControlledMotor._MODE_TRANS_POSITION] != True):
-            print("translation speed mode is not enabled in the module please use 'robot.module.trans_pos_mode(True)' to enable it")
+            print("translation speed mode is not enabled in the module please use 'robot.module.trans_position_mode = True' to enable it")
         #if s != self._target_trans_position:
         self._target_trans_position = s
         self._push_value("target_trans_position", s)
 
+    @property
+    def trans_position_mode(self):
+        return self._config[ControlledMotor._MODE_TRANS_POSITION]
+
+    @trans_position_mode.setter
     def trans_position_mode(self, enable):
         self._config[ControlledMotor._MODE_TRANS_POSITION] = True if enable != 0  else False
         if (enable == True) :
@@ -269,8 +294,7 @@ class ControlledMotor(Module):
     @property
     def rot_position(self):
         if (self._config[ControlledMotor._ROTATION_POSITION] != True):
-            print("rotation position report is not enabled in the module please use 'robot.module.rot_position = True' to enable it")
-            return
+            self.rot_position = True
         return self._rot_position
 
     @rot_position.setter
@@ -283,8 +307,7 @@ class ControlledMotor(Module):
     @property
     def rot_speed(self):
         if (self._config[ControlledMotor._ROTATION_SPEED] != True):
-            print("rotation speed report is not enabled in the module please use 'robot.module.rot_speed = True' to enable it")
-            return
+            self.rot_speed = True
         return self._rot_speed
 
     @rot_speed.setter
@@ -297,8 +320,7 @@ class ControlledMotor(Module):
     @property
     def trans_position(self):
         if (self._config[ControlledMotor._TRANSLATION_POSITION] != True):
-            print("translation position report is not enabled in the module please use 'robot.module.trans_position = True' to enable it")
-            return
+            self.trans_position = True
         return self._rot_position
 
     @trans_position.setter
@@ -311,8 +333,7 @@ class ControlledMotor(Module):
     @property
     def trans_speed(self):
         if (self._config[ControlledMotor._TRANSLATION_SPEED] != True):
-            print("translation speed report is not enabled in the module please use 'robot.module.trans_speed = True' to enable it")
-            return
+            self.trans_speed = True
         return self._rot_speed
 
     @trans_speed.setter
@@ -325,8 +346,7 @@ class ControlledMotor(Module):
     @property
     def current(self):
         if (self._config[ControlledMotor._CURRENT] != True):
-            print("translation speed report is not enabled in the module please use 'robot.module.current = True' to enable it")
-            return
+            self.current = True
         return self._current
 
     @current.setter
@@ -360,23 +380,23 @@ class ControlledMotor(Module):
             self.current = current_report
             # target mode
             self.compliant = compliant_mode
-            self.power_mode(power_mode)
+            self.power_mode = power_mode
             if (power_mode) :
                 self.power_ratio = power_ratio
 
-            self.rot_speed_mode(rot_speed_mode)
+            self.rot_speed_mode = rot_speed_mode
             if (rot_speed_mode) :
                 self.target_rot_speed = rot_speed
 
-            self.rot_position_mode(rot_position_mode)
+            self.rot_position_mode = rot_position_mode
             if (rot_position_mode) :
                 self.target_rot_position = rot_position
 
-            self.trans_speed_mode(trans_speed_mode)
+            self.trans_speed_mode = trans_speed_mode
             if (trans_speed_mode) :
                 self.target_trans_speed = trans_speed
 
-            self.trans_position_mode(trans_position_mode)
+            self.trans_position_mode = trans_position_mode
             if (trans_position_mode) :
                 self.target_trans_position = trans_position
 

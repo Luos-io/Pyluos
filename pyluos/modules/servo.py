@@ -12,11 +12,11 @@ class Servo(Module):
         self._angle = 0.0
 
     @property
-    def position(self):
+    def rot_position(self):
         return self._angle
 
-    @position.setter
-    def position(self, new_pos):
+    @rot_position.setter
+    def rot_position(self, new_pos):
         self._angle = new_pos
         self._push_value('target_rot_position', new_pos)
 

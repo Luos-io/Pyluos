@@ -4,10 +4,10 @@ from .distance import Distance
 from .l0_gpio import GPIO
 from .dc_motor import DCMotor
 from .dxl import DynamixelMotor
-from .button import Button
-from .potentiometer import Potentiometer
+from .state import State
+from .angle import Angle
 from .servo import Servo
-from .led import Led
+from .color import Color
 from .handy import Handy
 from .imu import Imu
 from .stepper import Stepper
@@ -16,6 +16,7 @@ from .light_sensor import LightSensor
 from .controlled_motor import ControlledMotor
 from .void import Void
 from .load import Load
+from .voltage import Voltage
 
 
 __all__ = [
@@ -24,11 +25,11 @@ __all__ = [
     'GenericMotorController',
     'DynamixelMotor',
     'Distance',
-    'Button',
+    'State',
     'GPIO',
-    'Potentiometer',
+    'Angle',
     'Servo',
-    'Led',
+    'Color',
     'DCMotor',
     'Handy',
     'Imu' ,
@@ -37,7 +38,8 @@ __all__ = [
     'LightSensor',
     'ControlledMotor',
     'Void',
-    'Load'
+    'Load',
+    'Voltage'
 ]
 
 name2mod = {
@@ -47,10 +49,10 @@ name2mod = {
     'DistanceSensor': Distance,
     'GPIO': GPIO,
     'DCMotor': DCMotor,
-    'Button': Button,
-    'Potentiometer': Potentiometer,
+    'State': State,
+    'Angle': Angle,
     'Servo': Servo,
-    'RgbLed': Led,
+    'Color': Color,
     'Handy': Handy,
     'Imu': Imu,
     'Stepper' : Stepper,
@@ -58,5 +60,6 @@ name2mod = {
     'LightSensor' : LightSensor,
     'ControlledMotor' : ControlledMotor,
     'Void' : Void,
-    'Load' : Load
+    'Load' : Load,
+    'Voltage' : Voltage
 }

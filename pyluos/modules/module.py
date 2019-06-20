@@ -44,14 +44,7 @@ class Module(object):
     def __repr__(self):
         return ('<{self.type} '
                 'alias="{self.alias}" '
-                'id={self.id} '
-                '{state}>'.format(self=self,
-                                  state=self._state_repr()))
-
-    def _state_repr(self):
-        return ('state={}'.format(self._value)
-                if self._value is not None else
-                '')
+                'id={self.id}>'.format(self=self))
 
     def _update(self, new_state):
         self.refresh_freq = ((200.0 * self.refresh_freq) + (1.0 / (time.time() - self._last_update))) / 201.0

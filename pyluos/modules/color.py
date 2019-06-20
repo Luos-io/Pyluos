@@ -1,9 +1,9 @@
 from .module import Module, interact
 
 
-class Led(Module):
+class Color(Module):
     def __init__(self, id, alias, robot):
-        Module.__init__(self, 'LED', id, alias, robot)
+        Module.__init__(self, 'Color', id, alias, robot)
         self.color = (0, 0, 0)
         self.time = 0.0
 

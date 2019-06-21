@@ -47,8 +47,9 @@ class Module(object):
                 'id={self.id}>'.format(self=self))
 
     def _update(self, new_state):
-        self.refresh_freq = ((200.0 * self.refresh_freq) + (1.0 / (time.time() - self._last_update))) / 201.0
-        self._last_update = time.time()
+        if ((time.time() - self._last_update) != 0):
+            self.refresh_freq = ((200.0 * self.refresh_freq) + (1.0 / (time.time() - self._last_update))) / 201.0
+            self._last_update = time.time()
         if 'L0_temperature' in new_state:
             self._L0_temperature = new_state['L0_temperature']
         if 'L0_voltage' in new_state:

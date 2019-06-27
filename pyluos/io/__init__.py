@@ -31,7 +31,7 @@ class IOHandler(object):
         self.write(self.dumps(msg))
 
     def write(self, data):
-        raise NotImplementedError
+        self.write(data)
 
     def loads(self, data):
         if type(data) == bytes:

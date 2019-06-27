@@ -72,6 +72,9 @@ class Module(object):
             else :
                 self._delegate.update_cmd(self.alias, key, new_val)
 
+    def _push_data(self, data):
+        self._delegate.update_data(data)
+
     @property
     def L0_temperature(self):
         self._push_value('L0_temperature', "")

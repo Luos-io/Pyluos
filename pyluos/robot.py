@@ -131,6 +131,7 @@ class Robot(object):
                    if 'type' in mod and mod['type'] in name2mod.keys()]
 
         self._cmd = defaultdict(lambda: defaultdict(lambda: None))
+        self._binary = None
 
         self.modules = [
             name2mod[mod['type']](id=mod['id'],
@@ -181,20 +182,29 @@ class Robot(object):
         with self._cmd_lock:
             self._cmd[alias][key] = val
 
+    def update_data(self, data):
+        with self._cmd_lock:
+            self._binary = data.tobytes()
+
     def _push_once(self):
         with self._cmd_lock:
             if not self._cmd:
                 return
-
-            self._send({
-                'modules': self._cmd
-            })
+            if not self._binary:
+                self._write( json.dumps({'modules': self._cmd}).encode())
+            else :
+                self._write( json.dumps({'modules': self._cmd}).encode() + '\r'.encode() + self._binary)
 
             self._cmd = defaultdict(lambda: defaultdict(lambda: None))
+            self._binary = None
 
     def _send(self, msg):
         with self._send_lock:
             self._io.send(msg)
+
+    def _write(self, data):
+        with self._send_lock:
+            self._io.write(data)
 
     def _broadcast(self, state):
         if not hasattr(self, '_s'):

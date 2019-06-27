@@ -1,11 +1,10 @@
 from .module import Module, interact
+import numpy as np
 
 
 class Color(Module):
     def __init__(self, id, alias, robot):
         Module.__init__(self, 'Color', id, alias, robot)
-        self.color = (0, 0, 0)
-        self.time = 0.0
 
     @property
     def color(self):
@@ -14,9 +13,13 @@ class Color(Module):
     @color.setter
     def color(self, new_color):
         new_color = [int(min(max(c, 0), 255)) for c in new_color]
-        self._value = new_color
-        self._push_value('color', new_color)
-
+        if len(new_color) > 3 :
+            self._value = new_color
+            self._push_value('color', len(new_color))
+            self._push_data(np.array(new_color, dtype=np.uint8))
+        else :
+            self._value = new_color
+            self._push_value('color', new_color)
     @property
     def time(self):
         return self._time
@@ -25,6 +28,15 @@ class Color(Module):
     def time(self, new_time):
         self._time = new_time
         self._push_value('time', new_time)
+
+    @property
+    def size(self):
+        return self._size
+
+    @time.setter
+    def size(self, new_size):
+        self._size = new_size
+        self._push_value('parameters', new_size)
 
     def _update(self, new_state):
         Module._update(self, new_state)

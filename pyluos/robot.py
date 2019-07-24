@@ -31,6 +31,16 @@ known_host = {
 }
 
 
+class moduList(list):
+    def __repr__(self):
+
+        s = '-------------------------------------------------\n'
+        s += '{:<20s}{:<20s}{:<5s}\n'.format("Type", "Alias", "ID")
+        s += '-------------------------------------------------\n'
+        for elem in self:
+            s += '{:<20s}{:<20s}{:<5d}\n'.format(elem.type, elem.alias, elem.id)
+        return s
+
 class Robot(object):
     _heartbeat_timeout = 5  # in sec.
     _max_alias_length = 15
@@ -127,13 +137,14 @@ class Robot(object):
         except StopIteration:
             self._name = 'gate_unknown'
 
-        modules = [mod for mod in state['route_table']
-                   if 'type' in mod and mod['type'] in name2mod.keys()]
+
+        modules = moduList([mod for mod in state['route_table']
+                   if 'type' in mod and mod['type'] in name2mod.keys()])
 
         self._cmd = defaultdict(lambda: defaultdict(lambda: None))
         self._binary = None
 
-        self.modules = [
+        self._modules = [
             name2mod[mod['type']](id=mod['id'],
                                   alias=mod['alias'],
                                   robot=self)
@@ -141,12 +152,17 @@ class Robot(object):
             if 'type' in mod and 'id' in mod and 'alias' in mod
         ]
 
-        for mod in self.modules:
+        for mod in self._modules:
             setattr(self, mod.alias, mod)
 
         # We push our current state to make sure that
         # both our model and the hardware are synced.
         self._push_once()
+
+    @property
+    def modules(self):
+        return moduList(self._modules)
+
 
     # Poll state from hardware.
     def _poll_once(self):

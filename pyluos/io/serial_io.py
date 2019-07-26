@@ -73,8 +73,14 @@ class Serial(IOHandler):
             j = s.find(b'\n')
             if j == -1:
                 return b'', s
+            # Sometimes the begin of serial data can be wrong remove it
+            # Find the first '{'
 
-            return s[:j], s[j + 1:]
+            x = s.find(b'{')
+            if x == -1:
+                return b'', s[j + 1:]
+
+            return s[x:j], s[j + 1:]
 
         period = 1 / self.poll_frequency
         buff = b''

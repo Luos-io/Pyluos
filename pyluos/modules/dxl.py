@@ -64,15 +64,12 @@ class DynamixelMotor(Module):
     # power limit
     @property
     def power_ratio_limit(self):
-        if (self._config[ControlledMotor._MODE_POWER] != True):
-            print("power mode is not enabled in the module please use 'robot.module.power_mode = True' to enable it")
-            return
         return self._power_limit
 
     @power_ratio_limit.setter
     def power_ratio_limit(self, s):
         s = min(max(s, 0), 100.0)
-        self._target_power = s
+        self._power_limit = s
         self._push_value("power_limit",s)
 
     @property

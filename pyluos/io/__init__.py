@@ -22,7 +22,7 @@ class IOHandler(object):
             if trials == 0:
                 raise e
 
-        return self.read(trials)
+        return self.read(trials - 1)
 
     def recv(self):
         raise NotImplementedError

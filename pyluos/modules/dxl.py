@@ -14,6 +14,7 @@ class DynamixelMotor(Module):
         self._wheel_mode = None
         self._power_limit = None
         self._positionPid = [None, None, None]
+        self._limit_rot_position = [None, None]
 
     def _update(self, new_state):
         Module._update(self, new_state)
@@ -34,6 +35,13 @@ class DynamixelMotor(Module):
             self._target_rot_position = target_position
 
     @property
+    def rot_position_limit(self):
+        return self._limit_rot_position
+
+    @rot_position_limit.setter
+    def rot_position_limit(self, limit_position):
+        self._push_value('limit_rot_position', limit_position)
+        self._limit_rot_position = limit_position
 
     @property
     def target_rot_speed(self):

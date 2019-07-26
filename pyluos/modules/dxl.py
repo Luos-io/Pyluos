@@ -4,12 +4,12 @@ class DynamixelMotor(Module):
     def __init__(self, id, alias, robot):
         Module.__init__(self, 'DynamixelMotor', id, alias, robot)
         # Read
-        self.position = None
+        self.rot_position = None
         self.temperature = None
 
         # Write
-        self._target_position = None
-        self._moving_speed = None
+        self._target_rot_position = None
+        self._rot_speed = None
         self._compliant = None
         self._wheel_mode = None
 
@@ -17,28 +17,30 @@ class DynamixelMotor(Module):
         Module._update(self, new_state)
 
         if 'rot_position' in new_state:
-            self.position = new_state['rot_position']
+            self.rot_position = new_state['rot_position']
         if 'temperature' in new_state:
             self.temperature = new_state['temperature']
 
     @property
-    def target_position(self):
-        return self._target_position
+    def target_rot_position(self):
+        return self._target_rot_position
 
-    @target_position.setter
-    def target_position(self, target_position):
+    @target_rot_position.setter
+    def target_rot_position(self, target_position):
         if self._compliant == False:
             self._push_value('target_rot_position', target_position)
-            self._target_position = target_position
+            self._target_rot_position = target_position
 
     @property
-    def moving_speed(self):
-        return self._moving_speed
 
-    @moving_speed.setter
-    def moving_speed(self, moving_speed):
+    @property
+    def target_rot_speed(self):
+        return self._rot_speed
+
+    @target_rot_speed.setter
+    def target_rot_speed(self, moving_speed):
         self._push_value('target_rot_speed', moving_speed)
-        self._moving_speed = moving_speed
+        self._rot_speed = moving_speed
 
     @property
     def compliant(self):

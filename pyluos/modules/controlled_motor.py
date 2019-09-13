@@ -36,6 +36,10 @@ class ControlledMotor(Module):
         self._resolution = 16 # encoder resolution
         self._reduction = 131 # mechanical reduction after encoder
         self._dimension = 100 # Wheel size (mm)
+        self._limit_rot_position = None
+        self._limit_trans_position = None
+        self._limit_power = 100.0
+        self._limit_current = 6.0
 
         #targets
         self._compliant = True
@@ -126,6 +130,43 @@ class ControlledMotor(Module):
     def wheel_size(self, s):
         self._dimension = s
         self._push_value("dimension", s)
+
+    @property
+    def limit_rot_position(self):
+        return self._limit_rot_position
+
+    @limit_rot_position.setter
+    def limit_rot_position(self, s):
+        self._limit_rot_position = s
+        self._push_value("limit_rot_position", s)
+
+    @property
+    def limit_trans_position(self):
+        return self._limit_trans_position
+
+    @limit_trans_position.setter
+    def limit_trans_position(self, s):
+        self._limit_trans_position = s
+        self._push_value("limit_trans_position", s)
+
+    @property
+    def limit_power(self):
+        return self._limit_power
+
+    @limit_power.setter
+    def limit_power(self, s):
+        self._limit_power = abs(s)
+        s = min(s, 100.0)
+        self._push_value("limit_power", s)
+
+    @property
+    def limit_current(self):
+        return self._limit_current
+
+    @limit_current.setter
+    def limit_current(self, s):
+        self._limit_rot_position = s
+        self._push_value("limit_current", s)
 
 #************************** target modes *****************************
 

@@ -70,7 +70,7 @@ class DynamixelMotor(Module):
     def power_ratio_limit(self, s):
         s = min(max(s, 0), 100.0)
         self._power_limit = s
-        self._push_value("power_limit",s)
+        self._push_value("limit_power",s)
 
     @property
     def compliant(self):

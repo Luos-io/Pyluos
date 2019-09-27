@@ -5,6 +5,7 @@ from copy import copy
 import time
 
 from .module import Module, interact
+import numpy as np
 
 
 class ControlledMotor(Module):
@@ -21,6 +22,12 @@ class ControlledMotor(Module):
     _TRANSLATION_POSITION = 2
     _TRANSLATION_SPEED = 1
     _CURRENT = 0
+
+    # control modes
+    _PLAY = 0
+    _PAUSE = 1
+    _STOP = 2
+    _REC = 4
 
     def __init__(self, id, alias, robot):
         Module.__init__(self, 'ControlledMotor', id, alias, robot)
@@ -40,6 +47,8 @@ class ControlledMotor(Module):
         self._limit_trans_position = None
         self._limit_power = 100.0
         self._limit_current = 6.0
+        self._sampling_freq = 100.0
+        self._control = 0
 
         #targets
         self._compliant = True
@@ -64,8 +73,45 @@ class ControlledMotor(Module):
 
 #************************** configurations *****************************
 
+    def play(self):
+        if (self._control >= self._REC):
+            self._control = self._PLAY + self._REC
+        else :
+            self._control = self._PLAY
+        self._push_value('control', self._control)
+
+    def pause(self):
+        if (self._control >= self._REC):
+            self._control = self._PAUSE + self._REC
+        else :
+            self._control = self._PAUSE
+        self._push_value('control', self._control)
+
+    def stop(self):
+        # also stop recording
+        self._control = self._STOP
+        self._push_value('control', self._control)
+
+    def rec(self, enable):
+        if (self._control >= self._REC):
+            if (enable == False):
+                self._control = self._control - self._REC
+        else :
+            if (enable == True):
+                self._control = self._control + self._REC
+        self._push_value('control', self._control)
+
     def setToZero(self):
         self._push_value('reinit', None)
+
+    @property
+    def sampling_freq(self):
+        return self._sampling_freq
+
+    @sampling_freq.setter
+    def sampling_freq(self, sampling_freq):
+        self._sampling_freq = sampling_freq
+        self._push_value("time", 1.0 / sampling_freq)
 
     @property
     def positionPid(self):
@@ -255,9 +301,12 @@ class ControlledMotor(Module):
     def target_rot_position(self, s):
         if (self._config[ControlledMotor._MODE_ROT_POSITION] != True):
             print("rotation position mode is not enabled in the module please use 'robot.module.rot_position_mode = True' to enable it")
-        #if s != self._target_rot_position:
         self._target_rot_position = s
-        self._push_value("target_rot_position", s)
+        if hasattr(s, "__len__"):
+            self._push_value('target_rot_position', [len(s) * 4]) # multiplying by the size of float32
+            self._push_data(np.array(s, dtype=np.float32))
+        else :
+            self._push_value("target_rot_position", s)
 
     @property
     def rot_position_mode(self):
@@ -313,9 +362,12 @@ class ControlledMotor(Module):
     def target_trans_position(self, s):
         if (self._config[ControlledMotor._MODE_TRANS_POSITION] != True):
             print("translation speed mode is not enabled in the module please use 'robot.module.trans_position_mode = True' to enable it")
-        #if s != self._target_trans_position:
         self._target_trans_position = s
-        self._push_value("target_trans_position", s)
+        if hasattr(s, "__len__"):
+            self._push_value('target_trans_position', [len(s) * 4]) # multiplying by the size of float32
+            self._push_data(np.array(s, dtype=np.float32))
+        else :
+            self._push_value("target_trans_position", s)
 
     @property
     def trans_position_mode(self):

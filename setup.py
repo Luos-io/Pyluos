@@ -15,6 +15,7 @@ setup(name='pyluos',
                         'pyserial>3',
                         'SimpleWebSocketServer',
                         'zeroconf',
+                        'numpy',
                         ],
       extras_require={
           'tests': [],

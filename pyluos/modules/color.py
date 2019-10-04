@@ -15,8 +15,7 @@ class Color(Module):
         new_color = [int(min(max(c, 0), 255)) for c in new_color]
         if len(new_color) > 3 :
             self._value = new_color
-            self._push_value('color', [len(new_color)])
-            self._push_data(np.array(new_color, dtype=np.uint8))
+            self._push_data('color', [len(new_color)], np.array(new_color, dtype=np.uint8))
         else :
             self._value = new_color
             self._push_value('color', new_color)

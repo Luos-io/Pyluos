@@ -72,8 +72,11 @@ class Module(object):
             else :
                 self._delegate.update_cmd(self.alias, key, new_val)
 
-    def _push_data(self, data):
-        self._delegate.update_data(data)
+    def _push_data(self, key, new_val, data):
+        if (self._killed) :
+            print("module", self.alias,"is excluded.")
+        else :
+            self._delegate.update_data(self.alias, key, new_val, data)
 
     @property
     def L0_temperature(self):

@@ -303,8 +303,7 @@ class ControlledMotor(Module):
             print("rotation position mode is not enabled in the module please use 'robot.module.rot_position_mode = True' to enable it")
         self._target_rot_position = s
         if hasattr(s, "__len__"):
-            self._push_value('target_rot_position', [len(s) * 4]) # multiplying by the size of float32
-            self._push_data(np.array(s, dtype=np.float32))
+            self._push_data('target_rot_position', [len(s) * 4], np.array(s, dtype=np.float32)) # multiplying by the size of float32
         else :
             self._push_value("target_rot_position", s)
 

@@ -142,7 +142,8 @@ class Robot(object):
                    if 'type' in mod and mod['type'] in name2mod.keys()])
 
         self._cmd = defaultdict(lambda: defaultdict(lambda: None))
-        self._binary = None
+        self._cmd_data = []
+        self._binary = []
 
         self._modules = [
             name2mod[mod['type']](id=mod['id'],
@@ -198,21 +199,23 @@ class Robot(object):
         with self._cmd_lock:
             self._cmd[alias][key] = val
 
-    def update_data(self, data):
+    def update_data(self, alias, key, val, data):
         with self._cmd_lock:
-            self._binary = data.tobytes()
+            self._cmd_data.append({alias: {key: val}})
+            self._binary.append(data.tobytes())
 
     def _push_once(self):
         with self._cmd_lock:
-            if not self._cmd:
-                return
-            if not self._binary:
+            if self._cmd:
                 self._write( json.dumps({'modules': self._cmd}).encode())
-            else :
-                self._write( json.dumps({'modules': self._cmd}).encode() + '\r'.encode() + self._binary)
+                self._cmd = defaultdict(lambda: defaultdict(lambda: None))
+            for cmd, binary in zip(self._cmd_data, self._binary):
+                time.sleep(0.01)
+                self._write( json.dumps({'modules': cmd}).encode() + '\r'.encode() + binary)
 
-            self._cmd = defaultdict(lambda: defaultdict(lambda: None))
-            self._binary = None
+            self._cmd_data = []
+            self._binary = []
+
 
     def _send(self, msg):
         with self._send_lock:

@@ -87,6 +87,7 @@ class Robot(object):
 
         self._last_update = time.time()
         self._running = True
+        self._pause = False
 
         # Setup both poll/push synchronization loops.
         self._poll_bg = threading.Thread(target=self._poll_and_up)
@@ -115,6 +116,27 @@ class Robot(object):
         self._send({'baudrate': baudrate})
         self._baudrate = baudrate
         time.sleep(0.01)
+
+    def benchmark(self, target_id, data, repetition):
+        data = np.array(data, dtype=np.uint8)
+        self._bench_settings = {'benchmark': {'target': target_id, 'repetitions': repetition, 'data': [len(data)]}}
+        self._bench_Data = data.tobytes()
+        self._write( json.dumps(self._bench_settings).encode() + '\r'.encode() + self._bench_Data)
+
+        state = self._poll_once()
+        while ('benchmark' not in state):
+            state = self._poll_once()
+
+        #self._pause = False
+        return state['benchmark']['data_rate']
+
+    def pause(self):
+        self._pause = True
+        time.sleep(1)
+
+    def play(self):
+        self._pause = False
+
     def _setup(self):
         self.logger.info('Sending detection signal.')
         self._send({'detection': {}})
@@ -167,11 +189,13 @@ class Robot(object):
 
     def _poll_and_up(self):
         while self._running:
-            state = self._poll_once()
-            self._update(state)
-            self._push_once()
-
-            self._broadcast(state)
+            if not self._pause :
+                state = self._poll_once()
+                self._update(state)
+                self._push_once()
+                self._broadcast(state)
+            else :
+                time.sleep(0.1)
 
     # Update our model with the new state.
     def _update(self, new_state):

@@ -5,6 +5,7 @@ import time
 import logging
 import threading
 import logging.config
+import numpy as np
 
 from datetime import datetime
 from collections import defaultdict
@@ -97,24 +98,6 @@ class Robot(object):
             s = c.socket(zmq.PUB)
             s.connect('tcp://127.0.0.1:33000')
             self._s = s
-
-    @property
-    def state(self):
-        return {
-            'gate': self.name,
-            'timestamp': datetime.now(),
-            'types': ','.join([mod.type for mod in self.modules]),
-            'modules': ','.join([mod.alias for mod in self.modules])
-        }
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def alive(self):
-        dt = time.time() - self._last_update
-        return self._running and dt < self._heartbeat_timeout
 
     def close(self):
         self._running = False
@@ -231,20 +214,3 @@ class Robot(object):
 
         msg = '{} {}'.format(self.name, json.dumps(state))
         self._s.send_string(msg)
-
-    def rename_module(self, old, new):
-        if not hasattr(self, old):
-            raise ValueError('No module named {}!'.format(old))
-
-        if len(new) > self._max_alias_length:
-            raise ValueError(
-                'Alias length should be less than {}'
-                .format(self._max_alias_length)
-            )
-
-        self._send({'modules': {old: {'set_alias': new}}})
-
-        mod = getattr(self, old)
-        mod.alias = new
-        setattr(self, new, mod)
-        delattr(self, old)

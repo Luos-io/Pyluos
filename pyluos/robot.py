@@ -92,6 +92,7 @@ class Robot(object):
         self._poll_bg = threading.Thread(target=self._poll_and_up)
         self._poll_bg.daemon = True
         self._poll_bg.start()
+        self._baudrate = 1000000
 
         if not (test_mode or run_from_unittest()) and use_topographe:
             c = zmq.Context()
@@ -104,6 +105,16 @@ class Robot(object):
         self._poll_bg.join()
         self._io.close()
 
+
+    @property
+    def baudrate(self):
+        return self._baudrate
+
+    @baudrate.setter
+    def baudrate(self, baudrate):
+        self._send({'baudrate': baudrate})
+        self._baudrate = baudrate
+        time.sleep(0.01)
     def _setup(self):
         self.logger.info('Sending detection signal.')
         self._send({'detection': {}})

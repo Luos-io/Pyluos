@@ -128,7 +128,7 @@ class Robot(object):
             state = self._poll_once()
 
         #self._pause = False
-        return state['benchmark']['data_rate']
+        return (state['benchmark']['data_rate'], state['benchmark']['fail_rate'])
 
     def pause(self):
         self._pause = True

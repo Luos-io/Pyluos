@@ -211,7 +211,7 @@ class ControlledMotor(Module):
 
     @limit_current.setter
     def limit_current(self, s):
-        self._limit_rot_position = s
+        self._limit_current = s
         self._push_value("limit_current", s)
 
 #************************** target modes *****************************

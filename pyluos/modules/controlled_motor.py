@@ -264,15 +264,13 @@ class ControlledMotor(Module):
     @property
     def target_rot_speed(self):
         if (self._config[ControlledMotor._MODE_ROT_SPEED] != True):
-            print("rotation speed mode is not enabled in the module please use 'robot.module.rot_speed_mode = True' to enable it")
-            return
+            print("rotation speed mode could be not enabled in the module please use 'robot.module.rot_speed_mode = True' to enable it")
         return self._target_rot_speed
 
     @target_rot_speed.setter
     def target_rot_speed(self, s):
         if (self._config[ControlledMotor._MODE_ROT_SPEED] != True):
-            print("rotation speed mode is not enabled in the module please use 'robot.module.rot_speed_mode = True' to enable it")
-        #if s != self._target_rot_speed:
+            print("rotation speed mode could be not enabled in the module please use 'robot.module.rot_speed_mode = True' to enable it")
         self._target_rot_speed = s
         self._push_value("target_rot_speed", s)
 
@@ -293,14 +291,13 @@ class ControlledMotor(Module):
     @property
     def target_rot_position(self):
         if (self._config[ControlledMotor._MODE_ROT_POSITION] != True):
-            print("rotation position mode is not enabled in the module please use 'robot.module.rot_position_mode = True' to enable it")
-            return
+            print("rotation position mode could be not enabled in the module please use 'robot.module.rot_position_mode = True' to enable it")
         return self._target_rot_position
 
     @target_rot_position.setter
     def target_rot_position(self, s):
         if (self._config[ControlledMotor._MODE_ROT_POSITION] != True):
-            print("rotation position mode is not enabled in the module please use 'robot.module.rot_position_mode = True' to enable it")
+            print("rotation position mode could be not enabled in the module please use 'robot.module.rot_position_mode = True' to enable it")
         self._target_rot_position = s
         if hasattr(s, "__len__"):
             self._push_data('target_rot_position', [len(s) * 4], np.array(s, dtype=np.float32)) # multiplying by the size of float32
@@ -324,15 +321,13 @@ class ControlledMotor(Module):
     @property
     def target_trans_speed(self):
         if (self._config[ControlledMotor._MODE_TRANS_SPEED] != True):
-            print("translation speed mode is not enabled in the module please use 'robot.module.trans_speed_mode = True' to enable it")
-            return
+            print("translation speed mode could be not enabled in the module please use 'robot.module.trans_speed_mode = True' to enable it")
         return self._target_trans_speed
 
     @target_trans_speed.setter
     def target_trans_speed(self, s):
         if (self._config[ControlledMotor._MODE_TRANS_SPEED] != True):
-            print("translation speed mode is not enabled in the module please use 'robot.module.trans_speed_mode = True' to enable it")
-        #if s != self._target_trans_speed:
+            print("translation speed mode could be not enabled in the module please use 'robot.module.trans_speed_mode = True' to enable it")
         self._target_trans_speed = s
         self._push_value("target_trans_speed", s)
 
@@ -353,14 +348,13 @@ class ControlledMotor(Module):
     @property
     def target_trans_position(self):
         if (self._config[ControlledMotor._MODE_TRANS_POSITION] != True):
-            print("translation speed mode is not enabled in the module please use 'robot.module.trans_pos_mode = True' to enable it")
-            return
+            print("translation speed mode could be not enabled in the module please use 'robot.module.trans_pos_mode = True' to enable it")
         return self._target_trans_position
 
     @target_trans_position.setter
     def target_trans_position(self, s):
         if (self._config[ControlledMotor._MODE_TRANS_POSITION] != True):
-            print("translation speed mode is not enabled in the module please use 'robot.module.trans_position_mode = True' to enable it")
+            print("translation speed mode could be not enabled in the module please use 'robot.module.trans_position_mode = True' to enable it")
         self._target_trans_position = s
         if hasattr(s, "__len__"):
             self._push_value('target_trans_position', [len(s) * 4]) # multiplying by the size of float32

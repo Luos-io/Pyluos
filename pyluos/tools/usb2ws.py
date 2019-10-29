@@ -30,7 +30,7 @@ class SerialToWs(WebSocket):
             self.serial.write(message)
 
         except UnicodeDecodeError:
-            print("bite")
+            print("Fail")
             pass
 
 
@@ -45,7 +45,7 @@ class SerialToWs(WebSocket):
             try:
                 self.send(r)
             except UnicodeDecodeError:
-                print('MERDE', r)
+                print('Fail', r)
 
         print('LOOP OVER!')
 

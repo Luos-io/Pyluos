@@ -50,7 +50,7 @@ class Ws(IOHandler):
         return self._ws.recv()
 
     def write(self, data):
-        self._ws.send(data)
+        self._ws.send(data + '\r'.encode())
 
     def close(self):
         self._ws.close()

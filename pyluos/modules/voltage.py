@@ -28,6 +28,8 @@ class Voltage(Module):
                 if abs(new_val - self._value) > self.threshold:
                     self._pub_event('filter_changed',
                                     self._value, new_val)
+            self._value = new_val
+
     def control(self):
         def move(val):
             self._value = val

@@ -80,6 +80,8 @@ class DynamixelMotor(Module):
     def compliant(self, compliant):
         self._push_value('compliant', compliant)
         self._compliant = compliant
+        if (_self.compliant == False):
+            self.target_rot_position = self.rot_position
 
     @property
     def wheel_mode(self):

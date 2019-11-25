@@ -226,6 +226,8 @@ class ControlledMotor(Module):
         self._config[ControlledMotor._MODE_COMPLIANT] = True if enable != 0  else False
         self._compliant = enable
         self._push_value('parameters', self._convert_config())
+        if (enable == False):
+            self._target_rot_position = self._rot_position
         time.sleep(0.01)
 
     # power

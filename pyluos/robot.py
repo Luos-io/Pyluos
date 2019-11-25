@@ -36,14 +36,12 @@ known_host = {
 
 class moduList(list):
     def __repr__(self):
-        s = '---------------------------------------------------------------------\n'
-        s += '{:<20s}{:<20s}{:<5s}{:<20s}\n'.format("Type", "Alias", "ID", "UUID")
-        s += '---------------------------------------------------------------------\n'
-        for pre, fill, node in RenderTree(self[0]):
-            for y,elem in enumerate(node.modules):
-                s += '{:<20s}{:<20s}{:<5d}{:<20s}\n'.format(elem.type, elem.alias, elem.id, str(node.id))
+        s = '-------------------------------------------------\n'
+        s += '{:<20s}{:<20s}{:<5s}\n'.format("Type", "Alias", "ID")
+        s += '-------------------------------------------------\n'
+        for elem in self:
+            s += '{:<20s}{:<20s}{:<5d}\n'.format(elem.type, elem.alias, elem.id)
         return s
-
 
 class nodeList(list):
     def __repr__(self):
@@ -167,6 +165,7 @@ class Robot(object):
             state = self._poll_once()
 
         # Create nodes
+        self._modules = []
         self._nodes = []
         for i, node in enumerate(state['route_table']):
             parent_elem = None
@@ -192,6 +191,7 @@ class Robot(object):
                 if 'type' in mod and 'id' in mod and 'alias' in mod
             ]
             # Create a list of modules of the entire robot
+            self._modules = self._modules + self._nodes[i].modules
             for mod in self._nodes[i].modules:
                 setattr(self, mod.alias, mod)
 
@@ -205,7 +205,7 @@ class Robot(object):
 
     @property
     def modules(self):
-        return moduList(self._nodes)
+        return moduList(self._modules)
 
     @property
     def nodes(self):

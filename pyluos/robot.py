@@ -13,6 +13,8 @@ from collections import defaultdict
 from .io import discover_hosts, io_from_host, Ws
 from .modules import name2mod
 
+from anytree import AnyNode, RenderTree
+
 
 def run_from_unittest():
     return 'unittest' in sys.modules
@@ -34,12 +36,30 @@ known_host = {
 
 class moduList(list):
     def __repr__(self):
+        s = '---------------------------------------------------------------------\n'
+        s += '{:<20s}{:<20s}{:<5s}{:<20s}\n'.format("Type", "Alias", "ID", "UUID")
+        s += '---------------------------------------------------------------------\n'
+        for pre, fill, node in RenderTree(self[0]):
+            for y,elem in enumerate(node.modules):
+                s += '{:<20s}{:<20s}{:<5d}{:<20s}\n'.format(elem.type, elem.alias, elem.id, str(node.id))
+        return s
 
-        s = '-------------------------------------------------\n'
-        s += '{:<20s}{:<20s}{:<5s}\n'.format("Type", "Alias", "ID")
-        s += '-------------------------------------------------\n'
-        for elem in self:
-            s += '{:<20s}{:<20s}{:<5d}\n'.format(elem.type, elem.alias, elem.id)
+
+class nodeList(list):
+    def __repr__(self):
+        # Display the topology
+        s = ''
+        for pre, fill, node in RenderTree(self[0]):
+            if (node.parent == None):
+                branch = " root : "
+            else:
+                l_port_id = [i for i,x in enumerate(node.parent.port_table) if x == node.modules[0].id]
+                r_port_id = node.port_table.index(min(node.port_table))
+                branch = str(l_port_id[0]) + "<=>" + str(r_port_id) + " : "
+            s += "%s%s%s\n" % (pre, branch, node.id)
+            s += fill + "        |  " + '{:<20s}{:<20s}{:<5s}\n'.format("Type", "Alias", "ID")
+            for y,elem in enumerate(node.modules):
+                s += fill + "        └> " + '{:<20s}{:<20s}{:<5d}\n'.format(elem.type, elem.alias, elem.id)
         return s
 
 class Robot(object):
@@ -146,31 +166,38 @@ class Robot(object):
         while ('route_table' not in state):
             state = self._poll_once()
 
-        try:
-            gate = next(g for g in state['route_table']
-                        if 'type' in g and g['type'] == 'gate')
-            self._name = gate['alias']
-        except StopIteration:
-            self._name = 'gate_unknown'
+        # Create nodes
+        self._nodes = []
+        for i, node in enumerate(state['route_table']):
+            parent_elem = None
+            # find a parent and create a link
+            if (min(node["port_table"]) < node["modules"][0]["id"]):
+                parent_id = min(node["port_table"])
+                for elem in self._nodes:
+                    for module in elem.modules:
+                        if (module.id == parent_id):
+                            parent_elem = elem
+                            break;
+            # create the node
+            self._nodes.append(AnyNode(id=node["uuid"], parent=parent_elem, port_table=node["port_table"]))
 
-
-        modules = moduList([mod for mod in state['route_table']
-                   if 'type' in mod and mod['type'] in name2mod.keys()])
+            filtered_modules = moduList([mod for mod in node["modules"]
+                                if 'type' in mod and mod['type'] in name2mod.keys()])
+            # Create a list of modules in the node
+            self._nodes[i].modules = [
+                name2mod[mod['type']](id=mod['id'],
+                                      alias=mod['alias'],
+                                      robot=self)
+                for mod in filtered_modules
+                if 'type' in mod and 'id' in mod and 'alias' in mod
+            ]
+            # Create a list of modules of the entire robot
+            for mod in self._nodes[i].modules:
+                setattr(self, mod.alias, mod)
 
         self._cmd = defaultdict(lambda: defaultdict(lambda: None))
         self._cmd_data = []
         self._binary = []
-
-        self._modules = [
-            name2mod[mod['type']](id=mod['id'],
-                                  alias=mod['alias'],
-                                  robot=self)
-            for mod in modules
-            if 'type' in mod and 'id' in mod and 'alias' in mod
-        ]
-
-        for mod in self._modules:
-            setattr(self, mod.alias, mod)
 
         # We push our current state to make sure that
         # both our model and the hardware are synced.
@@ -178,8 +205,11 @@ class Robot(object):
 
     @property
     def modules(self):
-        return moduList(self._modules)
+        return moduList(self._nodes)
 
+    @property
+    def nodes(self):
+        return nodeList(self._nodes)
 
     # Poll state from hardware.
     def _poll_once(self):

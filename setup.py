@@ -16,6 +16,7 @@ setup(name='pyluos',
                         'SimpleWebSocketServer',
                         'zeroconf',
                         'numpy',
+                        'anytree',
                         ],
       extras_require={
           'tests': [],

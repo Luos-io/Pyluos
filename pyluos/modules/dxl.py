@@ -1,6 +1,14 @@
 from .module import Module, interact
+import numpy as np
 
 class DynamixelMotor(Module):
+
+    # control modes
+    _PLAY = 0
+    _PAUSE = 1
+    _STOP = 2
+    _REC = 4
+
     def __init__(self, id, alias, robot):
         Module.__init__(self, 'DynamixelMotor', id, alias, robot)
         # Read
@@ -16,6 +24,10 @@ class DynamixelMotor(Module):
         self._positionPid = [None, None, None]
         self._limit_rot_position = [None, None]
 
+        # Config
+        self._control = 0
+        self._sampling_freq = 100.0
+
     def _update(self, new_state):
         Module._update(self, new_state)
 
@@ -30,9 +42,11 @@ class DynamixelMotor(Module):
 
     @target_rot_position.setter
     def target_rot_position(self, target_position):
-        if self._compliant == False:
-            self._push_value('target_rot_position', target_position)
-            self._target_rot_position = target_position
+        self._target_rot_position = target_position
+        if hasattr(target_position, "__len__"):
+            self._push_data('target_rot_position', [len(target_position) * 4], np.array(target_position, dtype=np.float32)) # multiplying by the size of float32
+        else :
+            self._push_value("target_rot_position", target_position)
 
     @property
     def rot_position_limit(self):
@@ -80,7 +94,7 @@ class DynamixelMotor(Module):
     def compliant(self, compliant):
         self._push_value('compliant', compliant)
         self._compliant = compliant
-        if (_self.compliant == False):
+        if (self.compliant == False):
             self.target_rot_position = self.rot_position
 
     @property
@@ -101,6 +115,44 @@ class DynamixelMotor(Module):
     def register(self, register, val):
         new_val = [register, val]
         self._push_value('register', new_val)
+
+    def play(self):
+        if (self._control >= self._REC):
+            self._control = self._PLAY + self._REC
+        else :
+            self._control = self._PLAY
+        self._push_value('control', self._control)
+
+    def pause(self):
+        if (self._control >= self._REC):
+            self._control = self._PAUSE + self._REC
+        else :
+            self._control = self._PAUSE
+        self._push_value('control', self._control)
+
+    def stop(self):
+        # also stop recording
+        self._control = self._STOP
+        self._push_value('control', self._control)
+
+    def rec(self, enable):
+        if (self._control >= self._REC):
+            if (enable == False):
+                self._control = self._control - self._REC
+        else :
+            if (enable == True):
+                self._control = self._control + self._REC
+        self._push_value('control', self._control)
+
+    @property
+    def sampling_freq(self):
+        return self._sampling_freq
+
+    @sampling_freq.setter
+    def sampling_freq(self, sampling_freq):
+        self._sampling_freq = sampling_freq
+        self._push_value("time", 1.0 / sampling_freq)
+
 
     # notebook things
     def control(self):

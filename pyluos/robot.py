@@ -146,9 +146,13 @@ class Robot(object):
         self._send({'detection': {}})
         self.logger.info('Waiting for route table...')
 
+        startTime = time.time()
         state = self._poll_once()
         while ('route_table' not in state):
             state = self._poll_once()
+            if (time.time()-startTime > 1):
+                self._send({'detection': {}})
+                startTime = time.time()
 
         # Create nodes
         self._modules = []

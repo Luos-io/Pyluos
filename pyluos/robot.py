@@ -20,13 +20,6 @@ def run_from_unittest():
     return 'unittest' in sys.modules
 
 
-use_topographe = True
-try:
-    import zmq
-except ImportError:
-    use_topographe = False
-
-
 known_host = {
     'ergo': ['/dev/cu.usbserial-DN2AAOVK', '/dev/cu.usbserial-DN2YEFLN'],
     'handy': ['/dev/cu.usbserial-DN2X236E'],
@@ -113,17 +106,10 @@ class Robot(object):
         self._poll_bg.start()
         self._baudrate = 1000000
 
-        if not (test_mode or run_from_unittest()) and use_topographe:
-            c = zmq.Context()
-            s = c.socket(zmq.PUB)
-            s.connect('tcp://127.0.0.1:33000')
-            self._s = s
-
     def close(self):
         self._running = False
         self._poll_bg.join()
         self._io.close()
-
 
     @property
     def baudrate(self):
@@ -223,7 +209,6 @@ class Robot(object):
                 state = self._poll_once()
                 self._update(state)
                 self._push_once()
-                self._broadcast(state)
             else :
                 time.sleep(0.1)
 
@@ -272,10 +257,3 @@ class Robot(object):
     def _write(self, data):
         with self._send_lock:
             self._io.write(data)
-
-    def _broadcast(self, state):
-        if not hasattr(self, '_s'):
-            return
-
-        msg = '{} {}'.format(self.name, json.dumps(state))
-        self._s.send_string(msg)

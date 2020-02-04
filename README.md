@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/pollen-robotics/pyluos.svg?branch=master)](https://travis-ci.org/pollen-robotics/pyluos)
 
-Pyluos lets you easily connect, interact and program your [luos](https://www.luos.io) based robots.
+Pyluos lets you easily connect, interact and program your [luos](https://www.luos-robotics.com) based robots.
 
 The API was designed to be as simple as possible and let you focus on **bringing life to your ideas!**
 
-*You can find more information on luos on https://www.luos.io.*
+*You can find more information on luos on https://www.luos-robotics.com.*
 
 ## Install Pyluos
 
@@ -18,7 +18,7 @@ pip install pyluos
 
 #### Or clone from git:
 ```
-git clone http://github.com/pollen-robotics/pyluos.git
+git clone http://github.com/luos-robotics/pyluos.git
 ```
 
 #### Compatibility

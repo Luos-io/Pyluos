@@ -5,6 +5,7 @@ import numpy as np
 class Color(Module):
     def __init__(self, id, alias, robot):
         Module.__init__(self, 'Color', id, alias, robot)
+        self._time = 0.2
 
     @property
     def color(self):

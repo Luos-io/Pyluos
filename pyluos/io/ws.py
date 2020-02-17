@@ -2,8 +2,14 @@ import os
 import socket
 import websocket
 
-from . import IOHandler
+import sys
+if sys.version_info >= (3, 0):
+    import queue
+else:
+    import Queue as queue
 
+from threading import Event, Thread
+from . import IOHandler
 
 def resolve_hostname(hostname, port):
     # We do our own mDNS resolution
@@ -19,6 +25,7 @@ def resolve_hostname(hostname, port):
 
 
 class Ws(IOHandler):
+
     @classmethod
     def is_host_compatible(cls, host):
         try:
@@ -39,18 +46,55 @@ class Ws(IOHandler):
 
     def __init__(self, host, port=9342):
         host = resolve_hostname(host, port)
-        url = 'ws://{}:{}'.format(host, port)
 
-        self._ws = websocket.create_connection(url)
+        self._ws = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._ws.connect((host, port))
+
+        self._msg = queue.Queue(100)
+        self._running = True
+
+        self._poll_loop = Thread(target=self._poll)
+        self._poll_loop.daemon = True
+        self._poll_loop.start()
 
     def is_ready(self):
         return True
 
     def recv(self):
-        return self._ws.recv()
+        return self._msg.get()
 
     def write(self, data):
         self._ws.send(data + '\r'.encode())
 
     def close(self):
+        self._running = False
+        self._poll_loop.join()
         self._ws.close()
+
+    def _poll(self):
+        def extract_line(s):
+            j = s.find(b'\n')
+            if j == -1:
+                return b'', s
+            # Sometimes the begin of serial data can be wrong remove it
+            # Find the first '{'
+
+            x = s.find(b'{')
+            if x == -1:
+                return b'', s[j + 1:]
+
+            return s[x:j], s[j + 1:]
+
+        buff = b''
+
+        while self._running:
+            s = self._ws.recv(4096)
+
+            buff = buff + s
+            while self._running:
+                line, buff = extract_line(buff)
+                if not len(line):
+                    break
+                if self._msg.full():
+                    self._msg.get()
+                self._msg.put(line)

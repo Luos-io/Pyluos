@@ -6,19 +6,21 @@ class Color(Module):
     def __init__(self, id, alias, device):
         Module.__init__(self, 'Color', id, alias, device)
         self._time = None
+        self._size = None
+        self._color = None
 
     @property
     def color(self):
-        return self._value
+        return self._color
 
     @color.setter
     def color(self, new_color):
         new_color = [int(min(max(c, 0), 255)) for c in new_color]
         if len(new_color) > 3 :
-            self._value = new_color
+            self._color = new_color
             self._push_data('color', [len(new_color)], np.array(new_color, dtype=np.uint8))
         else :
-            self._value = new_color
+            self._color = new_color
             self._push_value('color', new_color)
     @property
     def time(self):

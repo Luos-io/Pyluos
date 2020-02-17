@@ -17,6 +17,7 @@ from .controlled_motor import ControlledMotor
 from .void import Void
 from .load import Load
 from .voltage import Voltage
+from .unknown import Unknown
 
 
 __all__ = [
@@ -39,7 +40,8 @@ __all__ = [
     'ControlledMotor',
     'Void',
     'Load',
-    'Voltage'
+    'Voltage',
+    'Unknown'
 ]
 
 name2mod = {
@@ -61,5 +63,6 @@ name2mod = {
     'ControlledMotor' : ControlledMotor,
     'Void' : Void,
     'Load' : Load,
-    'Voltage' : Voltage
+    'Voltage' : Voltage,
+    'Unknown' : Unknown
 }

@@ -23,6 +23,7 @@ class DynamixelMotor(Module):
         self._power_limit = None
         self._positionPid = [None, None, None]
         self._limit_rot_position = [None, None]
+        self._baudrate = 1000000
 
         # Config
         self._control = 0
@@ -115,6 +116,16 @@ class DynamixelMotor(Module):
     def register(self, register, val):
         new_val = [register, val]
         self._push_value('register', new_val)
+
+    @property
+    def baudrate(self):
+        return self._baudrate
+
+    @baudrate.setter
+    def baudrate(self, baud):
+        new_val = [4, baud]
+        self._push_value('register', new_val)
+        self._baudrate = baud
 
     def play(self):
         if (self._control >= self._REC):

@@ -110,7 +110,7 @@ class DynamixelMotor(Module):
     def set_id(self, id):
         self._push_value('set_id', id)
 
-    def detect(self):
+    def dxl_detect(self):
         self._push_value('reinit', 0)
 
     def register(self, register, val):

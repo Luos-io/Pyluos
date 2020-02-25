@@ -8,32 +8,32 @@ from pyluos import Robot
 import fakerobot
 
 
-class TestWsRobot(fakerobot.TestCase):
-    def test_first_command(self):
-        with closing(Robot(fakerobot.host)) as robot:
-            sent = Event()
+# class TestWsRobot(fakerobot.TestCase):
+#     def test_first_command(self):
+#         with closing(Robot(fakerobot.host)) as robot:
+#             sent = Event()
 
-            def my_send(msg):
-                sent.set()
+#             def my_send(msg):
+#                 sent.set()
 
-            robot._send = my_send
+#             robot._send = my_send
 
-            robot.my_servo.target_position = 0
-            sent.wait()
+#             robot.my_servo.target_position = 0
+#             sent.wait()
 
-    def test_speed_control(self):
-        with closing(Robot(fakerobot.host)) as robot:
-            # Stop sync to make sure the fake robot
-            # does not change the position anymore.
-            robot.close()
+#     def test_speed_control(self):
+#         with closing(Robot(fakerobot.host)) as robot:
+#             # Stop sync to make sure the fake robot
+#             # does not change the position anymore.
+#             robot.close()
 
-            servo = robot.my_servo
+#             servo = robot.my_servo
 
-            servo.target_speed = 0
-            self.assertEqual(servo.target_position, 90)
+#             servo.target_speed = 0
+#             self.assertEqual(servo.target_position, 90)
 
-            servo.target_position = 180
-            self.assertEqual(servo.target_speed, 100)
+#             servo.target_position = 180
+#             self.assertEqual(servo.target_speed, 100)
 
 
 if __name__ == '__main__':

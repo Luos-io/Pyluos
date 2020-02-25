@@ -19,7 +19,7 @@ setup(name='pyluos',
                         'anytree',
                         ],
       extras_require={
-          'tests': [],
+          'tests': ['pytest', 'flake8'],
           'topographe': ['pyzmq'],
           'jupyter-integration': ['ipywidgets'],
           'scratch': ['flask', 'Jinja2'],

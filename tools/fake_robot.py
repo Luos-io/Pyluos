@@ -53,6 +53,8 @@ class FakeRobot(WebSocketHandler):
             print('{}: Received {}'.format(time(), message))
 
         self.handle_command(json.loads(message))
+        if (message == '{detection:}'):
+            self.ioloop.add_callback(self.pub_route_table)
 
     def on_close(self):
         if self.verbose:
@@ -63,34 +65,36 @@ class FakeRobot(WebSocketHandler):
     def proxy_pub(self):
         self.ioloop.add_callback(self.pub_state)
 
+    def pub_route_table(self):
+        state = {'route_table': [{'uuid': [4456498, 1347571976, 540555569], 'port_table': [65535, 2], 'modules': [{'type': 'Gate', 'id': 1, 'alias': 'gate'}]}, {'uuid': [3932192, 1194612503, 540554032], 'port_table': [3, 1], 'modules': [{'type': 'Angle', 'id': 2, 'alias': 'potentiometer_m'}]}, {'uuid': [2949157, 1194612501, 540554032], 'port_table': [65535, 2], 'modules': [{'type': 'Gate', 'id': 3, 'alias': 'gate1'}]}]}
     def pub_state(self):
         state = {
             'modules': [
                 {
                     'alias': 'my_gate',
                     'id': 1,
-                    'type': 'gate',
+                    'type': 'Gate',
                 },
                 {
                     'alias': 'my_led',
                     'id': 2,
-                    'type': 'led',
+                    'type': 'Color',
                 },
                 {
                     'alias': 'my_servo',
                     'id': 3,
-                    'type': 'servo',
+                    'type': 'Servo',
                 },
                 {
                     'alias': 'my_button',
                     'id': 4,
-                    'type': 'button',
+                    'type': 'State',
                     'state': choice((0, 1)),
                 },
                 {
                     'alias': 'my_potentiometer',
                     'id': 5,
-                    'type': 'potard',
+                    'type': 'Angle',
                     'position': randint(0, 4096),
                 },
                 {
@@ -101,19 +105,19 @@ class FakeRobot(WebSocketHandler):
                 {
                     'alias': 'my_distance',
                     'id': 7,
-                    'type': 'distance',
+                    'type': 'Distance',
                     'distance': randint(0, 2000),
                 },
                 {
                     'alias': 'my_dxl_1',
                     'id': 8,
-                    'type': 'dynamixel',
+                    'type': 'DynamixelMotor',
                     'position': randint(-180, 180),
                 },
                 {
                     'alias': 'my_dxl_2',
                     'id': 9,
-                    'type': 'dynamixel',
+                    'type': 'DynamixelMotor',
                     'position': randint(-180, 180),
                 },
             ]

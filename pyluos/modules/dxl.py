@@ -136,6 +136,11 @@ class DynamixelMotor(Module):
                 err = err + "\t- " + str(val) + "\n"
             raise ValueError(err)
 
+    def factory_reset(self):
+        new_val = [0xFF, 0]
+        self._push_value('register', new_val)
+        print("Motor reseted => baudrate : 1000000, ID : 1")
+
     def play(self):
         if (self._control >= self._REC):
             self._control = self._PLAY + self._REC

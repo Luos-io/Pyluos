@@ -30,3 +30,8 @@ class Void(Module):
             for val in values :
                 err = err + "\t- " + str(val) + "\n"
             raise ValueError(err)
+
+    def factory_reset(self):
+        new_val = [0xFF, 0]
+        self._push_value('register', new_val)
+        print("Motor reseted => baudrate : 1000000, ID : same")

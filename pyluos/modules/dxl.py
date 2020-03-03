@@ -112,7 +112,7 @@ class DynamixelMotor(Module):
 
     def dxl_detect(self):
         self._push_value('reinit', 0)
-        print ("To get new detected Dxl motors usable on pyluos you should recreate your Luos object.")
+        print ("To get new detected Dxl motors usable on pyluos you should recreate your Pyluos object.")
 
     def register(self, register, val):
         new_val = [register, val]
@@ -129,12 +129,17 @@ class DynamixelMotor(Module):
             new_val = [4, baud]
             self._push_value('register', new_val)
             self._baudrate = baud
-            print ("If you try to recover a motor you should start 'dxl_detect()' command and recreate your Luos object.")
+            print ("If you try to recover a motor you should start 'dxl_detect()' command and recreate your Pyluos object.")
         else :
             err = "Possible values are :\n"
             for val in values :
                 err = err + "\t- " + str(val) + "\n"
             raise ValueError(err)
+
+    def factory_reset(self):
+        new_val = [0xFF, 0]
+        self._push_value('register', new_val)
+        print("Motor reseted => baudrate : 1000000, ID : 1")
 
     def play(self):
         if (self._control >= self._REC):

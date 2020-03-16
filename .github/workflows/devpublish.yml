@@ -50,17 +50,27 @@ jobs:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
-        # Get the last revision
+        # Get the online last revision
         last_rev=$(pip install pyluos==  2>&1 | grep ')' | awk 'NF{print substr($NF, 1, length($NF)-1)}')
+        # Get the local last revision
+        local_rev=$(cat pyluos/version.py |  awk 'NF{print substr($NF, 1, length($NF)-1)}')
+        local_rev="${local_rev:1}"
+        # if local and remote revision are same increase rev of last_rev
+        if [[ $last_rev == $local_rev ]]; then
+          # get bug fix rev and increase it
+          bugfix_rev=$(expr $(cut -d. -f3 <<< "$last_rev")+1 | bc)
+          tmp=$(cut -d. -f-2 <<< "$last_rev")
+          last_rev=${tmp}.${bugfix_rev}
+        fi
         pre_rev_nb=1
-        if [[ $last_rev == *\+* ]]; then
+        if [[ $last_rev == *\.b* ]]; then
           # get pre rev number and increment it
-          pre_rev_nb=$(expr $(cut -d "+" -f 2 <<< "$last_rev")+1 | bc)
+          pre_rev_nb=$(expr $(cut -d "b" -f 2 <<< "$last_rev")+1 | bc)
           # remove pre rev number
-          last_rev=$(cut -d+ -f1 <<< "$last_rev")
+          last_rev=$(cut -d. -f-3 <<< "$last_rev")
         fi
         # put dev revision after last_rev
-        revision=${last_rev}+${pre_rev_nb}
+        revision=${last_rev}.b${pre_rev_nb}
         # save it into version file
         echo version = \'$revision\' > pyluos/version.py
 

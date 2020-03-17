@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/pollen-robotics/pyluos.svg?branch=master)](https://travis-ci.org/pollen-robotics/pyluos)
 
-Pyluos lets you easily connect, interact and program your [luos](https://www.luos-robotics.com) based robots.
+Pyluos lets you easily connect, interact and program your [luos](https://www.luos.io) based devices.
 
 The API was designed to be as simple as possible and let you focus on **bringing life to your ideas!**
 
-*You can find more information on luos on https://www.luos-robotics.com.*
+*You can find more information on luos on https://www.luos.io.*
 
 ## Install Pyluos
 
@@ -18,7 +18,7 @@ pip install pyluos
 
 #### Or clone from git:
 ```
-git clone http://github.com/luos-robotics/pyluos.git
+git clone https://github.com/Luos-io/pyluos
 ```
 
 #### Compatibility
@@ -31,7 +31,7 @@ Pyluos API was designed to be as simple as possible so you can directly focus on
 
 ### Connecting
 
-Connecting to your robot is really easy. It actually takes only two lines of code.
+Connecting to your device is really easy. It actually takes only two lines of code.
 
 #### On WiFi
 
@@ -84,7 +84,7 @@ robot.led.color = (0, 255, 0)
 
 #### Linking sensor and effector in a loop
 
-You can also transparently link sensors and effectors (even from different robots) together.
+You can also transparently link sensors and effectors (even from different devices) together.
 
 For instance, the following code will change the color of the led to red when there is something near the distance sensor and change it to blue otherwise:
 
@@ -174,7 +174,7 @@ Method:
 
 If you don't know the name of a gate, you can easily find it using the ```pyluos-usb-gate``` and ```pyluos-wifi-gate``` command line utilities.
 
-There should be automatically installed when you install pyluos. They should be available in your path. From the terminal, you can run:
+There should be automatically installed when you install Pyluos. They should be available in your path. From the terminal, you can run:
 
 ```pyluos-wifi-gate discover```
 
@@ -185,7 +185,7 @@ This will show the name of the wifi gate connected on the same WiFi. This uses t
 Similarly, to find the name of the USB gate connected to your machine you can run:
 ```pyluos-usb-gate discover```
 
-You can then uses the found name to connect to it via pyluos:
+You can then uses the found name to connect to it via Pyluos:
 
 ```python
 from pyluos import Robot
@@ -194,7 +194,7 @@ robot = Robot('/dev/cu.usbmodem2964691')
 
 ## Module Hotplug
 
-At the moment, pyluos does not support module hotplug. If you connect to a Robot and add a new module, they will not be automatically added to your Python object.
+At the moment, Pyluos does not support module hotplug. If you connect to a Robot and add a new module, they will not be automatically added to your Python object.
 
 You will need to unplug the whole bus and re-power it.
 
@@ -202,9 +202,9 @@ You will need to unplug the whole bus and re-power it.
 
 ## Luos gate external API
 
-If you want to connect your robot to other services, you can directly use its API. This JSON API is served either via the serial communication or via a websocket for the WiFi module.
+If you want to connect your device to other services, you can directly use its API. This JSON API is served either via the serial communication or via a websocket for the WiFi module.
 
-The robot publish its state at a predefined frequency (currently about 25Hz). The state looks like:
+The device publish its state at a predefined frequency (currently about 25Hz). The state looks like:
 
 ```JSON
 {
@@ -254,7 +254,7 @@ Pyluos was developed by the [Pollen Robotics](http://pollen-robotics.com/) team 
 
 Pyluos still needs lots of usage and testing to help it become more useful and reliable. If you are actively using Pyluos, have suggestion or comments  please let us know!
 
-Do not hesitate to share your experience with Pyluos our meet other luos users on our [forum](https://forum.luos.io)!
+Do not hesitate to share your experience with Pyluos our meet other luos users on our [forum](https://community.luos.io)!
 
 ## License
 

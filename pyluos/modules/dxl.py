@@ -9,8 +9,8 @@ class DynamixelMotor(Module):
     _STOP = 2
     _REC = 4
 
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'DynamixelMotor', id, alias, robot)
+    def __init__(self, id, alias, device):
+        Module.__init__(self, 'DynamixelMotor', id, alias, device)
         # Read
         self.rot_position = None
         self.temperature = None

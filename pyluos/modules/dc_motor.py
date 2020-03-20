@@ -4,8 +4,8 @@ from .module import Module, interact
 
 
 class DCMotor(Module):
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'DCMotor', id, alias, robot)
+    def __init__(self, id, alias, device):
+        Module.__init__(self, 'DCMotor', id, alias, device)
 
     @property
     def power_ratio(self):

@@ -5,8 +5,8 @@ class LightSensor(Module):
     possible_events = {'changed', 'filter_changed'}
     threshold = 10
 
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'LightSensor', id, alias, robot)
+    def __init__(self, id, alias, device):
+        Module.__init__(self, 'LightSensor', id, alias, device)
         self._value = 0.0
 
     @property

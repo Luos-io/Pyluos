@@ -3,14 +3,14 @@ import unittest
 from threading import Event
 from contextlib import closing
 
-from pyluos import Robot
+from pyluos import Device
 
 import fakerobot
 
 
 # class TestWsRobot(fakerobot.TestCase):
 #     def test_first_command(self):
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             sent = Event()
 
 #             def my_send(msg):
@@ -22,7 +22,7 @@ import fakerobot
 #             sent.wait()
 
 #     def test_speed_control(self):
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             # Stop sync to make sure the fake robot
 #             # does not change the position anymore.
 #             robot.close()

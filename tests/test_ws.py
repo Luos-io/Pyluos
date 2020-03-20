@@ -4,7 +4,7 @@ from time import sleep
 from contextlib import closing
 from random import random
 
-from pyluos import Robot
+from pyluos import Device
 
 import fakerobot
 
@@ -20,16 +20,16 @@ import fakerobot
 #         self.assertFalse(Ws.is_host_compatible('/dev/ttyUSB0'))
 
 #     def test_ws_connection(self):
-#         with closing(Robot(fakerobot.host)):
+#         with closing(Device(fakerobot.host)):
 #             pass
 
 #     def test_ws_reception(self):
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             self.assertTrue(robot.modules)
 #             self.assertTrue(robot.name)
 
 #     def test_spamming(self):
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             robot.i = 0
 
 #             def my_send(msg):

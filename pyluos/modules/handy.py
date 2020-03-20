@@ -1,8 +1,8 @@
 from .module import Module, interact
 
 class Handy(Module):
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'Handy', id, alias, robot)
+    def __init__(self, id, alias, device):
+        Module.__init__(self, 'Handy', id, alias, device)
 
         self.fingers = {'index': 0.0, 'middle': 0.0, 'ring': 0.0, 'pinky': 0.0, 'thumb': 0.0, }
 

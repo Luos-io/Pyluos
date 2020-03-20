@@ -4,8 +4,8 @@ from .module import Module, interact
 
 
 class Servo(Module):
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'Servo', id, alias, robot)
+    def __init__(self, id, alias, device):
+        Module.__init__(self, 'Servo', id, alias, device)
         self._max_angle = 180.0
         self._min_pulse = 0.0005
         self._max_pulse = 0.0015

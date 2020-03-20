@@ -4,14 +4,14 @@ import string
 
 from contextlib import closing
 
-from pyluos import Robot
+from pyluos import Device
 
 import fakerobot
 
 
 # class TestWsRobot(fakerobot.TestCase):
 #     def test_rename(self):
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             for _ in range(5):
 #                 length = random.randint(1, robot._max_alias_length)
 #                 mod = random.choice(robot.modules)
@@ -25,7 +25,7 @@ import fakerobot
 #                 self.assertFalse(hasattr(robot, old))
 
 #     def test_unexisting_module(self):
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             while True:
 #                 length = random.randint(1, robot._max_alias_length)
 #                 name = self.random_name(length)
@@ -37,7 +37,7 @@ import fakerobot
 #                 robot.rename_module(name, 'oups')
 
 #     def test_loooooong_name(self):
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             mod = random.choice(robot.modules)
 
 #             length = random.randint(robot._max_alias_length + 1,

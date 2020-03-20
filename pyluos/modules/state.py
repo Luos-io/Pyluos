@@ -4,8 +4,8 @@ from .module import Module
 class State(Module):
     possible_events = {'changed', 'falling', 'rising'}
 
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'State', id, alias, robot)
+    def __init__(self, id, alias, device):
+        Module.__init__(self, 'State', id, alias, device)
         self._value = False
 
     @property

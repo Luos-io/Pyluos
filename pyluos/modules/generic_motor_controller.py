@@ -2,8 +2,8 @@ from .module import Module, interact
 
 
 class GenericMotorController(Module):
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'generic_motor_controller', id, alias, robot)
+    def __init__(self, id, alias, device):
+        Module.__init__(self, 'generic_motor_controller', id, alias, device)
         self._power = None
 
     @property

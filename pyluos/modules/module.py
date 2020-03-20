@@ -25,12 +25,12 @@ class Module(object):
 
     def __init__(self,
                  type, id, alias,
-                 robot):
+                 device):
         self.id = id
         self.type = type
         self.alias = alias
         self.refresh_freq = 0.0
-        self._delegate = robot
+        self._delegate = device
         self._value = None
         self._cb = defaultdict(list)
         self._led = False

@@ -3,8 +3,8 @@ import time
 
 class Void(Module):
 
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'Void', id, alias, robot)
+    def __init__(self, id, alias, device):
+        Module.__init__(self, 'Void', id, alias, device)
         self._baudrate = 1000000
 
     def _update(self, new_state):

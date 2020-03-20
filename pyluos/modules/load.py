@@ -5,8 +5,8 @@ class Load(Module):
     possible_events = {'changed', 'filter_changed'}
     threshold = 10
 
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'Load', id, alias, robot)
+    def __init__(self, id, alias, device):
+        Module.__init__(self, 'Load', id, alias, device)
         self._load = 0.0
         self._offset = 0.0
         self._scale = 1.0

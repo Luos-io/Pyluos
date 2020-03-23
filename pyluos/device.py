@@ -53,7 +53,7 @@ class nodeList(list):
                 s += fill + "        └> " + '{:<20s}{:<20s}{:<5d}\n'.format(elem.type, elem.alias, elem.id)
         return s
 
-class Robot(object):
+class Device(object):
     _heartbeat_timeout = 5  # in sec.
     _max_alias_length = 15
     _base_log_conf = os.path.join(os.path.dirname(__file__),
@@ -94,7 +94,7 @@ class Robot(object):
 
         # We force a first poll to setup our model.
         self._setup()
-        self.logger.info('Robot setup.')
+        self.logger.info('Device setup.')
 
         self._last_update = time.time()
         self._running = True
@@ -176,11 +176,11 @@ class Robot(object):
             self._nodes[i].modules = [
                 name2mod[mod['type']](id=mod['id'],
                                       alias=mod['alias'],
-                                      robot=self)
+                                      device=self)
                 for mod in filtered_modules
                 if 'type' in mod and 'id' in mod and 'alias' in mod
             ]
-            # Create a list of modules of the entire robot
+            # Create a list of modules of the entire device
             self._modules = self._modules + self._nodes[i].modules
             for mod in self._nodes[i].modules:
                 setattr(self, mod.alias, mod)

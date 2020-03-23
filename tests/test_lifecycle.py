@@ -5,38 +5,38 @@ from contextlib import closing
 from random import randint, choice
 from string import ascii_lowercase
 
-from pyluos import Robot
+from pyluos import Device
 
 import fakerobot
 
 
 # class TestWsRobot(fakerobot.TestCase):
 #     def test_life_cycle(self):
-#         robot = Robot(fakerobot.host)
+#         robot = Device(fakerobot.host)
 #         self.assertTrue(robot.alive)
 #         robot.close()
 #         self.assertFalse(robot.alive)
 
 #     def test_modules(self):
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             for mod in robot.modules:
 #                 self.assertTrue(hasattr(robot, mod.alias))
 
 #     def test_cmd(self):
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             pos = randint(0, 180)
 #             robot.my_servo.position = pos
 #             self.assertEqual(robot.my_servo.position, pos)
 
 #     def test_possible_events(self):
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             for mod in robot.modules:
 #                 self.assertTrue(isinstance(mod.possible_events, set))
 
 #             self.assertTrue('pressed' in robot.my_button.possible_events)
 
 #     def test_add_evt_cb(self):
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             robot.cb_trigger = Event()
 
 #             def dummy_cb(evt):
@@ -51,7 +51,7 @@ import fakerobot
 #         def dummy_cb(evt):
 #             pass
 
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             mod = robot.my_potentiometer
 #             while True:
 #                 evt = ''.join(choice(ascii_lowercase)
@@ -63,7 +63,7 @@ import fakerobot
 #                 mod.add_callback(evt, dummy_cb)
 
 #     def test_servoing_evt(self):
-#         with closing(Robot(fakerobot.host)) as robot:
+#         with closing(Device(fakerobot.host)) as robot:
 #             robot._synced = Event()
 
 #             def on_move(evt):

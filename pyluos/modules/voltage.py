@@ -4,8 +4,8 @@ from .module import Module
 class Voltage(Module):
     possible_events = {'changed', 'filter_changed'}
 
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'Voltage', id, alias, robot)
+    def __init__(self, id, alias, device):
+        Module.__init__(self, 'Voltage', id, alias, device)
         self._value = 0
         self.threshold = 1.0
 

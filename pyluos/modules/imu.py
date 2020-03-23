@@ -19,8 +19,8 @@ class Imu(Module):
     _HEADING = 0
 
 
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'Imu', id, alias, robot)
+    def __init__(self, id, alias, device):
+        Module.__init__(self, 'Imu', id, alias, device)
         self._config = [False] * (Imu._ACCELL + 1)
         self._config[Imu._QUAT] = True # by default enable quaternion
         self._quaternion = (0, 0, 0, 0)

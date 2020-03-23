@@ -36,27 +36,27 @@ Connecting to your device is really easy. It actually takes only two lines of co
 #### On WiFi
 
 ```python
-from pyluos import Robot
+from pyluos import Device
 
-robot = Robot('my_robot_hostname.local')
+device = Device('my_robot_hostname.local')
 ```
 
 #### On serial
 
 ```python
-from pyluos import Robot
+from pyluos import Device
 
-robot = Robot('my_serial_port')
+device = Device('my_serial_port')
 ```
 
 *If you don't know how to find the name of the usb/wifi gate you are using, you can report to the section [Finding  a gate](#finding-a-gate).*
 
 #### Accessing values
 
-Once connected the robot is automatically synced at a high frequency. You can list the plugged modules via:
+Once connected the device is automatically synced at a high frequency. You can list the plugged modules via:
 
 ```python
-print(robot.modules)
+print(device.modules)
 
 >>> [<Motor alias="motor_1" id=2 state=90>,
      <Motor alias="motor_2" id=3 state=90>,
@@ -66,7 +66,7 @@ print(robot.modules)
 Or access the current value of a sensor directly:
 
 ```python
-print(robot.distance_sensor_1.distance)
+print(device.distance_sensor_1.distance)
 
 >>> 45
 ```
@@ -76,8 +76,8 @@ print(robot.distance_sensor_1.distance)
 You can send command value to the effectors in a similar way.
 
 ```python
-robot.motor_1.position = 45
-robot.led.color = (0, 255, 0)
+device.motor_1.position = 45
+device.led.color = (0, 255, 0)
 ```
 
 *The orders are in fact buffered and are actually sent a very short time after (few ms).*
@@ -90,10 +90,10 @@ For instance, the following code will change the color of the led to red when th
 
 ```python
 while True:
-  if robot.dist_sensor.distance < 50:
-    robot.led.color = (255, 0, 0)
+  if device.dist_sensor.distance < 50:
+    device.led.color = (255, 0, 0)
   else:
-    robot.led.color = (0, 0, 255)
+    device.led.color = (0, 0, 255)
 ```
 
 ## Available module
@@ -188,8 +188,8 @@ Similarly, to find the name of the USB gate connected to your machine you can ru
 You can then uses the found name to connect to it via Pyluos:
 
 ```python
-from pyluos import Robot
-robot = Robot('/dev/cu.usbmodem2964691')
+from pyluos import Device
+device = Device('/dev/cu.usbmodem2964691')
 ```
 
 ## Module Hotplug

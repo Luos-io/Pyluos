@@ -3,8 +3,8 @@ from .gpio import AnalogInputPin, DigitalInputPin, DigitalOutputPin, Pwm
 
 
 class GPIO(Module):
-    def __init__(self, id, alias, robot):
-        Module.__init__(self, 'GPIO', id, alias, robot)
+    def __init__(self, id, alias, device):
+        Module.__init__(self, 'GPIO', id, alias, device)
 
         self.analog_1 = AnalogInputPin('p1')
 

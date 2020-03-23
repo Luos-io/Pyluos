@@ -32,7 +32,7 @@ jobs:
         pytest
 
   publish:
-    name: publis a new dev revision
+    name: publish a new dev revision
     runs-on: ubuntu-latest
     needs: test
     steps:
@@ -63,11 +63,11 @@ jobs:
           last_rev=${tmp}.${bugfix_rev}
         fi
         pre_rev_nb=1
-        if [[ $last_rev == *\.b* ]]; then
+        if [[ $last_rev == *b* ]]; then
           # get pre rev number and increment it
           pre_rev_nb=$(expr $(cut -d "b" -f 2 <<< "$last_rev")+1 | bc)
           # remove pre rev number
-          last_rev=$(cut -d. -f-3 <<< "$last_rev")
+          last_rev=$(cut -db -f1 <<< "$last_rev")
         fi
         # put dev revision after last_rev
         revision=${last_rev}.b${pre_rev_nb}

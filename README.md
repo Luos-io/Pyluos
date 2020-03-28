@@ -252,7 +252,7 @@ You can find the list of all available registers in the [modules](#module-availa
 
 ## Contributing
 
-Pyluos was developed by the [Pollen Robotics](http://pollen-robotics.com/) team as part of [Luos](https://www.luos.io).
+Pyluos is developed by [Luos](https://www.luos.io) with the support of [Pollen Robotics](http://pollen-robotics.com/).
 
 Pyluos still needs lots of usage and testing to help it become more useful and reliable. If you are actively using Pyluos, have suggestion or comments  please let us know!
 

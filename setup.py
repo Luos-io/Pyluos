@@ -20,7 +20,6 @@ setup(name='pyluos',
                         ],
       extras_require={
           'tests': ['pytest', 'flake8'],
-          'topographe': ['pyzmq'],
           'jupyter-integration': ['ipywidgets'],
       },
       entry_points={

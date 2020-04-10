@@ -34,8 +34,8 @@ class Module(object):
         self._value = None
         self._cb = defaultdict(list)
         self._led = False
-        self._L0_temperature = None
-        self._L0_voltage = None
+        self._node_temperature = None
+        self._node_voltage = None
         self._firmware_revision = "Unknown"
         self._uuid = [0, 0, 0]
         self._killed = False
@@ -50,10 +50,10 @@ class Module(object):
         if ((time.time() - self._last_update) != 0):
             self.refresh_freq = ((200.0 * self.refresh_freq) + (1.0 / (time.time() - self._last_update))) / 201.0
             self._last_update = time.time()
-        if 'L0_temperature' in new_state:
-            self._L0_temperature = new_state['L0_temperature']
-        if 'L0_voltage' in new_state:
-            self._L0_voltage = new_state['L0_voltage']
+        if 'node_temperature' in new_state:
+            self._node_temperature = new_state['node_temperature']
+        if 'node_voltage' in new_state:
+            self._node_voltage = new_state['node_voltage']
         if 'revision' in new_state:
             self._firmware_revision = new_state['revision']
         if 'uuid' in new_state:
@@ -79,16 +79,16 @@ class Module(object):
             self._delegate.update_data(self.alias, key, new_val, data)
 
     @property
-    def L0_temperature(self):
-        self._push_value('L0_temperature', "")
+    def node_temperature(self):
+        self._push_value('node_temperature', "")
         time.sleep(0.03)
-        return self._L0_temperature
+        return self._node_temperature
 
     @property
-    def L0_voltage(self):
-        self._push_value('L0_voltage', "")
+    def node_voltage(self):
+        self._push_value('node_voltage', "")
         time.sleep(0.03)
-        return self._L0_voltage
+        return self._node_voltage
 
     @property
     def firmware_revision(self):

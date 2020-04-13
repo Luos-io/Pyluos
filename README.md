@@ -1,3 +1,5 @@
+<a href="https://luos.io"><img src="https://www.luos.io/wp-content/uploads/2020/03/Luos-color.png" alt="Luos logo" title="Luos" align="right" height="60" /></a>
+
 [![Build Status](https://travis-ci.org/pollen-robotics/pyluos.svg?branch=master)](https://travis-ci.org/pollen-robotics/pyluos)
 [![](http://certified.luos.io)](https://luos.io)
 [![](https://img.shields.io/github/license/Luos-io/Pyluos)](https://github.com/Luos-io/Pyluos/blob/master/LICENSE)

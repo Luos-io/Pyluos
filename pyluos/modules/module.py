@@ -37,6 +37,7 @@ class Module(object):
         self._node_temperature = None
         self._node_voltage = None
         self._firmware_revision = "Unknown"
+        self._luos_revision = "Unknown"
         self._uuid = [0, 0, 0]
         self._killed = False
         self._last_update = time.time()
@@ -56,6 +57,8 @@ class Module(object):
             self._node_voltage = new_state['node_voltage']
         if 'revision' in new_state:
             self._firmware_revision = new_state['revision']
+        if 'luos_revision' in new_state:
+            self._luos_revision = new_state['luos_revision']
         if 'uuid' in new_state:
             self._uuid = new_state['uuid']
 
@@ -95,6 +98,12 @@ class Module(object):
         self._push_value('revision', "")
         time.sleep(0.03)
         return self._firmware_revision
+        
+    @property
+    def luos_revision(self):
+        self._push_value('luos_revision', "")
+        time.sleep(0.03)
+        return self._luos_revision
 
     @property
     def uuid(self):

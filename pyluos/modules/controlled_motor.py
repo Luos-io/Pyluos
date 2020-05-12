@@ -10,18 +10,19 @@ import numpy as np
 
 class ControlledMotor(Module):
     # target modes
-    _MODE_COMPLIANT = 11
-    _MODE_POWER = 10
-    _MODE_ROT_SPEED = 8
-    _MODE_ROT_POSITION = 7
-    _MODE_TRANS_SPEED = 6
-    _MODE_TRANS_POSITION = 5
+    _MODE_COMPLIANT = 12
+    _MODE_POWER = 11
+    _MODE_ROT_SPEED = 9
+    _MODE_ROT_POSITION = 8
+    _MODE_TRANS_SPEED = 7
+    _MODE_TRANS_POSITION = 6
     # report modes
-    _ROTATION_POSITION = 4
-    _ROTATION_SPEED = 3
-    _TRANSLATION_POSITION = 2
-    _TRANSLATION_SPEED = 1
-    _CURRENT = 0
+    _ROTATION_POSITION = 5
+    _ROTATION_SPEED = 4
+    _TRANSLATION_POSITION = 3
+    _TRANSLATION_SPEED = 2
+    _CURRENT = 1
+    _TEMPERATURE = 0
 
     # control modes
     _PLAY = 0
@@ -64,6 +65,7 @@ class ControlledMotor(Module):
         self._trans_position= 0.0
         self._trans_speed = 0.0
         self._current = 0.0
+        self._temperature = 0.0
 
     def _convert_config(self):
         return int(''.join(['1' if c else '0' for c in self._config]), 2) # Table read reversly
@@ -148,7 +150,6 @@ class ControlledMotor(Module):
         self._config = bak
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
-
 
     @property
     def encoder_res(self):
@@ -443,6 +444,19 @@ class ControlledMotor(Module):
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
+    # temperature
+    @property
+    def temperature(self):
+        if (self._config[ControlledMotor._TEMPERATURE] != True):
+            self.temperature = True
+        return self._temperature
+
+    @temperature.setter
+    def temperature(self, enable):
+        self._config[ControlledMotor._TEMPERATURE] = True if enable != 0  else False
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.01)
+
 #************************** controls and updates *****************************
 
     def _update(self, new_state):
@@ -457,6 +471,8 @@ class ControlledMotor(Module):
             self._trans_speed = new_state['trans_speed']
         if 'current' in new_state:
             self._current = new_state['current']
+        if 'temperature' in new_state:
+            self._temperature = new_state['temperature']
 
     def control(self):
         def change_config(rot_speed_report, rot_position_report, trans_speed_report, trans_position_report, current_report, compliant_mode, power_mode, power_ratio, rot_speed_mode, rot_speed, rot_position_mode, rot_position, trans_speed_mode, trans_speed, trans_position_mode, trans_position):
@@ -494,6 +510,7 @@ class ControlledMotor(Module):
                         trans_speed_report = self._config[ControlledMotor._TRANSLATION_SPEED],
                         trans_position_report = self._config[ControlledMotor._TRANSLATION_POSITION],
                         current_report = self._config[ControlledMotor._CURRENT],
+                        temperature_report = self._config[ControlledMotor._TEMPERATURE],
 
                         compliant_mode = self._config[ControlledMotor._MODE_COMPLIANT],
                         power_mode = self._config[ControlledMotor._MODE_POWER],

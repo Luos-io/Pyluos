@@ -18,7 +18,7 @@ from .void import Void
 from .load import Load
 from .voltage import Voltage
 from .unknown import Unknown
-from .reachy import ReachyArm
+from .reachy import ReachyArm, ReachyFan
 
 __all__ = [
     'name2mod',
@@ -66,4 +66,5 @@ name2mod = {
     'Voltage' : Voltage,
     'Unknown' : Unknown,
     'ReachyArm': ReachyArm,
+    'ReachyFan': ReachyFan,
 }

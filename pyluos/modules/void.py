@@ -19,16 +19,16 @@ class Void(Module):
         return self._baudrate
 
 
-    def _baudrate(self, baud):
+    def _set_baudrate(self, baud):
         new_val = [4, baud]
         self._push_value('register', new_val)
         self._baudrate = baud
 
-
+    @baudrate.setter
     def baudrate(self, baud):
         values = [9600, 19200, 57600, 115200, 200000, 250000, 400000, 500000, 1000000]
         if baud in values :
-            self._baudrate(baud)
+            self._set_baudrate(baud)
             print ("If you try to recover a motor you should start 'dxl_detect()' command and recreate your Pyluos object.")
         else :
             err = "Possible values are :\n"

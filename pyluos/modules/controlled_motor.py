@@ -10,19 +10,20 @@ import numpy as np
 
 class ControlledMotor(Module):
     # target modes
-    _MODE_COMPLIANT = 12
-    _MODE_POWER = 11
-    _MODE_ROT_SPEED = 9
-    _MODE_ROT_POSITION = 8
-    _MODE_TRANS_SPEED = 7
-    _MODE_TRANS_POSITION = 6
+    _MODE_COMPLIANT = 13
+    _MODE_POWER = 12
+    _MODE_ROT_SPEED = 10
+    _MODE_ROT_POSITION = 9
+    _MODE_TRANS_SPEED = 8
+    _MODE_TRANS_POSITION = 7
     # report modes
-    _ROTATION_POSITION = 5
-    _ROTATION_SPEED = 4
-    _TRANSLATION_POSITION = 3
-    _TRANSLATION_SPEED = 2
-    _CURRENT = 1
-    _TEMPERATURE = 0
+    _ROTATION_POSITION = 6
+    _ROTATION_SPEED = 5
+    _TRANSLATION_POSITION = 4
+    _TRANSLATION_SPEED = 3
+    _CURRENT = 2
+    _TEMPERATURE = 1
+    _TORQUE = 0
 
     # control modes
     _PLAY = 0

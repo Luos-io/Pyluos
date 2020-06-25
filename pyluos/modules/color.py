@@ -35,7 +35,7 @@ class Color(Module):
     def size(self):
         return self._size
 
-    @time.setter
+    @size.setter
     def size(self, new_size):
         self._size = new_size
         self._push_value('parameters', new_size)

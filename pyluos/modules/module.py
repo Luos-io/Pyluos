@@ -42,6 +42,7 @@ class Module(object):
         self._uuid = [0, 0, 0]
         self._killed = False
         self._last_update = time.time()
+        self._luos_statistics = [0, 0, 0, 0, 0]
 
     def __repr__(self):
         return ('<{self.type} '
@@ -58,6 +59,8 @@ class Module(object):
             self._luos_revision = new_state['luos_revision']
         if 'uuid' in new_state:
             self._uuid = new_state['uuid']
+        if 'luos_statistics' in new_state:
+            self._luos_statistics = new_state['luos_statistics']
 
     def _kill(self):
         self._killed = True
@@ -97,6 +100,19 @@ class Module(object):
         return self._uuid
 
     @property
+    def luos_statistics(self):
+        self._push_value('luos_statistics', "")
+        time.sleep(0.3)
+        max_table = [self._luos_statistics[0], self._luos_statistics[1], self._luos_statistics[2]]
+        max_val = max(max_table)
+        s = self.alias + " statistics :"
+        s = s + "\n.luos allocated RAM occupation \t= " + repr(max_val)
+        s = s + "%\n\t.Allocator stack \t= " + repr(self._luos_statistics[0])
+        s = s + "%\n\t.Message stack \t\t= " + repr(self._luos_statistics[1])
+        s = s + "%\n\t.Luos stack \t\t= " + repr(self._luos_statistics[2])
+        s = s + "%\n.Dropped messages number \t= " + repr(self._luos_statistics[3])
+        s = s + "\n.Max luos loop delay \t\t= " + repr(self._luos_statistics[4]) + "ms"
+        print(s)
 
     def rename(self, name):
         # check if the string start with a number before sending

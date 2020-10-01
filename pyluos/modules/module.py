@@ -52,16 +52,10 @@ class Module(object):
         if ((time.time() - self._last_update) != 0):
             self.refresh_freq = ((200.0 * self.refresh_freq) + (1.0 / (time.time() - self._last_update))) / 201.0
             self._last_update = time.time()
-        if 'node_temperature' in new_state:
-            self._node_temperature = new_state['node_temperature']
-        if 'node_voltage' in new_state:
-            self._node_voltage = new_state['node_voltage']
         if 'revision' in new_state:
             self._firmware_revision = new_state['revision']
         if 'luos_revision' in new_state:
             self._luos_revision = new_state['luos_revision']
-        if 'robus_revision' in new_state:
-            self._robus_revision = new_state['robus_revision']
         if 'uuid' in new_state:
             self._uuid = new_state['uuid']
 
@@ -85,34 +79,16 @@ class Module(object):
             self._delegate.update_data(self.alias, key, new_val, data)
 
     @property
-    def node_temperature(self):
-        self._push_value('node_temperature', "")
-        time.sleep(0.03)
-        return self._node_temperature
-
-    @property
-    def node_voltage(self):
-        self._push_value('node_voltage', "")
-        time.sleep(0.03)
-        return self._node_voltage
-
-    @property
     def firmware_revision(self):
         self._push_value('revision', "")
         time.sleep(0.03)
         return self._firmware_revision
-        
+
     @property
     def luos_revision(self):
         self._push_value('luos_revision', "")
         time.sleep(0.03)
         return self._luos_revision
-        
-    @property
-    def robus_revision(self):
-        self._push_value('robus_revision', "")
-        time.sleep(0.03)
-        return self._robus_revision
 
     @property
     def uuid(self):
@@ -121,29 +97,11 @@ class Module(object):
         return self._uuid
 
     @property
-    def led(self):
-        return self._led
-
-    @led.setter
-    def led(self, state):
-        if state != self._led:
-            self._push_value('led', state)
-            self._led = state
-
-
-    def led_toggle(self):
-        if self._led is True:
-            self._push_value('led', False)
-            self._led = False
-        else:
-            self._push_value('led', True)
-            self._led = True
 
     def rename(self, name):
         # check if the string start with a number before sending
         self._push_value('rename', name)
         self.alias = name
-
 
     # Events cb handling
 

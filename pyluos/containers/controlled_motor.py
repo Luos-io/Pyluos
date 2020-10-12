@@ -4,11 +4,11 @@ import collections
 from copy import copy
 import time
 
-from .module import Module, interact
+from .module import Container, interact
 import numpy as np
 
 
-class ControlledMotor(Module):
+class ControlledMotor(Container):
     # target modes
     _MODE_COMPLIANT = 13
     _MODE_POWER = 12
@@ -32,7 +32,7 @@ class ControlledMotor(Module):
     _REC = 4
 
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'ControlledMotor', id, alias, device)
+        Container.__init__(self, 'ControlledMotor', id, alias, device)
         self._config = [False] * (ControlledMotor._MODE_COMPLIANT + 1)
         # default configs, enable compliant, power_mode, and rotation position report
         self._config[ControlledMotor._MODE_COMPLIANT] = True
@@ -461,7 +461,7 @@ class ControlledMotor(Module):
 #************************** controls and updates *****************************
 
     def _update(self, new_state):
-        Module._update(self, new_state)
+        Container._update(self, new_state)
         if 'rot_position' in new_state:
             self._rot_position = new_state['rot_position']
         if 'rot_speed' in new_state:

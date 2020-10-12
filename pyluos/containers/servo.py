@@ -1,11 +1,11 @@
 from __future__ import division
 
-from .module import Module, interact
+from .module import Container, interact
 
 
-class Servo(Module):
+class Servo(Container):
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'Servo', id, alias, device)
+        Container.__init__(self, 'Servo', id, alias, device)
         self._max_angle = 180.0
         self._min_pulse = 0.0005
         self._max_pulse = 0.0015
@@ -51,7 +51,7 @@ class Servo(Module):
         self._push_value('parameters', param)
 
     def _update(self, new_state):
-        Module._update(self, new_state)
+        Container._update(self, new_state)
 
     def control(self):
         def move(position):

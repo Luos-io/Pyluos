@@ -20,7 +20,7 @@ except ImportError:
 Event = namedtuple('Event', ('name', 'old_value', 'new_value'))
 
 
-class Module(object):
+class Container(object):
     possible_events = set()
 
     def __init__(self,

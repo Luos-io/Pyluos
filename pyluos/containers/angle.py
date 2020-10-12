@@ -1,12 +1,12 @@
-from .module import Module
+from .module import Container
 
 
-class Angle(Module):
+class Angle(Container):
     possible_events = {'changed', 'filter_changed'}
     threshold = 10
 
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'Angle', id, alias, device)
+        Container.__init__(self, 'Angle', id, alias, device)
         self._value = 0
 
     @property
@@ -15,7 +15,7 @@ class Angle(Module):
         return self._value
 
     def _update(self, new_state):
-        Module._update(self, new_state)
+        Container._update(self, new_state)
         if 'rot_position' in new_state:
             new_val = new_state['rot_position']
             if new_val != self._value:

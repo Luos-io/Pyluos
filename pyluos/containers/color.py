@@ -1,10 +1,10 @@
-from .module import Module, interact
+from .module import Container, interact
 import numpy as np
 
 
-class Color(Module):
+class Color(Container):
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'Color', id, alias, device)
+        Container.__init__(self, 'Color', id, alias, device)
         self._time = None
         self._size = None
         self._color = None
@@ -41,7 +41,7 @@ class Color(Module):
         self._push_value('parameters', new_size)
 
     def _update(self, new_state):
-        Module._update(self, new_state)
+        Container._update(self, new_state)
 
     def control(self):
         def change_color(red, green, blue):

@@ -1,8 +1,8 @@
-from .module import Module, interact
+from .module import Container, interact
 from copy import copy
 import time
 
-class Stepper(Module):
+class Stepper(Container):
     # target modes
     _MODE_COMPLIANT = 13
     _MODE_POWER = 12
@@ -20,7 +20,7 @@ class Stepper(Module):
     _TORQUE = 0
 
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'Stepper', id, alias, device)
+        Container.__init__(self, 'Stepper', id, alias, device)
         self._config = [False] * (Stepper._MODE_COMPLIANT + 1)
         # default configs, enable compliant, power_mode, and rotation position report
         self._config[Stepper._MODE_ROT_POSITION] = True
@@ -180,7 +180,7 @@ class Stepper(Module):
 #************************** controls and updates *****************************
 
     def _update(self, new_state):
-        Module._update(self, new_state)
+        Container._update(self, new_state)
 
     def control(self):
         def change_config(compliant_mode, rot_speed, rot_position_mode, rot_position, trans_speed, trans_position_mode, trans_position):

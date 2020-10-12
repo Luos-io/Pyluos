@@ -1,12 +1,12 @@
-from .module import Module
+from .module import Container
 
 
-class Load(Module):
+class Load(Container):
     possible_events = {'changed', 'filter_changed'}
     threshold = 10
 
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'Load', id, alias, device)
+        Container.__init__(self, 'Load', id, alias, device)
         self._load = 0.0
         self._offset = 0.0
         self._scale = 1.0
@@ -40,7 +40,7 @@ class Load(Module):
             self._push_value("resolution",value)
 
     def _update(self, new_state):
-        Module._update(self, new_state)
+        Container._update(self, new_state)
         if 'force' in new_state:
             new_force = new_state['force']
             if new_force != self._value:

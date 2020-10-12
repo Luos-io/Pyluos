@@ -1,7 +1,7 @@
-from .module import Module
+from .module import Container
 
 
-class Unknown(Module):
+class Unknown(Container):
     possible_events = {'changed', 'pressed', 'released'}
 
     # control modes
@@ -11,7 +11,7 @@ class Unknown(Module):
     _REC = 4
 
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'Unknown', id, alias, device)
+        Container.__init__(self, 'Unknown', id, alias, device)
         self._control = 0
         self._state = False
         self._angular_position = 0.0
@@ -30,7 +30,7 @@ class Unknown(Module):
         self._volt = 0.0
 
     def _update(self, new_state):
-        Module._update(self, new_state)
+        Container._update(self, new_state)
         if 'io_state' in new_state:
             new_state = new_state['io_state']
             if new_state != self._state:

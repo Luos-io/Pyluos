@@ -1,4 +1,4 @@
-from .module import Module, interact
+from .module import Container, interact
 import collections
 from copy import copy
 import time
@@ -6,7 +6,7 @@ import time
 compare = lambda x, y: collections.Counter(x) == collections.Counter(y)
 
 
-class Imu(Module):
+class Imu(Container):
     _ACCELL = 9
     _GYRO = 8
     _QUAT = 7
@@ -20,7 +20,7 @@ class Imu(Module):
 
 
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'Imu', id, alias, device)
+        Container.__init__(self, 'Imu', id, alias, device)
         self._config = [False] * (Imu._ACCELL + 1)
         self._config[Imu._QUAT] = True # by default enable quaternion
         self._quaternion = (0, 0, 0, 0)
@@ -183,7 +183,7 @@ class Imu(Module):
 
 
     def _update(self, new_state):
-        Module._update(self, new_state)
+        Container._update(self, new_state)
         if 'quaternion' in new_state:
             self._quaternion = new_state['quaternion']
         if 'accel' in new_state:

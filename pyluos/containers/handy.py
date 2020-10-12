@@ -1,8 +1,8 @@
-from .module import Module, interact
+from .module import Container, interact
 
-class Handy(Module):
+class Handy(Container):
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'Handy', id, alias, device)
+        Container.__init__(self, 'Handy', id, alias, device)
 
         self.fingers = {'index': 0.0, 'middle': 0.0, 'ring': 0.0, 'pinky': 0.0, 'thumb': 0.0, }
 

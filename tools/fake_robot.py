@@ -54,7 +54,7 @@ class FakeRobot(WebSocketHandler):
 
         self.handle_command(json.loads(message))
         if (message == '{detection:}'):
-            self.ioloop.add_callback(self.pub_route_table)
+            self.ioloop.add_callback(self.pub_routing_table)
 
     def on_close(self):
         if self.verbose:
@@ -65,8 +65,8 @@ class FakeRobot(WebSocketHandler):
     def proxy_pub(self):
         self.ioloop.add_callback(self.pub_state)
 
-    def pub_route_table(self):
-        state = {'route_table': [{'uuid': [4456498, 1347571976, 540555569], 'port_table': [65535, 2], 'containers': [{'type': 'Gate', 'id': 1, 'alias': 'gate'}]}, {'uuid': [3932192, 1194612503, 540554032], 'port_table': [3, 1], 'containers': [{'type': 'Angle', 'id': 2, 'alias': 'potentiometer_m'}]}, {'uuid': [2949157, 1194612501, 540554032], 'port_table': [65535, 2], 'containers': [{'type': 'Gate', 'id': 3, 'alias': 'gate1'}]}]}
+    def pub_routing_table(self):
+        state = {'routing_table': [{'uuid': [4456498, 1347571976, 540555569], 'port_table': [65535, 2], 'containers': [{'type': 'Gate', 'id': 1, 'alias': 'gate'}]}, {'uuid': [3932192, 1194612503, 540554032], 'port_table': [3, 1], 'containers': [{'type': 'Angle', 'id': 2, 'alias': 'potentiometer_m'}]}, {'uuid': [2949157, 1194612501, 540554032], 'port_table': [65535, 2], 'containers': [{'type': 'Gate', 'id': 3, 'alias': 'gate1'}]}]}
     def pub_state(self):
         state = {
             'containers': [

@@ -20,7 +20,7 @@ except ImportError:
 Event = namedtuple('Event', ('name', 'old_value', 'new_value'))
 
 
-class Module(object):
+class Container(object):
     possible_events = set()
 
     def __init__(self,
@@ -42,6 +42,7 @@ class Module(object):
         self._uuid = [0, 0, 0]
         self._killed = False
         self._last_update = time.time()
+        self._luos_statistics = [0, 0, 0, 0, 0]
 
     def __repr__(self):
         return ('<{self.type} '
@@ -52,26 +53,22 @@ class Module(object):
         if ((time.time() - self._last_update) != 0):
             self.refresh_freq = ((200.0 * self.refresh_freq) + (1.0 / (time.time() - self._last_update))) / 201.0
             self._last_update = time.time()
-        if 'node_temperature' in new_state:
-            self._node_temperature = new_state['node_temperature']
-        if 'node_voltage' in new_state:
-            self._node_voltage = new_state['node_voltage']
         if 'revision' in new_state:
             self._firmware_revision = new_state['revision']
         if 'luos_revision' in new_state:
             self._luos_revision = new_state['luos_revision']
-        if 'robus_revision' in new_state:
-            self._robus_revision = new_state['robus_revision']
         if 'uuid' in new_state:
             self._uuid = new_state['uuid']
+        if 'luos_statistics' in new_state:
+            self._luos_statistics = new_state['luos_statistics']
 
     def _kill(self):
         self._killed = True
-        print ("module", self.alias, "have been excluded from the network due to no responses.")
+        print ("container", self.alias, "have been excluded from the network due to no responses.")
 
     def _push_value(self, key, new_val):
         if (self._killed) :
-            print("module", self.alias,"is excluded.")
+            print("container", self.alias,"is excluded.")
         else :
             if isinstance(new_val, float) :
                 self._delegate.update_cmd(self.alias, key, float(str("%.3f" % new_val)))
@@ -80,39 +77,21 @@ class Module(object):
 
     def _push_data(self, key, new_val, data):
         if (self._killed) :
-            print("module", self.alias,"is excluded.")
+            print("container", self.alias,"is excluded.")
         else :
             self._delegate.update_data(self.alias, key, new_val, data)
-
-    @property
-    def node_temperature(self):
-        self._push_value('node_temperature', "")
-        time.sleep(0.03)
-        return self._node_temperature
-
-    @property
-    def node_voltage(self):
-        self._push_value('node_voltage', "")
-        time.sleep(0.03)
-        return self._node_voltage
 
     @property
     def firmware_revision(self):
         self._push_value('revision', "")
         time.sleep(0.03)
         return self._firmware_revision
-        
+
     @property
     def luos_revision(self):
         self._push_value('luos_revision', "")
         time.sleep(0.03)
         return self._luos_revision
-        
-    @property
-    def robus_revision(self):
-        self._push_value('robus_revision', "")
-        time.sleep(0.03)
-        return self._robus_revision
 
     @property
     def uuid(self):
@@ -121,29 +100,24 @@ class Module(object):
         return self._uuid
 
     @property
-    def led(self):
-        return self._led
-
-    @led.setter
-    def led(self, state):
-        if state != self._led:
-            self._push_value('led', state)
-            self._led = state
-
-
-    def led_toggle(self):
-        if self._led is True:
-            self._push_value('led', False)
-            self._led = False
-        else:
-            self._push_value('led', True)
-            self._led = True
+    def luos_statistics(self):
+        self._push_value('luos_statistics', "")
+        time.sleep(0.3)
+        max_table = [self._luos_statistics[0], self._luos_statistics[1], self._luos_statistics[2]]
+        max_val = max(max_table)
+        s = self.alias + " statistics :"
+        s = s + "\n.luos allocated RAM occupation \t= " + repr(max_val)
+        s = s + "%\n\t.Allocator stack \t= " + repr(self._luos_statistics[0])
+        s = s + "%\n\t.Message stack \t\t= " + repr(self._luos_statistics[1])
+        s = s + "%\n\t.Luos stack \t\t= " + repr(self._luos_statistics[2])
+        s = s + "%\n.Dropped messages number \t= " + repr(self._luos_statistics[3])
+        s = s + "\n.Max luos loop delay \t\t= " + repr(self._luos_statistics[4]) + "ms"
+        print(s)
 
     def rename(self, name):
         # check if the string start with a number before sending
         self._push_value('rename', name)
         self.alias = name
-
 
     # Events cb handling
 

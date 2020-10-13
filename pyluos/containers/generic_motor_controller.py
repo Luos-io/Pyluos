@@ -1,9 +1,9 @@
-from .module import Module, interact
+from .container import Container, interact
 
 
-class GenericMotorController(Module):
+class GenericMotorController(Container):
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'generic_motor_controller', id, alias, device)
+        Container.__init__(self, 'generic_motor_controller', id, alias, device)
         self._power = None
 
     @property

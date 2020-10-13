@@ -25,7 +25,7 @@ import fakerobot
 
 #     def test_ws_reception(self):
 #         with closing(Device(fakerobot.host)) as robot:
-#             self.assertTrue(robot.modules)
+#             self.assertTrue(robot.containers)
 #             self.assertTrue(robot.name)
 
 #     def test_spamming(self):

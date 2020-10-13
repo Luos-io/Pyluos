@@ -11,13 +11,13 @@ from datetime import datetime
 from collections import defaultdict
 
 from .io import discover_hosts, io_from_host, Ws
-from .modules import name2mod
+from .containers import name2mod
 
 from anytree import AnyNode, RenderTree
 
 
 def run_from_unittest():
-    return 'unittest' in sys.modules
+    return 'unittest' in sys.containers
 
 
 known_host = {
@@ -27,7 +27,7 @@ known_host = {
 }
 
 
-class moduList(list):
+class contList(list):
     def __repr__(self):
         s = '-------------------------------------------------\n'
         s += '{:<20s}{:<20s}{:<5s}\n'.format("Type", "Alias", "ID")
@@ -44,12 +44,12 @@ class nodeList(list):
             if (node.parent == None):
                 branch = " root : "
             else:
-                l_port_id = [i for i,x in enumerate(node.parent.port_table) if x == node.modules[0].id]
+                l_port_id = [i for i,x in enumerate(node.parent.port_table) if x == node.containers[0].id]
                 r_port_id = node.port_table.index(min(node.port_table))
                 branch = str(l_port_id[0]) + "<=>" + str(r_port_id) + " : "
             s += "%s%s%s\n" % (pre, branch, node.id)
             s += fill + "        |  " + '{:<20s}{:<20s}{:<5s}\n'.format("Type", "Alias", "ID")
-            for y,elem in enumerate(node.modules):
+            for y,elem in enumerate(node.containers):
                 s += fill + "        └> " + '{:<20s}{:<20s}{:<5d}\n'.format(elem.type, elem.alias, elem.id)
         return s
 
@@ -144,45 +144,45 @@ class Device(object):
     def _setup(self):
         self.logger.info('Sending detection signal.')
         self._send({'detection': {}})
-        self.logger.info('Waiting for route table...')
+        self.logger.info('Waiting for routing table...')
 
         startTime = time.time()
         state = self._poll_once()
-        while ('route_table' not in state):
+        while ('routing_table' not in state):
             state = self._poll_once()
             if (time.time()-startTime > 1):
                 self._send({'detection': {}})
                 startTime = time.time()
 
         # Create nodes
-        self._modules = []
+        self._containers = []
         self._nodes = []
-        for i, node in enumerate(state['route_table']):
+        for i, node in enumerate(state['routing_table']):
             parent_elem = None
             # find a parent and create a link
-            if (min(node["port_table"]) < node["modules"][0]["id"]):
+            if (min(node["port_table"]) < node["containers"][0]["id"]):
                 parent_id = min(node["port_table"])
                 for elem in self._nodes:
-                    for module in elem.modules:
-                        if (module.id == parent_id):
+                    for container in elem.containers:
+                        if (container.id == parent_id):
                             parent_elem = elem
                             break;
             # create the node
             self._nodes.append(AnyNode(id=node["uuid"], parent=parent_elem, port_table=node["port_table"]))
 
-            filtered_modules = moduList([mod for mod in node["modules"]
+            filtered_containers = contList([mod for mod in node["containers"]
                                 if 'type' in mod and mod['type'] in name2mod.keys()])
-            # Create a list of modules in the node
-            self._nodes[i].modules = [
+            # Create a list of containers in the node
+            self._nodes[i].containers = [
                 name2mod[mod['type']](id=mod['id'],
                                       alias=mod['alias'],
                                       device=self)
-                for mod in filtered_modules
+                for mod in filtered_containers
                 if 'type' in mod and 'id' in mod and 'alias' in mod
             ]
-            # Create a list of modules of the entire device
-            self._modules = self._modules + self._nodes[i].modules
-            for mod in self._nodes[i].modules:
+            # Create a list of containers of the entire device
+            self._containers = self._containers + self._nodes[i].containers
+            for mod in self._nodes[i].containers:
                 setattr(self, mod.alias, mod)
 
         self._cmd = defaultdict(lambda: defaultdict(lambda: None))
@@ -194,8 +194,8 @@ class Device(object):
         self._push_once()
 
     @property
-    def modules(self):
-        return moduList(self._modules)
+    def containers(self):
+        return contList(self._containers)
 
     @property
     def nodes(self):
@@ -218,15 +218,15 @@ class Device(object):
 
     # Update our model with the new state.
     def _update(self, new_state):
-        if 'dead_module' in new_state :
-            #we have lost a module put a flag on this module
-            alias = new_state['dead_module']
+        if 'dead_container' in new_state :
+            #we have lost a container put a flag on this container
+            alias = new_state['dead_container']
             if hasattr(self, alias):
                 getattr(self, alias)._kill()
-        if 'modules' not in new_state:
+        if 'containers' not in new_state:
             return
 
-        for alias, mod in new_state['modules'].items():
+        for alias, mod in new_state['containers'].items():
             if hasattr(self, alias):
                 getattr(self, alias)._update(mod)
 
@@ -244,11 +244,11 @@ class Device(object):
     def _push_once(self):
         with self._cmd_lock:
             if self._cmd:
-                self._write( json.dumps({'modules': self._cmd}).encode())
+                self._write( json.dumps({'containers': self._cmd}).encode())
                 self._cmd = defaultdict(lambda: defaultdict(lambda: None))
             for cmd, binary in zip(self._cmd_data, self._binary):
                 time.sleep(0.01)
-                self._write( json.dumps({'modules': cmd}).encode() + '\r'.encode() + binary)
+                self._write( json.dumps({'containers': cmd}).encode() + '\r'.encode() + binary)
 
             self._cmd_data = []
             self._binary = []

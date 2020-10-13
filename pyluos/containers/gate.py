@@ -1,13 +1,13 @@
-from .module import Module
+from .container import Container
 
 
-class Gate(Module):
+class Gate(Container):
 
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'Gate', id, alias, device)
+        Container.__init__(self, 'Gate', id, alias, device)
 
     def _update(self, new_state):
-        Module._update(self, new_state)
+        Container._update(self, new_state)
 
     @property
     def delay_ms(self):

@@ -1,12 +1,12 @@
-from .module import Module
+from .container import Container
 
 
-class Distance(Module):
+class Distance(Container):
     possible_events = {'changed', 'filter_changed'}
     threshold = 10
 
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'Distance', id, alias, device)
+        Container.__init__(self, 'Distance', id, alias, device)
         self._value = 0
 
     @property
@@ -15,7 +15,7 @@ class Distance(Module):
         return self._value
 
     def _update(self, new_state):
-        Module._update(self, new_state)
+        Container._update(self, new_state)
         if 'trans_position' in new_state:
             new_dist = new_state['trans_position']
             if new_dist != self._value:

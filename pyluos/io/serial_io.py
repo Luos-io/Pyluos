@@ -61,6 +61,7 @@ class Serial(IOHandler):
 
     def write(self, data):
         self._serial.write(data + '\r'.encode())
+        #print(data + '\r'.encode())
 
     def close(self):
         self._running = False

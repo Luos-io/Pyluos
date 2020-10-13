@@ -1,14 +1,14 @@
-from .module import Module
+from .container import Container
 import time
 
-class Void(Module):
+class Void(Container):
 
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'Void', id, alias, device)
+        Container.__init__(self, 'Void', id, alias, device)
         self._baudrate = 1000000
 
     def _update(self, new_state):
-        Module._update(self, new_state)
+        Container._update(self, new_state)
 
     def dxl_detect(self):
         self._push_value('reinit', 0)

@@ -1,7 +1,7 @@
-from .module import Module, interact
+from .container import Container, interact
 import numpy as np
 
-class DynamixelMotor(Module):
+class DynamixelMotor(Container):
 
     # control modes
     _PLAY = 0
@@ -10,7 +10,7 @@ class DynamixelMotor(Module):
     _REC = 4
 
     def __init__(self, id, alias, device):
-        Module.__init__(self, 'DynamixelMotor', id, alias, device)
+        Container.__init__(self, 'DynamixelMotor', id, alias, device)
         # Read
         self.rot_position = None
         self.temperature = None
@@ -30,7 +30,7 @@ class DynamixelMotor(Module):
         self._sampling_freq = 100.0
 
     def _update(self, new_state):
-        Module._update(self, new_state)
+        Container._update(self, new_state)
 
         if 'rot_position' in new_state:
             self.rot_position = new_state['rot_position']

@@ -1,6 +1,6 @@
 from __future__ import division
 
-from .module import Container, interact
+from .container import Container, interact
 
 
 class DCMotor(Container):

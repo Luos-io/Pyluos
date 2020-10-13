@@ -1,7 +1,7 @@
 import logging
 
 from .device import Device
-from .modules import *
+from .containers import *
 
 nh = logging.NullHandler()
 logging.getLogger(__name__).addHandler(nh)

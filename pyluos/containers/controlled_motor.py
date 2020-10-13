@@ -4,7 +4,7 @@ import collections
 from copy import copy
 import time
 
-from .module import Container, interact
+from .container import Container, interact
 import numpy as np
 
 
@@ -236,14 +236,14 @@ class ControlledMotor(Container):
     @property
     def power_ratio(self):
         if (self._config[ControlledMotor._MODE_POWER] != True):
-            print("power mode is not enabled in the module please use 'device.module.power_mode = True' to enable it")
+            print("power mode is not enabled in the container please use 'device.container.power_mode = True' to enable it")
             return
         return self._target_power
 
     @power_ratio.setter
     def power_ratio(self, s):
         if (self._config[ControlledMotor._MODE_POWER] != True):
-            print("power mode is not enabled in the module please use 'device.module.power_mode = True' to enable it")
+            print("power mode is not enabled in the container please use 'device.container.power_mode = True' to enable it")
         s = min(max(s, -100.0), 100.0)
         #if s != self._target_power:
         self._target_power = s
@@ -268,13 +268,13 @@ class ControlledMotor(Container):
     @property
     def target_rot_speed(self):
         if (self._config[ControlledMotor._MODE_ROT_SPEED] != True):
-            print("rotation speed mode could be not enabled in the module please use 'device.module.rot_speed_mode = True' to enable it")
+            print("rotation speed mode could be not enabled in the container please use 'device.container.rot_speed_mode = True' to enable it")
         return self._target_rot_speed
 
     @target_rot_speed.setter
     def target_rot_speed(self, s):
         if (self._config[ControlledMotor._MODE_ROT_SPEED] != True):
-            print("rotation speed mode could be not enabled in the module please use 'device.module.rot_speed_mode = True' to enable it")
+            print("rotation speed mode could be not enabled in the container please use 'device.container.rot_speed_mode = True' to enable it")
         self._target_rot_speed = s
         self._push_value("target_rot_speed", s)
 
@@ -295,13 +295,13 @@ class ControlledMotor(Container):
     @property
     def target_rot_position(self):
         if (self._config[ControlledMotor._MODE_ROT_POSITION] != True):
-            print("rotation position mode could be not enabled in the module please use 'device.module.rot_position_mode = True' to enable it")
+            print("rotation position mode could be not enabled in the container please use 'device.container.rot_position_mode = True' to enable it")
         return self._target_rot_position
 
     @target_rot_position.setter
     def target_rot_position(self, s):
         if (self._config[ControlledMotor._MODE_ROT_POSITION] != True):
-            print("rotation position mode could be not enabled in the module please use 'device.module.rot_position_mode = True' to enable it")
+            print("rotation position mode could be not enabled in the container please use 'device.container.rot_position_mode = True' to enable it")
         self._target_rot_position = s
         if hasattr(s, "__len__"):
             self._push_data('target_rot_position', [len(s) * 4], np.array(s, dtype=np.float32)) # multiplying by the size of float32
@@ -325,13 +325,13 @@ class ControlledMotor(Container):
     @property
     def target_trans_speed(self):
         if (self._config[ControlledMotor._MODE_TRANS_SPEED] != True):
-            print("translation speed mode could be not enabled in the module please use 'device.module.trans_speed_mode = True' to enable it")
+            print("translation speed mode could be not enabled in the container please use 'device.container.trans_speed_mode = True' to enable it")
         return self._target_trans_speed
 
     @target_trans_speed.setter
     def target_trans_speed(self, s):
         if (self._config[ControlledMotor._MODE_TRANS_SPEED] != True):
-            print("translation speed mode could be not enabled in the module please use 'device.module.trans_speed_mode = True' to enable it")
+            print("translation speed mode could be not enabled in the container please use 'device.container.trans_speed_mode = True' to enable it")
         self._target_trans_speed = s
         self._push_value("target_trans_speed", s)
 
@@ -352,13 +352,13 @@ class ControlledMotor(Container):
     @property
     def target_trans_position(self):
         if (self._config[ControlledMotor._MODE_TRANS_POSITION] != True):
-            print("translation speed mode could be not enabled in the module please use 'device.module.trans_pos_mode = True' to enable it")
+            print("translation speed mode could be not enabled in the container please use 'device.container.trans_pos_mode = True' to enable it")
         return self._target_trans_position
 
     @target_trans_position.setter
     def target_trans_position(self, s):
         if (self._config[ControlledMotor._MODE_TRANS_POSITION] != True):
-            print("translation speed mode could be not enabled in the module please use 'device.module.trans_position_mode = True' to enable it")
+            print("translation speed mode could be not enabled in the container please use 'device.container.trans_position_mode = True' to enable it")
         self._target_trans_position = s
         if hasattr(s, "__len__"):
             self._push_value('target_trans_position', [len(s) * 4]) # multiplying by the size of float32

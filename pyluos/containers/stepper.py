@@ -1,4 +1,4 @@
-from .module import Container, interact
+from .container import Container, interact
 from copy import copy
 import time
 
@@ -91,13 +91,13 @@ class Stepper(Container):
     @property
     def target_rot_position(self):
         if (self._config[Stepper._MODE_ROT_POSITION] != True):
-            print("rotation position mode is not enabled in the module please use 'device.module.rot_position_mode(True)' to enable it")
+            print("rotation position mode is not enabled in the container please use 'device.container.rot_position_mode(True)' to enable it")
         return self._target_rot_position
 
     @target_rot_position.setter
     def target_rot_position(self, s):
         if (self._config[Stepper._MODE_ROT_POSITION] != True):
-            print("rotation position mode is not enabled in the module please use 'device.module.rot_position_mode(True)' to enable it")
+            print("rotation position mode is not enabled in the container please use 'device.container.rot_position_mode(True)' to enable it")
         self._target_rot_position = s
         self._push_value("target_rot_position", s)
 
@@ -124,13 +124,13 @@ class Stepper(Container):
     @property
     def target_trans_position(self):
         if (self._config[Stepper._MODE_TRANS_POSITION] != True):
-            print("translation speed mode is not enabled in the module please use 'device.module.trans_speed_mode(True)' to enable it")
+            print("translation speed mode is not enabled in the container please use 'device.container.trans_speed_mode(True)' to enable it")
         return self._target_trans_position
 
     @target_trans_position.setter
     def target_trans_position(self, s):
         if (self._config[Stepper._MODE_TRANS_POSITION] != True):
-            print("translation speed mode is not enabled in the module please use 'device.module.trans_speed_mode(True)' to enable it")
+            print("translation speed mode is not enabled in the container please use 'device.container.trans_speed_mode(True)' to enable it")
         self._target_trans_position = s
         self._push_value("target_trans_position", s)
 

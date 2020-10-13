@@ -144,11 +144,11 @@ class Device(object):
     def _setup(self):
         self.logger.info('Sending detection signal.')
         self._send({'detection': {}})
-        self.logger.info('Waiting for route table...')
+        self.logger.info('Waiting for routing table...')
 
         startTime = time.time()
         state = self._poll_once()
-        while ('route_table' not in state):
+        while ('routing_table' not in state):
             state = self._poll_once()
             if (time.time()-startTime > 1):
                 self._send({'detection': {}})
@@ -157,7 +157,7 @@ class Device(object):
         # Create nodes
         self._containers = []
         self._nodes = []
-        for i, node in enumerate(state['route_table']):
+        for i, node in enumerate(state['routing_table']):
             parent_elem = None
             # find a parent and create a link
             if (min(node["port_table"]) < node["containers"][0]["id"]):

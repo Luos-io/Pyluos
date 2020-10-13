@@ -14,17 +14,17 @@ import fakerobot
 #         with closing(Device(fakerobot.host)) as robot:
 #             for _ in range(5):
 #                 length = random.randint(1, robot._max_alias_length)
-#                 mod = random.choice(robot.modules)
+#                 mod = random.choice(robot.containers)
 
 #                 old = mod.alias
 #                 new = self.random_name(length)
 
-#                 robot.rename_module(old, new)
+#                 robot.rename_container(old, new)
 
 #                 self.assertTrue(hasattr(robot, new))
 #                 self.assertFalse(hasattr(robot, old))
 
-#     def test_unexisting_module(self):
+#     def test_unexisting_container(self):
 #         with closing(Device(fakerobot.host)) as robot:
 #             while True:
 #                 length = random.randint(1, robot._max_alias_length)
@@ -34,18 +34,18 @@ import fakerobot
 #                     break
 
 #             with self.assertRaises(ValueError):
-#                 robot.rename_module(name, 'oups')
+#                 robot.rename_container(name, 'oups')
 
 #     def test_loooooong_name(self):
 #         with closing(Device(fakerobot.host)) as robot:
-#             mod = random.choice(robot.modules)
+#             mod = random.choice(robot.containers)
 
 #             length = random.randint(robot._max_alias_length + 1,
 #                                     robot._max_alias_length + 100)
 #             long_name = self.random_name(length)
 
 #             with self.assertRaises(ValueError):
-#                 robot.rename_module(mod.alias, long_name)
+#                 robot.rename_container(mod.alias, long_name)
 
 #     def random_name(self, length):
 #         return ''.join(random.choice(string.ascii_lowercase)

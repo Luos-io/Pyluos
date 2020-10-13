@@ -64,11 +64,11 @@ class Container(object):
 
     def _kill(self):
         self._killed = True
-        print ("module", self.alias, "have been excluded from the network due to no responses.")
+        print ("container", self.alias, "have been excluded from the network due to no responses.")
 
     def _push_value(self, key, new_val):
         if (self._killed) :
-            print("module", self.alias,"is excluded.")
+            print("container", self.alias,"is excluded.")
         else :
             if isinstance(new_val, float) :
                 self._delegate.update_cmd(self.alias, key, float(str("%.3f" % new_val)))
@@ -77,7 +77,7 @@ class Container(object):
 
     def _push_data(self, key, new_val, data):
         if (self._killed) :
-            print("module", self.alias,"is excluded.")
+            print("container", self.alias,"is excluded.")
         else :
             self._delegate.update_data(self.alias, key, new_val, data)
 

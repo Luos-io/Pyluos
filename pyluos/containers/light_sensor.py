@@ -1,4 +1,4 @@
-from .module import Container
+from .container import Container
 
 
 class LightSensor(Container):

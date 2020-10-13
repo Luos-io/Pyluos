@@ -1,4 +1,4 @@
-from .module import Container, interact
+from .container import Container, interact
 
 
 class GenericMotorController(Container):

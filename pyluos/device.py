@@ -13,7 +13,7 @@ from collections import defaultdict
 from .io import discover_hosts, io_from_host, Ws
 from .containers import name2mod
 
-from anytree import AnyNode, RenderTree
+from anytree import AnyNode, RenderTree, ContRoundStyle
 
 
 def run_from_unittest():
@@ -40,17 +40,24 @@ class nodeList(list):
     def __repr__(self):
         # Display the topology
         s = ''
-        for pre, fill, node in RenderTree(self[0]):
+        for pre, fill, node in RenderTree(self[0], style=ContRoundStyle()):
             if (node.parent == None):
                 branch = " root : "
             else:
                 l_port_id = [i for i,x in enumerate(node.parent.port_table) if x == node.containers[0].id]
                 r_port_id = node.port_table.index(min(node.port_table))
-                branch = str(l_port_id[0]) + "<=>" + str(r_port_id) + " : "
-            s += "%s%s%s\n" % (pre, branch, node.id)
-            s += fill + "        |  " + '{:<20s}{:<20s}{:<5s}\n'.format("Type", "Alias", "ID")
+                branch = str(l_port_id[0]) + "<═>" + str(r_port_id) + " : "
+            s += "%s%s╭node %s" % (fill, branch, node.id)
+            if (node.certified == True):
+                s += "    Certified\n"
+            else:
+                s += "    /!\\ Not certified\n"
+            s += fill + "    ║   │  " + '{:<20s}{:<20s}{:<5s}\n'.format("Type", "Alias", "ID")
             for y,elem in enumerate(node.containers):
-                s += fill + "        └> " + '{:<20s}{:<20s}{:<5d}\n'.format(elem.type, elem.alias, elem.id)
+                if (y == (len(node.containers)-1)):
+                    s += fill + "    ║   ╰> " + '{:<20s}{:<20s}{:<5d}\n'.format(elem.type, elem.alias, elem.id)
+                else:
+                    s += fill + "    ║   ├> " + '{:<20s}{:<20s}{:<5d}\n'.format(elem.type, elem.alias, elem.id)
         return s
 
 class Device(object):
@@ -153,7 +160,6 @@ class Device(object):
             if (time.time()-startTime > 1):
                 self._send({'detection': {}})
                 startTime = time.time()
-
         # Create nodes
         self._containers = []
         self._nodes = []
@@ -168,7 +174,7 @@ class Device(object):
                             parent_elem = elem
                             break;
             # create the node
-            self._nodes.append(AnyNode(id=node["uuid"], parent=parent_elem, port_table=node["port_table"]))
+            self._nodes.append(AnyNode(id=node["node_id"], certified=node["certified"], parent=parent_elem, port_table=node["port_table"]))
 
             filtered_containers = contList([mod for mod in node["containers"]
                                 if 'type' in mod and mod['type'] in name2mod.keys()])

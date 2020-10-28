@@ -13,7 +13,7 @@ from collections import defaultdict
 from .io import discover_hosts, io_from_host, Ws
 from .containers import name2mod
 
-from anytree import AnyNode, RenderTree, ContRoundStyle
+from anytree import AnyNode, RenderTree, DoubleStyle
 
 
 def run_from_unittest():
@@ -40,24 +40,49 @@ class nodeList(list):
     def __repr__(self):
         # Display the topology
         s = ''
-        for pre, fill, node in RenderTree(self[0], style=ContRoundStyle()):
+        prefill = ''
+        prechild = False
+        for pre, fill, node in RenderTree(self[0], style=DoubleStyle()):
+            child = []
             if (node.parent == None):
-                branch = " root : "
+                branch = "  ┃  "
+                for i,x in enumerate(node.port_table):
+                    child.append(i)
             else:
-                l_port_id = [i for i,x in enumerate(node.parent.port_table) if x == node.containers[0].id]
+                l_port_id = '?'
+                for i,x in enumerate(node.parent.port_table):
+                    if (x == node.id):
+                        l_port_id = str(i)
                 r_port_id = node.port_table.index(min(node.port_table))
-                branch = str(l_port_id[0]) + "<═>" + str(r_port_id) + " : "
-            s += "%s%s╭node %s" % (fill, branch, node.id)
+                for i,x in enumerate(node.port_table):
+                    if ((i != r_port_id) and (x != 65535)):
+                        child.append(i)
+                branch = str(l_port_id) + ">┃" + str(r_port_id) + " "
+            prefill = (prefill[:len(fill)]) if len(prefill) > len(fill) else prefill
+            s +='{:<{fillsize}s}'.format(prefill, fillsize=len(fill))
+            if (prechild == True):
+                position = -4
+                s = s[:position] + '║' + s[position+1:]
+            s += "  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
+            tmpstr = "%s╭node %s" % (branch, node.id)
+            s += pre + '{:^10s}'.format(tmpstr)
             if (node.certified == True):
-                s += "    Certified\n"
+                s += '{:^41s}'.format("Certified") + "┃\n"
             else:
-                s += "    /!\\ Not certified\n"
-            s += fill + "    ║   │  " + '{:<20s}{:<20s}{:<5s}\n'.format("Type", "Alias", "ID")
+                s += '{:^41s}'.format("/!\\ Not certified") + "┃\n"
+            s += fill + "  ┃  │  " + '{:<20s}{:<20s}{:<5s}'.format("Type", "Alias", "ID")+ "┃\n"
             for y,elem in enumerate(node.containers):
                 if (y == (len(node.containers)-1)):
-                    s += fill + "    ║   ╰> " + '{:<20s}{:<20s}{:<5d}\n'.format(elem.type, elem.alias, elem.id)
+                    s += fill + "  ┃  ╰> " + '{:<20s}{:<20s}{:<5d}'.format(elem.type, elem.alias, elem.id)+ "┃\n"
                 else:
-                    s += fill + "    ║   ├> " + '{:<20s}{:<20s}{:<5d}\n'.format(elem.type, elem.alias, elem.id)
+                    s += fill + "  ┃  ├> " + '{:<20s}{:<20s}{:<5d}'.format(elem.type, elem.alias, elem.id) + "┃\n"
+            if (not child):
+                s += fill + " >┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+                prechild = False
+            else:
+                s += fill + "╔>┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+                prechild = True
+            prefill = fill
         return s
 
 class Device(object):
@@ -169,10 +194,9 @@ class Device(object):
             if (min(node["port_table"]) < node["containers"][0]["id"]):
                 parent_id = min(node["port_table"])
                 for elem in self._nodes:
-                    for container in elem.containers:
-                        if (container.id == parent_id):
-                            parent_elem = elem
-                            break;
+                    if (elem.id == parent_id):
+                        parent_elem = elem
+                        break;
             # create the node
             self._nodes.append(AnyNode(id=node["node_id"], certified=node["certified"], parent=parent_elem, port_table=node["port_table"]))
 

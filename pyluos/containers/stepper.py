@@ -27,6 +27,7 @@ class Stepper(Container):
         #configuration
         self._resolution = 200.0
         self._dimension = 0.0
+        self._compliant = True
 
         #targets
         self._target_rot_speed = 100.0

@@ -4,18 +4,20 @@ import time
 
 class Stepper(Module):
     # target modes
-    _MODE_COMPLIANT = 11
-    _MODE_POWER = 10
-    _MODE_ROT_SPEED = 8
-    _MODE_ROT_POSITION = 7
-    _MODE_TRANS_SPEED = 6
-    _MODE_TRANS_POSITION = 5
+    _MODE_COMPLIANT = 13
+    _MODE_POWER = 12
+    _MODE_ROT_SPEED = 10
+    _MODE_ROT_POSITION = 9
+    _MODE_TRANS_SPEED = 8
+    _MODE_TRANS_POSITION = 7
     # report modes
-    _ROTATION_POSITION = 4
-    _ROTATION_SPEED = 3
-    _TRANSLATION_POSITION = 2
-    _TRANSLATION_SPEED = 1
-    _CURRENT = 0
+    _ROTATION_POSITION = 6
+    _ROTATION_SPEED = 5
+    _TRANSLATION_POSITION = 4
+    _TRANSLATION_SPEED = 3
+    _CURRENT = 2
+    _TEMPERATURE = 1
+    _TORQUE = 0
 
     def __init__(self, id, alias, device):
         Module.__init__(self, 'Stepper', id, alias, device)
@@ -68,12 +70,11 @@ class Stepper(Module):
     # compliant
     @property
     def compliant(self):
-        self._compliant
+        return self._config[Stepper._MODE_COMPLIANT]
 
     @compliant.setter
     def compliant(self, enable):
         self._config[Stepper._MODE_COMPLIANT] = True if enable != 0  else False
-        self._compliant = enable
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
@@ -87,6 +88,17 @@ class Stepper(Module):
         self._target_rot_speed = s
         self._push_value("target_rot_speed", s)
 
+    @property
+    def rot_speed_mode(self):
+        return self._config[Stepper._MODE_ROT_SPEED]
+
+    @rot_speed_mode.setter
+    def rot_speed_mode(self, enable):
+        self._config[Stepper._MODE_ROT_SPEED] = True if enable != 0  else False
+        if (enable == True) :
+            self._config[Stepper._MODE_TRANS_SPEED] = False
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.01)
     # rotation position
     @property
     def target_rot_position(self):
@@ -101,6 +113,11 @@ class Stepper(Module):
         self._target_rot_position = s
         self._push_value("target_rot_position", s)
 
+    @property
+    def rot_position_mode(self):
+        return self._config[Stepper._MODE_ROT_POSITION]
+
+    @rot_position_mode.setter
     def rot_position_mode(self, enable):
         self._config[Stepper._MODE_ROT_POSITION] = True if enable != 0  else False
         if (enable == True) :
@@ -120,6 +137,18 @@ class Stepper(Module):
         self._target_trans_speed = s
         self._push_value("target_trans_speed", s)
 
+    @property
+    def trans_speed_mode(self):
+        return self._config[Stepper._MODE_TRANS_SPEED]
+
+    @trans_speed_mode.setter
+    def trans_speed_mode(self, enable):
+        self._config[Stepper._MODE_TRANS_SPEED] = True if enable != 0  else False
+        if (enable == True) :
+            self._config[Stepper._MODE_ROT_SPEED] = False
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.01)
+
     # translation position
     @property
     def target_trans_position(self):
@@ -134,6 +163,11 @@ class Stepper(Module):
         self._target_trans_position = s
         self._push_value("target_trans_position", s)
 
+    @property
+    def trans_position_mode(self):
+        return self._config[Stepper._MODE_TRANS_POSITION]
+
+    @trans_position_mode.setter
     def trans_position_mode(self, enable):
         if (self._dimension == 0) :
             print("you have to setup a wheel_size before using translation command")

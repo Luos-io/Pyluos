@@ -110,7 +110,10 @@ class Container(object):
         s = s + "%\n\t.Message stack \t\t= " + repr(self._luos_statistics["msg_stack"])
         s = s + "%\n\t.Luos stack \t\t= " + repr(self._luos_statistics["luos_stack"])
         s = s + "%\n.Dropped messages number \t= " + repr(self._luos_statistics["msg_drop"])
-        s = s + "\n.Max luos loop delay \t\t= " + repr(self._luos_statistics["loop_ms"]) + "ms"
+        s = s + "\n.Max luos loop delay \t\t= " + repr(self._luos_statistics["loop_ms"])
+        s = s + "ms\n.Msg fail ratio \t\t= " + repr(self._luos_statistics["fail_ratio"])
+        s = s + "%\n.Nak msg max number \t\t= " + repr(self._luos_statistics["nak_max"])
+        s = s + "\n.Collision msg max number \t= " + repr(self._luos_statistics["collision_max"])
         print(s)
 
     def rename(self, name):

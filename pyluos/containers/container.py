@@ -42,7 +42,7 @@ class Container(object):
         self._uuid = [0, 0, 0]
         self._killed = False
         self._last_update = time.time()
-        self._luos_statistics = [0, 0, 0, 0, 0]
+        self._luos_statistics = {}
 
     def __repr__(self):
         return ('<{self.type} '
@@ -103,15 +103,17 @@ class Container(object):
     def luos_statistics(self):
         self._push_value('luos_statistics', "")
         time.sleep(0.3)
-        max_table = [self._luos_statistics[0], self._luos_statistics[1], self._luos_statistics[2]]
+        max_table = [self._luos_statistics["msg_stack"], self._luos_statistics["luos_stack"]]
         max_val = max(max_table)
         s = self.alias + " statistics :"
         s = s + "\n.luos allocated RAM occupation \t= " + repr(max_val)
-        s = s + "%\n\t.Allocator stack \t= " + repr(self._luos_statistics[0])
-        s = s + "%\n\t.Message stack \t\t= " + repr(self._luos_statistics[1])
-        s = s + "%\n\t.Luos stack \t\t= " + repr(self._luos_statistics[2])
-        s = s + "%\n.Dropped messages number \t= " + repr(self._luos_statistics[3])
-        s = s + "\n.Max luos loop delay \t\t= " + repr(self._luos_statistics[4]) + "ms"
+        s = s + "%\n\t.Message stack \t\t= " + repr(self._luos_statistics["msg_stack"])
+        s = s + "%\n\t.Luos stack \t\t= " + repr(self._luos_statistics["luos_stack"])
+        s = s + "%\n.Dropped messages number \t= " + repr(self._luos_statistics["msg_drop"])
+        s = s + "\n.Max luos loop delay \t\t= " + repr(self._luos_statistics["loop_ms"])
+        s = s + "ms\n.Msg fail ratio \t\t= " + repr(self._luos_statistics["fail_ratio"])
+        s = s + "%\n.Nak msg max number \t\t= " + repr(self._luos_statistics["nak_max"])
+        s = s + "\n.Collision msg max number \t= " + repr(self._luos_statistics["collision_max"])
         print(s)
 
     def rename(self, name):

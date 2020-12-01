@@ -177,7 +177,6 @@ class Device(object):
         self.logger.info('Sending detection signal.')
         self._send({'detection': {}})
         self.logger.info('Waiting for routing table...')
-        print ("plop")
         startTime = time.time()
         state = self._poll_once()
         while ('routing_table' not in state):

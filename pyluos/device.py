@@ -189,6 +189,8 @@ class Device(object):
         self._containers = []
         self._nodes = []
         for i, node in enumerate(state['routing_table']):
+            if ('node_id' not in node):
+                self.logger.info("Watch out the Luos revision you are using on your board is too old to work with this revision on pyluos.\n Please consider updating Luos on your boards")
             parent_elem = None
             # find a parent and create a link
             if (min(node["port_table"]) < node["containers"][0]["id"]):

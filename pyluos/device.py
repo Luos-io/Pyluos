@@ -177,18 +177,24 @@ class Device(object):
         self.logger.info('Sending detection signal.')
         self._send({'detection': {}})
         self.logger.info('Waiting for routing table...')
-
+        print ("plop")
         startTime = time.time()
         state = self._poll_once()
         while ('routing_table' not in state):
+            if ('route_table' in state):
+                self.logger.info("Watch out the Luos revision you are using on your board is too old to work with this revision on pyluos.\n Please consider updating Luos on your boards")
+                return
             state = self._poll_once()
             if (time.time()-startTime > 1):
                 self._send({'detection': {}})
+                print ("detec")
                 startTime = time.time()
         # Create nodes
         self._containers = []
         self._nodes = []
         for i, node in enumerate(state['routing_table']):
+            if ('node_id' not in node):
+                self.logger.info("Watch out the Luos revision you are using on your board is too old to work with this revision on pyluos.\n Please consider updating Luos on your boards")
             parent_elem = None
             # find a parent and create a link
             if (min(node["port_table"]) < node["containers"][0]["id"]):

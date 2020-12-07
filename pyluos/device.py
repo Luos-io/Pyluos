@@ -186,7 +186,6 @@ class Device(object):
             state = self._poll_once()
             if (time.time()-startTime > 1):
                 self._send({'detection': {}})
-                print ("detec")
                 startTime = time.time()
         # Create nodes
         self._containers = []

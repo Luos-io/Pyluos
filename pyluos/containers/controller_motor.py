@@ -8,7 +8,7 @@ from .container import Container, interact
 import numpy as np
 
 
-class ControlledMotor(Container):
+class ControllerMotor(Container):
     # target modes
     _MODE_COMPLIANT = 13
     _MODE_POWER = 12
@@ -32,12 +32,12 @@ class ControlledMotor(Container):
     _REC = 4
 
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'ControlledMotor', id, alias, device)
-        self._config = [False] * (ControlledMotor._MODE_COMPLIANT + 1)
+        Container.__init__(self, 'ControllerMotor', id, alias, device)
+        self._config = [False] * (ControllerMotor._MODE_COMPLIANT + 1)
         # default configs, enable compliant, power_mode, and rotation position report
-        self._config[ControlledMotor._MODE_COMPLIANT] = True
-        self._config[ControlledMotor._MODE_POWER] = True
-        self._config[ControlledMotor._ROTATION_POSITION] = True
+        self._config[ControllerMotor._MODE_COMPLIANT] = True
+        self._config[ControllerMotor._MODE_POWER] = True
+        self._config[ControllerMotor._ROTATION_POSITION] = True
 
         #configuration
         self._positionPid = [0.0, 0.0, 0.0]
@@ -221,11 +221,11 @@ class ControlledMotor(Container):
     # compliant
     @property
     def compliant(self):
-        return self._config[ControlledMotor._MODE_COMPLIANT]
+        return self._config[ControllerMotor._MODE_COMPLIANT]
 
     @compliant.setter
     def compliant(self, enable):
-        self._config[ControlledMotor._MODE_COMPLIANT] = True if enable != 0  else False
+        self._config[ControllerMotor._MODE_COMPLIANT] = True if enable != 0  else False
         self._compliant = enable
         self._push_value('parameters', self._convert_config())
         if (enable == False):
@@ -235,14 +235,14 @@ class ControlledMotor(Container):
     # power
     @property
     def power_ratio(self):
-        if (self._config[ControlledMotor._MODE_POWER] != True):
+        if (self._config[ControllerMotor._MODE_POWER] != True):
             print("power mode is not enabled in the container please use 'device.container.power_mode = True' to enable it")
             return
         return self._target_power
 
     @power_ratio.setter
     def power_ratio(self, s):
-        if (self._config[ControlledMotor._MODE_POWER] != True):
+        if (self._config[ControllerMotor._MODE_POWER] != True):
             print("power mode is not enabled in the container please use 'device.container.power_mode = True' to enable it")
         s = min(max(s, -100.0), 100.0)
         #if s != self._target_power:
@@ -251,56 +251,56 @@ class ControlledMotor(Container):
 
     @property
     def power_mode(self):
-        return self._config[ControlledMotor._MODE_POWER]
+        return self._config[ControllerMotor._MODE_POWER]
 
     @power_mode.setter
     def power_mode(self, enable):
-        self._config[ControlledMotor._MODE_POWER] = True if enable != 0  else False
+        self._config[ControllerMotor._MODE_POWER] = True if enable != 0  else False
         if (enable == True) :
-            self._config[ControlledMotor._MODE_ROT_SPEED] = False
-            self._config[ControlledMotor._MODE_ROT_POSITION] = False
-            self._config[ControlledMotor._MODE_TRANS_SPEED] = False
-            self._config[ControlledMotor._MODE_TRANS_POSITION] = False
+            self._config[ControllerMotor._MODE_ROT_SPEED] = False
+            self._config[ControllerMotor._MODE_ROT_POSITION] = False
+            self._config[ControllerMotor._MODE_TRANS_SPEED] = False
+            self._config[ControllerMotor._MODE_TRANS_POSITION] = False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # rotation speed
     @property
     def target_rot_speed(self):
-        if (self._config[ControlledMotor._MODE_ROT_SPEED] != True):
+        if (self._config[ControllerMotor._MODE_ROT_SPEED] != True):
             print("rotation speed mode could be not enabled in the container please use 'device.container.rot_speed_mode = True' to enable it")
         return self._target_rot_speed
 
     @target_rot_speed.setter
     def target_rot_speed(self, s):
-        if (self._config[ControlledMotor._MODE_ROT_SPEED] != True):
+        if (self._config[ControllerMotor._MODE_ROT_SPEED] != True):
             print("rotation speed mode could be not enabled in the container please use 'device.container.rot_speed_mode = True' to enable it")
         self._target_rot_speed = s
         self._push_value("target_rot_speed", s)
 
     @property
     def rot_speed_mode(self):
-        return self._config[ControlledMotor._MODE_ROT_SPEED]
+        return self._config[ControllerMotor._MODE_ROT_SPEED]
 
     @rot_speed_mode.setter
     def rot_speed_mode(self, enable):
-        self._config[ControlledMotor._MODE_ROT_SPEED] = True if enable != 0  else False
+        self._config[ControllerMotor._MODE_ROT_SPEED] = True if enable != 0  else False
         if (enable == True) :
-            self._config[ControlledMotor._MODE_TRANS_SPEED] = False
-            self._config[ControlledMotor._MODE_POWER] = False
+            self._config[ControllerMotor._MODE_TRANS_SPEED] = False
+            self._config[ControllerMotor._MODE_POWER] = False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # rotation position
     @property
     def target_rot_position(self):
-        if (self._config[ControlledMotor._MODE_ROT_POSITION] != True):
+        if (self._config[ControllerMotor._MODE_ROT_POSITION] != True):
             print("rotation position mode could be not enabled in the container please use 'device.container.rot_position_mode = True' to enable it")
         return self._target_rot_position
 
     @target_rot_position.setter
     def target_rot_position(self, s):
-        if (self._config[ControlledMotor._MODE_ROT_POSITION] != True):
+        if (self._config[ControllerMotor._MODE_ROT_POSITION] != True):
             print("rotation position mode could be not enabled in the container please use 'device.container.rot_position_mode = True' to enable it")
         self._target_rot_position = s
         if hasattr(s, "__len__"):
@@ -310,54 +310,54 @@ class ControlledMotor(Container):
 
     @property
     def rot_position_mode(self):
-        return self._config[ControlledMotor._MODE_ROT_POSITION]
+        return self._config[ControllerMotor._MODE_ROT_POSITION]
 
     @rot_position_mode.setter
     def rot_position_mode(self, enable):
-        self._config[ControlledMotor._MODE_ROT_POSITION] = True if enable != 0  else False
+        self._config[ControllerMotor._MODE_ROT_POSITION] = True if enable != 0  else False
         if (enable == True) :
-            self._config[ControlledMotor._MODE_TRANS_POSITION] = False
-            self._config[ControlledMotor._MODE_POWER] = False
+            self._config[ControllerMotor._MODE_TRANS_POSITION] = False
+            self._config[ControllerMotor._MODE_POWER] = False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # translation speed
     @property
     def target_trans_speed(self):
-        if (self._config[ControlledMotor._MODE_TRANS_SPEED] != True):
+        if (self._config[ControllerMotor._MODE_TRANS_SPEED] != True):
             print("translation speed mode could be not enabled in the container please use 'device.container.trans_speed_mode = True' to enable it")
         return self._target_trans_speed
 
     @target_trans_speed.setter
     def target_trans_speed(self, s):
-        if (self._config[ControlledMotor._MODE_TRANS_SPEED] != True):
+        if (self._config[ControllerMotor._MODE_TRANS_SPEED] != True):
             print("translation speed mode could be not enabled in the container please use 'device.container.trans_speed_mode = True' to enable it")
         self._target_trans_speed = s
         self._push_value("target_trans_speed", s)
 
     @property
     def trans_speed_mode(self):
-        return self._config[ControlledMotor._MODE_TRANS_SPEED]
+        return self._config[ControllerMotor._MODE_TRANS_SPEED]
 
     @trans_speed_mode.setter
     def trans_speed_mode(self, enable):
-        self._config[ControlledMotor._MODE_TRANS_SPEED] = True if enable != 0  else False
+        self._config[ControllerMotor._MODE_TRANS_SPEED] = True if enable != 0  else False
         if (enable == True) :
-            self._config[ControlledMotor._MODE_ROT_SPEED] = False
-            self._config[ControlledMotor._MODE_POWER] = False
+            self._config[ControllerMotor._MODE_ROT_SPEED] = False
+            self._config[ControllerMotor._MODE_POWER] = False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # translation position
     @property
     def target_trans_position(self):
-        if (self._config[ControlledMotor._MODE_TRANS_POSITION] != True):
+        if (self._config[ControllerMotor._MODE_TRANS_POSITION] != True):
             print("translation speed mode could be not enabled in the container please use 'device.container.trans_pos_mode = True' to enable it")
         return self._target_trans_position
 
     @target_trans_position.setter
     def target_trans_position(self, s):
-        if (self._config[ControlledMotor._MODE_TRANS_POSITION] != True):
+        if (self._config[ControllerMotor._MODE_TRANS_POSITION] != True):
             print("translation speed mode could be not enabled in the container please use 'device.container.trans_position_mode = True' to enable it")
         self._target_trans_position = s
         if hasattr(s, "__len__"):
@@ -368,14 +368,14 @@ class ControlledMotor(Container):
 
     @property
     def trans_position_mode(self):
-        return self._config[ControlledMotor._MODE_TRANS_POSITION]
+        return self._config[ControllerMotor._MODE_TRANS_POSITION]
 
     @trans_position_mode.setter
     def trans_position_mode(self, enable):
-        self._config[ControlledMotor._MODE_TRANS_POSITION] = True if enable != 0  else False
+        self._config[ControllerMotor._MODE_TRANS_POSITION] = True if enable != 0  else False
         if (enable == True) :
-            self._config[ControlledMotor._MODE_ROT_POSITION] = False
-            self._config[ControlledMotor._MODE_POWER] = False
+            self._config[ControllerMotor._MODE_ROT_POSITION] = False
+            self._config[ControllerMotor._MODE_POWER] = False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 #************************** report modes *****************************
@@ -383,78 +383,78 @@ class ControlledMotor(Container):
     # rotation position
     @property
     def rot_position(self):
-        if (self._config[ControlledMotor._ROTATION_POSITION] != True):
+        if (self._config[ControllerMotor._ROTATION_POSITION] != True):
             self.rot_position = True
         return self._rot_position
 
     @rot_position.setter
     def rot_position(self, enable):
-        self._config[ControlledMotor._ROTATION_POSITION] = True if enable != 0  else False
+        self._config[ControllerMotor._ROTATION_POSITION] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # rotation speed
     @property
     def rot_speed(self):
-        if (self._config[ControlledMotor._ROTATION_SPEED] != True):
+        if (self._config[ControllerMotor._ROTATION_SPEED] != True):
             self.rot_speed = True
         return self._rot_speed
 
     @rot_speed.setter
     def rot_speed(self, enable):
-        self._config[ControlledMotor._ROTATION_SPEED] = True if enable != 0  else False
+        self._config[ControllerMotor._ROTATION_SPEED] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # translation position
     @property
     def trans_position(self):
-        if (self._config[ControlledMotor._TRANSLATION_POSITION] != True):
+        if (self._config[ControllerMotor._TRANSLATION_POSITION] != True):
             self.trans_position = True
         return self._rot_position
 
     @trans_position.setter
     def trans_position(self, enable):
-        self._config[ControlledMotor._TRANSLATION_POSITION] = True if enable != 0  else False
+        self._config[ControllerMotor._TRANSLATION_POSITION] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # translation speed
     @property
     def trans_speed(self):
-        if (self._config[ControlledMotor._TRANSLATION_SPEED] != True):
+        if (self._config[ControllerMotor._TRANSLATION_SPEED] != True):
             self.trans_speed = True
         return self._rot_speed
 
     @trans_speed.setter
     def trans_speed(self, enable):
-        self._config[ControlledMotor._TRANSLATION_SPEED] = True if enable != 0  else False
+        self._config[ControllerMotor._TRANSLATION_SPEED] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # current
     @property
     def current(self):
-        if (self._config[ControlledMotor._CURRENT] != True):
+        if (self._config[ControllerMotor._CURRENT] != True):
             self.current = True
         return self._current
 
     @current.setter
     def current(self, enable):
-        self._config[ControlledMotor._CURRENT] = True if enable != 0  else False
+        self._config[ControllerMotor._CURRENT] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # temperature
     @property
     def temperature(self):
-        if (self._config[ControlledMotor._TEMPERATURE] != True):
+        if (self._config[ControllerMotor._TEMPERATURE] != True):
             self.temperature = True
         return self._temperature
 
     @temperature.setter
     def temperature(self, enable):
-        self._config[ControlledMotor._TEMPERATURE] = True if enable != 0  else False
+        self._config[ControllerMotor._TEMPERATURE] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
@@ -506,22 +506,22 @@ class ControlledMotor(Container):
                 self.target_trans_position = trans_position
 
         w = interact(change_config,
-                        rot_speed_report = self._config[ControlledMotor._ROTATION_SPEED],
-                        rot_position_report = self._config[ControlledMotor._ROTATION_POSITION],
-                        trans_speed_report = self._config[ControlledMotor._TRANSLATION_SPEED],
-                        trans_position_report = self._config[ControlledMotor._TRANSLATION_POSITION],
-                        current_report = self._config[ControlledMotor._CURRENT],
-                        temperature_report = self._config[ControlledMotor._TEMPERATURE],
+                        rot_speed_report = self._config[ControllerMotor._ROTATION_SPEED],
+                        rot_position_report = self._config[ControllerMotor._ROTATION_POSITION],
+                        trans_speed_report = self._config[ControllerMotor._TRANSLATION_SPEED],
+                        trans_position_report = self._config[ControllerMotor._TRANSLATION_POSITION],
+                        current_report = self._config[ControllerMotor._CURRENT],
+                        temperature_report = self._config[ControllerMotor._TEMPERATURE],
 
-                        compliant_mode = self._config[ControlledMotor._MODE_COMPLIANT],
-                        power_mode = self._config[ControlledMotor._MODE_POWER],
+                        compliant_mode = self._config[ControllerMotor._MODE_COMPLIANT],
+                        power_mode = self._config[ControllerMotor._MODE_POWER],
                         power_ratio=(-100.0, 100.0, 1.0),
-                        rot_speed_mode = self._config[ControlledMotor._MODE_ROT_SPEED],
+                        rot_speed_mode = self._config[ControllerMotor._MODE_ROT_SPEED],
                         rot_speed = (-300.0, 300.0, 1.0),
-                        rot_position_mode = self._config[ControlledMotor._MODE_ROT_POSITION],
+                        rot_position_mode = self._config[ControllerMotor._MODE_ROT_POSITION],
                         rot_position = (-360.0, 360.0, 1.0),
-                        trans_speed_mode = self._config[ControlledMotor._MODE_TRANS_SPEED],
+                        trans_speed_mode = self._config[ControllerMotor._MODE_TRANS_SPEED],
                         trans_speed = (-1000.0, 1000.0, 1.0),
-                        trans_position_mode = self._config[ControlledMotor._MODE_TRANS_POSITION],
+                        trans_position_mode = self._config[ControllerMotor._MODE_TRANS_POSITION],
                         trans_position = (-1000.0, 1000.0, 1.0))
 

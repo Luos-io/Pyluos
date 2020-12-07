@@ -13,7 +13,7 @@ from .imu import Imu
 from .stepper import Stepper
 from .power_switch import PowerSwitch
 from .light_sensor import LightSensor
-from .controlled_motor import ControlledMotor
+from .controller_motor import ControllerMotor
 from .void import Void
 from .load import Load
 from .voltage import Voltage
@@ -37,7 +37,7 @@ __all__ = [
     'Stepper',
     'PowerSwitch',
     'LightSensor',
-    'ControlledMotor',
+    'ControllerMotor',
     'Void',
     'Load',
     'Voltage',
@@ -60,7 +60,7 @@ name2mod = {
     'Stepper' : Stepper,
     'PowerSwitch' : PowerSwitch,
     'LightSensor' : LightSensor,
-    'ControlledMotor' : ControlledMotor,
+    'ControllerMotor' : ControllerMotor,
     'Void' : Void,
     'Load' : Load,
     'Voltage' : Voltage,

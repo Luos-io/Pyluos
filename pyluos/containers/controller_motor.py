@@ -47,6 +47,8 @@ class ControllerMotor(Container):
         self._dimension = 100 # Wheel size (mm)
         self._limit_rot_position = None
         self._limit_trans_position = None
+        self._limit_rot_speed = None
+        self._limit_trans_speed = None
         self._limit_power = 100.0
         self._limit_current = 6.0
         self._sampling_freq = 100.0
@@ -196,6 +198,24 @@ class ControllerMotor(Container):
     def limit_trans_position(self, s):
         self._limit_trans_position = s
         self._push_value("limit_trans_position", s)
+
+    @property
+    def limit_rot_speed(self):
+        return self._limit_rot_speed
+
+    @limit_rot_speed.setter
+    def limit_rot_speed(self, s):
+        self._limit_rot_speed = s
+        self._push_value("limit_rot_speed", s)
+
+    @property
+    def limit_trans_speed(self):
+        return self._limit_trans_speed
+
+    @limit_trans_speed.setter
+    def limit_trans_speed(self, s):
+        self._limit_trans_speed = s
+        self._push_value("limit_trans_speed", s)
 
     @property
     def limit_power(self):
@@ -524,4 +544,3 @@ class ControllerMotor(Container):
                         trans_speed = (-1000.0, 1000.0, 1.0),
                         trans_position_mode = self._config[ControllerMotor._MODE_TRANS_POSITION],
                         trans_position = (-1000.0, 1000.0, 1.0))
-

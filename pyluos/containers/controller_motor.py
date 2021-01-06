@@ -478,6 +478,19 @@ class ControllerMotor(Container):
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
+#************************** custom motor type commands *****************************
+
+    def dxl_set_id(self, id):
+        self._push_value('set_id', id)
+
+    def dxl_detect(self):
+        self._push_value('reinit', 0)
+        print ("To get new detected Dxl motors usable on pyluos you should recreate your Pyluos object.")
+
+    def dxl_register(self, register, val):
+        new_val = [register, val]
+        self._push_value('register', new_val)
+
 #************************** controls and updates *****************************
 
     def _update(self, new_state):

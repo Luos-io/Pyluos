@@ -32,14 +32,14 @@ class Unknown(Container):
     def _update(self, new_state):
         Container._update(self, new_state)
         if 'io_state' in new_state:
-            new_state = new_state['io_state']
-            if new_state != self._state:
-                self._pub_event('changed', self._state, new_state)
+            val = new_state['io_state']
+            if val != self._state:
+                self._pub_event('changed', self._state, val)
 
-                evt = 'pressed' if new_state == True else 'released'
-                self._pub_event(evt, self._state, new_state)
+                evt = 'pressed' if val == True else 'released'
+                self._pub_event(evt, self._state, val)
 
-                self._state = new_state
+                self._state = val
         if 'rot_position' in new_state:
             self._angular_position = new_state['rot_position']
         if 'rot_speed' in new_state:
@@ -95,7 +95,7 @@ class Unknown(Container):
 
     @state.setter
     def state(self, new_val):
-        self._state == new_val
+        self._state = new_val
         self._push_value('io_state', new_val)
 
     @property

@@ -14,7 +14,7 @@ class State(Container):
 
     @state.setter
     def state(self, new_val):
-        self._value == new_val
+        self._value = new_val
         self._push_value('io_state', new_val)
 
     def _update(self, new_state):

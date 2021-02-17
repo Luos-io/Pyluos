@@ -1,4 +1,4 @@
-<a href="https://luos.io"><img src="https://www.luos.io/wp-content/uploads/2020/03/Luos-color.png" alt="Luos logo" title="Luos" align="right" height="60" /></a>
+<a href="https://luos.io"><img src="https://www.luos.io/wp-content/uploads/2021/02/Luos_Logo_animation_Black.gif" alt="Luos logo" title="Luos" align="right" height="60" /></a>
 
 [![Build Status](https://travis-ci.org/pollen-robotics/pyluos.svg?branch=master)](https://travis-ci.org/pollen-robotics/pyluos)
 [![](http://certified.luos.io)](https://luos.io)

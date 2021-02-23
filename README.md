@@ -10,7 +10,7 @@ Pyluos lets you easily connect, interact and program your [luos](https://www.luo
 
 The API was designed to be as simple as possible and let you focus on **bringing life to your ideas!**
 
-Read the complete [documentation of pyluos](https://docs.luos.io/pages/high/pyluos.html).
+Read the complete [documentation of Pyluos](https://docs.luos.io/pages/high/pyluos.html).
 
 ## Install Pyluos
 
@@ -57,17 +57,15 @@ from pyluos import Device
 device = Device('my_serial_port')
 ```
 
-*If you don't know how to find the name of the usb/wifi gate you are using, you can report to the section [Finding  a gate](#finding-a-gate).*
+The `my_serial_port` will look something like COM3 on a Windows device, or /dev/ttyUSB on a Mac or Linux device.
 
 ## Finding a gate
 
-If you don't know the name of a gate, you can easily find it using the ```pyluos-usb-gate``` and ```pyluos-wifi-gate``` command line utilities.
-
-There should be automatically installed when you install Pyluos. They should be available in your path. From the terminal, you can run:
+If you don't know the name of a gate, you can easily find it using the ```pyluos-usb-gate``` and ```pyluos-wifi-gate``` command line utilities. They should be automatically installed when you install Pyluos, and available in your path. From the terminal, you can run:
 
 ```pyluos-wifi-gate discover```
 
-This will show the name of the wifi gate connected on the same WiFi. This uses the Zeroconf protocol.
+This will show the name of the WiFi gate connected on the same WiFi. This uses the Zeroconf protocol.
 
 *Make sure to use either the IP or the hostname.local for WiFi gates.*
 
@@ -85,9 +83,9 @@ device = Device('/dev/cu.usbmodem2964691')
 
 Pyluos is developed by [Luos](https://www.luos.io) with the support of [Pollen Robotics](http://pollen-robotics.com/).
 
-Pyluos still needs lots of usage and testing to help it become more useful and reliable. If you are actively using Pyluos, have suggestion or comments  please let us know!
+Pyluos still needs lots of usage and testing to help it become more useful and reliable. If you are actively using Pyluos, and have suggestion or comments, please let us know!
 
-Do not hesitate to share your experience with Pyluos our meet other luos users on our [forum](https://community.luos.io)!
+Do not hesitate to share your experience with Pyluos and meet other Luos users on our [forum](https://community.luos.io)!
 
 ## License
 

@@ -161,8 +161,16 @@ class Device(object):
         self._write( json.dumps(self._bench_settings).encode() + '\r'.encode() + self._bench_Data)
 
         state = self._poll_once()
+        startTime = time.time()
+        retry = 0
         while ('benchmark' not in state):
             state = self._poll_once()
+            if (time.time()-startTime > 30):
+                self._write( json.dumps(self._bench_settings).encode() + '\r'.encode() + self._bench_Data)
+                retry = retry+1
+                if (retry == 3):
+                    return (0, 100)
+                startTime = time.time()
 
         #self._pause = False
         return (state['benchmark']['data_rate'], state['benchmark']['fail_rate'])

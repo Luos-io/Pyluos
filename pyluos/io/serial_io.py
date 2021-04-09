@@ -23,7 +23,7 @@ except AttributeError:
     JSONDecodeError = ValueError
 
 class Serial(IOHandler):
-    poll_frequency = 100
+    poll_frequency = 200
 
     @classmethod
     def available_hosts(cls):

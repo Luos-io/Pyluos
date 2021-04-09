@@ -103,18 +103,22 @@ class Container(object):
     def luos_statistics(self):
         self._push_value('luos_statistics', "")
         time.sleep(0.3)
-        max_table = [self._luos_statistics["msg_stack"], self._luos_statistics["luos_stack"]]
-        max_val = max(max_table)
-        s = self.alias + " statistics :"
-        s = s + "\n.luos allocated RAM occupation \t= " + repr(max_val)
-        s = s + "%\n\t.Message stack \t\t= " + repr(self._luos_statistics["msg_stack"])
-        s = s + "%\n\t.Luos stack \t\t= " + repr(self._luos_statistics["luos_stack"])
-        s = s + "%\n.Dropped messages number \t= " + repr(self._luos_statistics["msg_drop"])
-        s = s + "\n.Max luos loop delay \t\t= " + repr(self._luos_statistics["loop_ms"])
-        s = s + "ms\n.Msg fail ratio \t\t= " + repr(self._luos_statistics["fail_ratio"])
-        s = s + "%\n.Nak msg max number \t\t= " + repr(self._luos_statistics["nak_max"])
-        s = s + "\n.Collision msg max number \t= " + repr(self._luos_statistics["collision_max"])
-        print(s)
+        try:
+            max_table = [self._luos_statistics["rx_msg_stack"], self._luos_statistics["luos_stack"], self._luos_statistics["tx_msg_stack"], self._luos_statistics["buffer_occupation"]]
+            max_val = max(max_table)
+            s = self.alias + " statistics :"
+            s = s + "\n.luos allocated RAM occupation \t= " + repr(max_val)
+            s = s + "%\n\t.RX message stack \t  = " + repr(self._luos_statistics["rx_msg_stack"])
+            s = s + "%\n\t.TX message stack \t  = " + repr(self._luos_statistics["tx_msg_stack"])
+            s = s + "%\n\t.Luos stack \t\t  = " + repr(self._luos_statistics["luos_stack"])
+            s = s + "%\n\t.Buffer occupation \t  = " + repr(self._luos_statistics["buffer_occupation"])
+            s = s + "%\n.Dropped messages number \t= " + repr(self._luos_statistics["msg_drop"])
+            s = s + "\n.Max luos loop delay \t\t= " + repr(self._luos_statistics["loop_ms"])
+            s = s + "ms\n.msg max retry number \t\t= " + repr(self._luos_statistics["max_retry"])
+            s = s + "\n"
+            print(s)
+        except:
+            print(self.alias + " statistics collection failed.\n")
 
     def rename(self, name):
         # check if the string start with a number before sending

@@ -91,6 +91,7 @@ Do not hesitate to share your experience with Pyluos and meet other Luos users o
 ## License
 
 Pyluos is licensed under the [MIT license](./LICENSE).
+
 ## Don't hesitate to read [our documentation](https://docs.luos.io), or to post your questions/issues on the [Luos' subreddit](https://www.reddit.com/r/Luos/). :books:
 
 

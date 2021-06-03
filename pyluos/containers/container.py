@@ -30,6 +30,7 @@ class Container(object):
         self.type = type
         self.alias = alias
         self.refresh_freq = 0.0
+        self._update_time = 0.01
         self._delegate = device
         self._value = None
         self._cb = defaultdict(list)
@@ -124,6 +125,15 @@ class Container(object):
         # check if the string start with a number before sending
         self._push_value('rename', name)
         self.alias = name
+
+    @property
+    def update_time(self):
+        return self._update_time
+
+    @update_time.setter
+    def update_time(self, time):
+        self._push_value('update_time', time)
+        self._update_time= time
 
     # Events cb handling
 

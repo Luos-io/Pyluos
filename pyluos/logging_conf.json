@@ -4,6 +4,9 @@
     "formatters": {
         "simple": {
             "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        },
+        "single_message": {
+            "format": "%(message)s"
         }
     },
 
@@ -22,6 +25,15 @@
             "maxBytes": 10485760,
             "backupCount": 20,
             "encoding": "utf8"
+        },
+        "sniffer_info_file_handler": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "INFO",
+            "formatter": "single_message",
+            "filename": "sniffer.log",
+            "maxBytes": 10485760,
+            "backupCount": 20,
+            "encoding": "utf8"
         }
     },
 
@@ -29,6 +41,10 @@
         "pyluos": {
             "level": "DEBUG",
             "handlers": ["console", "info_file_handler"]
+        },
+        "pysniffer": {
+            "level": "DEBUG",
+            "handlers": ["sniffer_info_file_handler"]
         }
     }
 }

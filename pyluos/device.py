@@ -11,7 +11,7 @@ import numpy as np
 from datetime import datetime
 from collections import defaultdict
 
-from .io import discover_hosts, io_from_host, Ws
+from .io import discover_hosts, sniffer_discover_hosts, io_from_host, sniffer_io_from_host, Ws
 from .containers import name2mod
 
 from anytree import AnyNode, RenderTree, DoubleStyle
@@ -308,6 +308,108 @@ class Device(object):
         with self._send_lock:
             self._io.send(msg)
 
+    def _write(self, data):
+        with self._send_lock:
+            self._io.write(data)
+#################### Sniffer Code ###################
+class Sniffer(object):
+    _heartbeat_timeout = 5  # in sec.
+    _max_alias_length = 15
+    _base_log_conf = os.path.join(os.path.dirname(__file__),
+                                  'logging_conf.json')
+
+    @classmethod
+    def discover(cls):
+        hosts = sniffer_discover_hosts()
+
+        possibilities = {
+            k: [h for h in v if h in hosts]
+            for k, v in known_host.items()
+        }
+
+        return possibilities
+        
+    def __init__(self, host,
+                 IO=None,
+                 log_conf=_base_log_conf,
+                 test_mode=False,
+                 *args, **kwargs):
+        if IO is not None:
+            self._io = IO(host=host, *args, **kwargs)
+        else:
+            self._io = sniffer_io_from_host(host=host,
+                                    *args, **kwargs)
+
+
+        if os.path.exists(log_conf):
+            with open(log_conf) as f:
+                config = json.load(f)
+            logging.config.dictConfig(config)
+
+        self.logger = logging.getLogger(__name__)
+        self.logger.info('Connected to "{}".'.format(host))
+
+        self._send_lock = threading.Lock()
+        self._cmd_lock = threading.Lock()
+
+        # We force a first poll to setup our model.
+
+        self.logger.info('Device setup.')
+        
+        self._last_update = time.time()
+        self._running = True
+        self._pause = False
+
+        self.set
+
+        # Setup both poll/push synchronization loops.
+        self._poll_bg = threading.Thread(target=self._poll_and_up)
+        self._poll_bg.daemon = True
+        self._poll_bg.start()
+        self._baudrate = 1000000
+
+    @property
+    def set(self):
+        self._send('init')
+
+    @property
+    def start(self):
+        self._send('start')
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("Sending Start")
+
+    @property
+    def pause(self):
+        self._send('pause')    
+
+    @property  
+    def stop(self):
+        self._send('stop')
+        
+    def close(self):
+        self._running = False
+        self._poll_bg.join()
+        self._io.close()
+
+    # Poll state from hardware.
+    def _poll_once(self):
+        self._state = self._io.read()
+        self._state['timestamp'] = time.time()
+        return self._state
+
+    def _poll_and_up(self):
+        while self._running:
+            if not self._pause :
+                state = self._poll_once()
+                self._update(state)
+                self._push_once()
+            else :
+                time.sleep(0.1)
+    
+    def _send(self, msg):
+        with self._send_lock:
+            self._io.send(msg)
+            
     def _write(self, data):
         with self._send_lock:
             self._io.write(data)

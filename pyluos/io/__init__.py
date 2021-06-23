@@ -44,9 +44,10 @@ class IOHandler(object):
 
 from .ws import Ws
 from .serial_io import Serial
+from .serial_io import Sniffer_Serial
 
 IOs = [Serial, Ws]
-
+SnifferIOs = [Sniffer_Serial]
 
 def io_from_host(host, *args, **kwargs):
     for cls in IOs:
@@ -58,3 +59,14 @@ def io_from_host(host, *args, **kwargs):
 
 def discover_hosts():
     return sum([io.available_hosts() for io in IOs], [])
+
+def sniffer_io_from_host(host, *args, **kwargs):
+    for cls in SnifferIOs:
+        if cls.is_host_compatible(host):
+            return cls(host=host, *args, **kwargs)
+
+    raise ValueError('No corresponding IO found (among {}).'.format(sniffer_discover_hosts))
+
+
+def sniffer_discover_hosts():
+    return sum([io.available_hosts() for io in SnifferIOs], [])

@@ -27,7 +27,7 @@ class Serial(IOHandler):
 
     @classmethod
     def available_hosts(cls):
-        devices = comports()
+        devices = comports(include_links=True)
 
         return [d.device for d in devices]
 

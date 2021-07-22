@@ -12,6 +12,22 @@ from pyluos import Device
 # *******************************************************************************
 # Global Variables
 # *******************************************************************************
+BOOTLOADER_IDLE = 0
+BOOTLOADER_START = 1
+BOOTLOADER_STOP = 2
+BOOTLOADER_READY = 3
+BOOTLOADER_ERASE = 4
+BOOTLOADER_BIN_CHUNK = 5
+BOOTLOADER_BIN_END = 6
+BOOTLOADER_CRC_TEST = 7
+BOOTLOADER_READY_RESP = 16
+BOOTLOADER_BIN_HEADER_RESP = 17
+BOOTLOADER_ERASE_RESP = 18
+BOOTLOADER_BIN_CHUNK_RESP = 19
+BOOTLOADER_BIN_END_RESP = 20
+BOOTLOADER_CRC_RESP = 21
+BOOTLOADER_ERROR_SIZE = 32
+
 # *******************************************************************************
 # Function
 # *******************************************************************************
@@ -64,6 +80,25 @@ def create_target_list(args, state):
 
     return (nodes_to_reboot, nodes_to_program)
 
+# *******************************************************************************
+# @brief send commands
+# @param command type
+# @return None
+# *******************************************************************************
+def send_command(device, node, command, size = 0):
+    # create a json file with the list of the nodes to program
+    bootloader_cmd = {
+        'bootloader': {
+            'command': {
+                'type': command,
+                'node': node,
+                'size': size
+            },
+        }
+    }
+    # send json command
+    device._send(bootloader_cmd)
+
 # @brief command used to flash luos nodes
 # @param flash function arguments : -g, -t, -b
 # @return None
@@ -85,6 +120,15 @@ def luos_flash(args):
     # searching nodes to program in network
     (nodes_to_reboot, nodes_to_program) = create_target_list(args, state)
 
+    # reboot all nodes in bootloader mode
+    print("** Reboot all nodes in bootloader mode **")
+    for node in nodes_to_reboot:
+        send_command(device, node, BOOTLOADER_START)
+        # delay to let gate send commands
+        time.sleep(0.01)
+
+    # wait before next step
+    time.sleep(0.1)
 # *******************************************************************************
 # @brief command used to detect network
 # @param detect function arguments : -p

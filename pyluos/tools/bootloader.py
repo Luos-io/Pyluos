@@ -37,6 +37,33 @@ def find_network(device):
     return state
 
 # *******************************************************************************
+# @brief find nodes to program in the network
+# @param target list, routing table
+# @return a tuple with 2 lists : nodes to reboot and nodes to program
+# *******************************************************************************
+def create_target_list(args, state):
+    bypass_node = False
+    nodes_to_program = []
+    nodes_to_reboot = []
+    for node in state['routing_table']:
+        # bypass if node contains a Gate container
+        # prevent programmation of a Gate
+        for container in node['containers']:
+            bypass_node = False
+            if(container['type'] == 'Gate'):
+                bypass_node = True
+                break
+            if(container['alias'] == 'Pipe_mod'):
+                bypass_node = True
+        # check if node is in target list
+        if not (bypass_node):
+            nodes_to_reboot.append(node['node_id'])
+            for target in args.target:
+                if(int(node['node_id']) == int(target)):
+                    nodes_to_program.append(node['node_id'])
+
+    return (nodes_to_reboot, nodes_to_program)
+
 # @brief command used to flash luos nodes
 # @param flash function arguments : -g, -t, -b
 # @return None
@@ -54,6 +81,9 @@ def luos_flash(args):
 
     # find routing table
     state = find_network(device)
+
+    # searching nodes to program in network
+    (nodes_to_reboot, nodes_to_program) = create_target_list(args, state)
 
 # *******************************************************************************
 # @brief command used to detect network

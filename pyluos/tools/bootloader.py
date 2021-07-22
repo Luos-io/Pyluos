@@ -6,6 +6,7 @@
 # *******************************************************************************
 import argparse
 import sys
+from pyluos import Device
 
 # *******************************************************************************
 # Global Variables
@@ -33,6 +34,12 @@ def luos_flash(args):
 # *******************************************************************************
 def luos_detect(args):
     print('Luos detect subcommand on port : ', args.port)
+
+    # detect network
+    device = Device(args.port)
+
+    # print network to user
+    print(device.nodes)
 
 # *******************************************************************************
 # @brief command used to detect network
@@ -92,4 +99,3 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
-    

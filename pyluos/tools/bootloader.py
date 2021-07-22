@@ -407,6 +407,17 @@ def check_crc(device, node):
 
     return return_value
 
+# *******************************************************************************
+# @brief reboot all nodes in application mode
+# @param
+# @return
+# *******************************************************************************
+def reboot_network(device, nodes_to_reboot):
+    for node in nodes_to_reboot:
+                send_command(device, node, BOOTLOADER_STOP)
+                # delay to let gate send commands
+                time.sleep(0.01)
+# *******************************************************************************
 # @brief command used to flash luos nodes
 # @param flash function arguments : -g, -t, -b
 # @return None
@@ -484,6 +495,15 @@ def luos_flash(args):
         machine_state = check_crc(device, node)
         if( machine_state != True):
             break
+
+    # wait before next step
+    time.sleep(0.1)
+
+    # reboot all nodes in application mode
+    if (machine_state == True):
+        print("** Reboot all nodes in application mode **")
+        reboot_network(device, nodes_to_reboot)
+
 
 # *******************************************************************************
 # @brief command used to detect network

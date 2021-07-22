@@ -6,6 +6,7 @@
 # *******************************************************************************
 import argparse
 import sys
+import time
 from pyluos import Device
 
 # *******************************************************************************
@@ -14,6 +15,26 @@ from pyluos import Device
 # *******************************************************************************
 # Function
 # *******************************************************************************
+
+# *******************************************************************************
+# @brief find routing table
+# @param port connected to the luos gate
+# @return an object containing routing table
+# *******************************************************************************
+def find_network(device):
+    device._send({'detection': {}})
+    startTime = time.time()
+    state = device._poll_once()
+    while ('routing_table' not in state):
+        if ('route_table' in state):
+            print('version of luos not supported')
+            return
+        state = device._poll_once()
+        if (time.time()-startTime > 1):
+            device._send({'detection': {}})
+            startTime = time.time()
+
+    return state
 
 # *******************************************************************************
 # @brief command used to flash luos nodes
@@ -26,6 +47,13 @@ def luos_flash(args):
     print('\t--target : ', args.target)
     print('\t--binary : ', args.binary)
     print('\t--port : ', args.port)
+
+
+    # init device
+    device = Device(args.port, background_task=False)
+
+    # find routing table
+    state = find_network(device)
 
 # *******************************************************************************
 # @brief command used to detect network

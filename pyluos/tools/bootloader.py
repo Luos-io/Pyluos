@@ -7,7 +7,11 @@
 import argparse
 import sys
 import time
+from multiprocessing import Process, Value
+import json
 from pyluos import Device
+import numpy as np
+import math
 
 # *******************************************************************************
 # Global Variables
@@ -28,8 +32,12 @@ BOOTLOADER_BIN_END_RESP = 20
 BOOTLOADER_CRC_RESP = 21
 BOOTLOADER_ERROR_SIZE = 32
 
+FILEPATH = None
+NB_SAMPLE_BY_FRAME_MAX = 127
+
 RESP_TIMEOUT = 3
 ERASE_TIMEOUT = 10
+PROGRAM_TIMEOUT = 5
 # *******************************************************************************
 # Function
 # *******************************************************************************
@@ -100,6 +108,18 @@ def send_command(device, node, command, size = 0):
     }
     # send json command
     device._send(bootloader_cmd)
+
+# *******************************************************************************
+# @brief get binary size
+# @param
+# @return binary size
+# *******************************************************************************
+def get_binary_size():
+    # get number of bytes in binary file
+    with open(FILEPATH, mode="rb") as f:
+        nb_bytes = len(f.read())
+
+    return nb_bytes
 
 # *******************************************************************************
 # @brief send erase command
@@ -196,6 +216,141 @@ def erase_flash(device, node):
 
     return return_value
 
+# *******************************************************************************
+# @brief get binary size
+# @param
+# @return binary size
+# *******************************************************************************
+def loading_bar(loading_progress):
+    init_time = time.time()
+    period = 0.2
+    while(1):
+        if(time.time() - init_time > period):
+            init_time = time.time()
+            print("\r  ╰> loading : {} %".format(loading_progress.value), end='')
+
+# *******************************************************************************
+# @brief send the binary file to the node
+# @param command type
+# @return None
+# *******************************************************************************
+def send_binary_data(device, node):
+    loading_state = True
+    # compute total number of bytes to send
+    with open(FILEPATH, mode="rb") as f:
+        nb_bytes = len(f.read())
+    # compute total number of frames to send
+    nb_frames = math.ceil(nb_bytes / NB_SAMPLE_BY_FRAME_MAX)
+
+    # display a progress bar to inform user
+    loading_progress = Value('f', 0.0)
+    loading_bar_bg = Process(target=loading_bar, args=(loading_progress,))
+    loading_bar_bg.start()
+
+    # send each frame to the network
+    file_offset = 0
+    for frame_index in range(nb_frames):
+        if (frame_index == (nb_frames-1)):
+            # last frame, compute size
+            frame_size = nb_bytes - (nb_frames-1)*NB_SAMPLE_BY_FRAME_MAX
+        else:
+            frame_size = NB_SAMPLE_BY_FRAME_MAX
+
+        # send the current frame
+        loading_state = send_frame_from_binary(device, node, frame_size, file_offset)
+        if( loading_state != True):
+            break
+        # update cursor position in the binary file
+        file_offset += frame_size
+        # update loading progress
+        loading_progress.value = math.trunc(frame_index / nb_frames * 100)
+
+    # kill the progress bar at the end of the loading
+    loading_bar_bg.terminate()
+    if( loading_state == True):
+        print("\r  ╰> loading : 100.0 %")
+
+    return loading_state
+
+# *******************************************************************************
+# @brief open binary file and send a frame
+# @param
+# @return None
+# *******************************************************************************
+def send_frame_from_binary(device, node, frame_size, file_offset):
+    return_value = True
+
+    with open(FILEPATH, mode="rb") as f:
+        # put the cursor at the beginning of the file
+        f.seek(file_offset)
+        # read binary data
+        data_bytes = f.read(1)
+        for sample in range(frame_size):
+            data_bytes = data_bytes + f.read(1)
+
+    send_data(device, node, BOOTLOADER_BIN_CHUNK, frame_size, data_bytes)
+
+    # wait node response
+    lock = 1
+    state = device._poll_once()
+    init_time = time.time()
+    while (lock):
+        if(time.time() - init_time > PROGRAM_TIMEOUT):
+            print("\r\n  ╰> Node n°", node, "is not responding.")
+            print("  ╰> Loading program aborted, please reboot the system.")
+            return_value = False
+            break
+        if 'bootloader' in state:
+            if (state['bootloader']['response'] == BOOTLOADER_BIN_CHUNK_RESP):
+                lock = 0
+        state = device._poll_once()
+
+    return return_value
+
+# *******************************************************************************
+# @brief send binary data with a header
+# @param
+# @return None
+# *******************************************************************************
+def send_data(device, node, command, size, data):
+    # create a json file with the list of the nodes to program
+    bootloader_cmd = {
+        'bootloader': {
+            'command': {
+                'type': command,
+                'node': node,
+                'size': size
+            },
+        }
+    }
+    # send json command
+    device._write(json.dumps(bootloader_cmd).encode() + '\r'.encode() + data)
+
+# *******************************************************************************
+# @brief send the binary end command
+# @param
+# @return
+# *******************************************************************************
+def send_binary_end(device, node):
+    return_value = True
+
+    # send command
+    send_command(device, node, BOOTLOADER_BIN_END)
+    # wait bin_end response
+    state = device._poll_once()
+    init_time = time.time()
+    while ('bootloader' not in state):
+        state = device._poll_once()
+        if(time.time() - init_time > RESP_TIMEOUT):
+            print("  ╰> Node n°", node, "is not responding.")
+            print("  ╰> Loading program aborted, please reboot the system.")
+            return_value = False
+            break
+    if (state['bootloader']['response'] == BOOTLOADER_BIN_END_RESP):
+        print("  ╰> Node acknowledge received, loading is complete.")
+
+    return return_value
+
 # @brief command used to flash luos nodes
 # @param flash function arguments : -g, -t, -b
 # @return None
@@ -209,6 +364,17 @@ def luos_flash(args):
 
     # state used to check each step
     machine_state = True
+
+    # update firmware path
+    global FILEPATH
+    FILEPATH = args.binary
+    try:
+        f = open(FILEPATH, mode="rb")
+    except IOError:
+        print("Cannot open :", FILEPATH)
+        sys.exit()
+    else:
+        f.close()
 
     # init device
     device = Device(args.port, background_task=False)
@@ -228,6 +394,7 @@ def luos_flash(args):
 
     # wait before next step
     time.sleep(0.1)
+
     # program nodes
     for node in nodes_to_program:
         print("** Programming node n°", node, "**")
@@ -241,6 +408,18 @@ def luos_flash(args):
         # erase node flash memory
         print("--> Erase flash memory.")
         machine_state = erase_flash(device, node)
+        if( machine_state != True):
+            break
+
+        # send binary data
+        print("--> Send binary data.")
+        machine_state = send_binary_data(device, node)
+        if( machine_state != True):
+            break
+
+        # inform the node of the end of the loading
+        print("--> Programmation finished, waiting for acknowledge.")
+        machine_state = send_binary_end(device, node)
         if( machine_state != True):
             break
 

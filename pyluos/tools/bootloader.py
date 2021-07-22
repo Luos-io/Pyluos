@@ -12,6 +12,7 @@ import json
 from pyluos import Device
 import numpy as np
 import math
+import crc8
 
 # *******************************************************************************
 # Global Variables
@@ -351,6 +352,61 @@ def send_binary_end(device, node):
 
     return return_value
 
+# *******************************************************************************
+# @brief compute binary crc
+# @param
+# @return None
+# *******************************************************************************
+def compute_crc():
+    # create crc8 function object
+    hash = crc8.crc8()
+    # get number of bytes in binary file
+    with open(FILEPATH, mode="rb") as f:
+        nb_bytes = len(f.read())
+
+    with open(FILEPATH, mode="rb") as f:
+        for bytes in range(nb_bytes):
+            data = f.read(1)
+            hash.update(data)
+            crc = hash.digest()
+
+    return crc
+
+# *******************************************************************************
+# @brief send the binary end command
+# @param
+# @return
+# *******************************************************************************
+def check_crc(device, node):
+    return_value = True
+
+    # send crc command
+    send_command(device, node, BOOTLOADER_CRC_TEST)
+    # wait bin_end response
+    state = device._poll_once()
+    init_time = time.time()
+    while ('bootloader' not in state):
+        state = device._poll_once()
+        if(time.time() - init_time > RESP_TIMEOUT):
+            print("  ╰> Node n°", node, "is not responding.")
+            print("  ╰> Loading program aborted, please reboot the system.")
+            return_value = False
+            break
+    if (state['bootloader']['response'] == BOOTLOADER_CRC_RESP):
+        source_crc = int.from_bytes(compute_crc(), byteorder='big')
+        node_crc = state['bootloader']['crc_value']
+        if ( source_crc == node_crc ):
+            print("  ╰> CRC test : OK.")
+        else:
+            print("  ╰> CRC test : NOK.")
+            print("  ╰> waited :", hex(source_crc), ", received :", hex(node_crc))
+            return_value = False
+    else:
+        print("  ╰> CRC note received.")
+        return_value = False
+
+    return return_value
+
 # @brief command used to flash luos nodes
 # @param flash function arguments : -g, -t, -b
 # @return None
@@ -420,6 +476,12 @@ def luos_flash(args):
         # inform the node of the end of the loading
         print("--> Programmation finished, waiting for acknowledge.")
         machine_state = send_binary_end(device, node)
+        if( machine_state != True):
+            break
+
+        # Ask the node to send binary crc
+        print("--> Check binary CRC.")
+        machine_state = check_crc(device, node)
         if( machine_state != True):
             break
 

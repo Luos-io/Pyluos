@@ -29,6 +29,7 @@ BOOTLOADER_CRC_RESP = 21
 BOOTLOADER_ERROR_SIZE = 32
 
 RESP_TIMEOUT = 3
+ERASE_TIMEOUT = 10
 # *******************************************************************************
 # Function
 # *******************************************************************************
@@ -129,6 +130,72 @@ def send_ready_cmd(device, node):
         print("  ╰> Node n°", node, "is ready.")
 
     return return_value
+# *******************************************************************************
+# @brief waiting for erase response
+# @param
+# @return binary size
+# *******************************************************************************
+def waiting_erase():
+    init_time = time.time()
+    count = 0
+    period = 0.4
+    print("\r                        ", end='')
+    print("\r  ╰> Erase flash        ", end='')
+    while(1):
+        if(time.time() - init_time > period):
+            init_time = time.time()
+            if(count == 0):
+                print("\r                        ", end='')
+                print("\r  ╰> Erase flash .      ", end='')
+                count += 1
+                continue
+            if(count == 1):
+                print("\r                        ", end='')
+                print("\r  ╰> Erase flash ..     ", end='')
+                count += 1
+                continue
+            if(count == 2):
+                print("\r                        ", end='')
+                print("\r  ╰> Erase flash ...    ", end='')
+                count += 1
+                continue
+            if(count == 3):
+                print("\r                        ", end='')
+                print("\r  ╰> Erase flash        ", end='')
+                count = 0
+                continue
+
+# *******************************************************************************
+# @brief send erase command
+# @param command type
+# @return None
+# *******************************************************************************
+def erase_flash(device, node):
+    return_value = True
+
+    # send erase command
+    send_command(device, node, BOOTLOADER_ERASE)
+
+    # display a progress bar
+    waiting_bg = Process(target=waiting_erase)
+    waiting_bg.start()
+
+    # wait ready response
+    state = device._poll_once()
+    init_time = time.time()
+    while ('bootloader' not in state):
+        state = device._poll_once()
+        if(time.time() - init_time > ERASE_TIMEOUT):
+            print("  ╰> Node n°", node, "is not responding.")
+            print("  ╰> Loading program aborted, please reboot the system.")
+            return_value = False
+            break
+    if (state['bootloader']['response'] == BOOTLOADER_ERASE_RESP):
+        waiting_bg.terminate()
+        print("\r\n  ╰> Flash memory erased.")
+
+    return return_value
+
 # @brief command used to flash luos nodes
 # @param flash function arguments : -g, -t, -b
 # @return None
@@ -170,6 +237,13 @@ def luos_flash(args):
         machine_state = send_ready_cmd(device, node)
         if( machine_state != True):
             break
+
+        # erase node flash memory
+        print("--> Erase flash memory.")
+        machine_state = erase_flash(device, node)
+        if( machine_state != True):
+            break
+
 # *******************************************************************************
 # @brief command used to detect network
 # @param detect function arguments : -p

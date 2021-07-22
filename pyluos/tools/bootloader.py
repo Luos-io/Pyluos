@@ -28,6 +28,7 @@ BOOTLOADER_BIN_END_RESP = 20
 BOOTLOADER_CRC_RESP = 21
 BOOTLOADER_ERROR_SIZE = 32
 
+RESP_TIMEOUT = 3
 # *******************************************************************************
 # Function
 # *******************************************************************************
@@ -99,6 +100,35 @@ def send_command(device, node, command, size = 0):
     # send json command
     device._send(bootloader_cmd)
 
+# *******************************************************************************
+# @brief send erase command
+# @param command type
+# @return None
+# *******************************************************************************
+def send_ready_cmd(device, node):
+    return_value = True
+
+    # send ready command to the node
+    send_command(device, node, BOOTLOADER_READY, get_binary_size())
+
+    # wait ready response
+    state = device._poll_once()
+    init_time = time.time()
+    while ('bootloader' not in state):
+        state = device._poll_once()
+        if(time.time() - init_time > RESP_TIMEOUT):
+            print("  ╰> Node n°", node, "is not responding.")
+            print("  ╰> Loading program aborted, please reboot the system.")
+            return_value = False
+            break
+    if (state['bootloader']['response'] == BOOTLOADER_ERROR_SIZE):
+        print("  ╰> Node n°", node, "has not enough space in flash memory.")
+        # don't load binary if there is not enough place in flash memory
+        return_value = False
+    if (state['bootloader']['response'] == BOOTLOADER_READY_RESP):
+        print("  ╰> Node n°", node, "is ready.")
+
+    return return_value
 # @brief command used to flash luos nodes
 # @param flash function arguments : -g, -t, -b
 # @return None
@@ -110,6 +140,8 @@ def luos_flash(args):
     print('\t--binary : ', args.binary)
     print('\t--port : ', args.port)
 
+    # state used to check each step
+    machine_state = True
 
     # init device
     device = Device(args.port, background_task=False)
@@ -129,6 +161,15 @@ def luos_flash(args):
 
     # wait before next step
     time.sleep(0.1)
+    # program nodes
+    for node in nodes_to_program:
+        print("** Programming node n°", node, "**")
+
+        # go to header state if node is ready
+        print("--> Check if node n°", node, "is ready.")
+        machine_state = send_ready_cmd(device, node)
+        if( machine_state != True):
+            break
 # *******************************************************************************
 # @brief command used to detect network
 # @param detect function arguments : -p

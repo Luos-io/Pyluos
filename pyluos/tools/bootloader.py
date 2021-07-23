@@ -429,6 +429,10 @@ def luos_flash(args):
     print('\t--binary : ', args.binary)
     print('\t--port : ', args.port)
 
+    if not (args.port):
+        print('Please specify a port to access the network.')
+        sys.exit()
+
     # state used to check each step
     machine_state = True
 
@@ -513,9 +517,12 @@ def luos_flash(args):
 def luos_detect(args):
     print('Luos detect subcommand on port : ', args.port)
 
+    if not (args.port):
+        print('Please specify a port to access the network.')
+        sys.exit()
+
     # detect network
     device = Device(args.port)
-
     # print network to user
     print(device.nodes)
 
@@ -543,16 +550,14 @@ def luos_options():
                               default=['2'],
                               nargs='*')
     flash_parser.add_argument('-p', '--port',
-                              help='serial port used to detect network',
-                              default='COM3')
+                              help='serial port used to detect network')
     flash_parser.set_defaults(func=luos_flash)
 
     # declare "detect" subcommand
     detect_parser = subparsers.add_parser('detect',
                                           help='tool to detect luos network')
     detect_parser.add_argument('-p', '--port',
-                               help='serial port used to detect network',
-                               default='COM3')
+                               help='serial port used to detect network')
     detect_parser.set_defaults(func=luos_detect)
 
     return parser

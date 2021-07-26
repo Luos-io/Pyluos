@@ -107,6 +107,7 @@ class Device(object):
                  IO=None,
                  log_conf=_base_log_conf,
                  test_mode=False,
+                 background_task=True,
                  *args, **kwargs):
         if IO is not None:
             self._io = IO(host=host, *args, **kwargs)
@@ -133,10 +134,11 @@ class Device(object):
         self._running = True
         self._pause = False
 
-        # Setup both poll/push synchronization loops.
-        self._poll_bg = threading.Thread(target=self._poll_and_up)
-        self._poll_bg.daemon = True
-        self._poll_bg.start()
+        if(background_task == True):
+            # Setup both poll/push synchronization loops.
+            self._poll_bg = threading.Thread(target=self._poll_and_up)
+            self._poll_bg.daemon = True
+            self._poll_bg.start()
         self._baudrate = 1000000
 
     def close(self):

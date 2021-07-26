@@ -34,6 +34,7 @@ setup(name='pyluos',
               'pyluos-wifi-gate = pyluos.tools.wifi_gate:main',
               'pyluos-usb-gate = pyluos.tools.usb_gate:main',
               'pyluos-usb2ws = pyluos.tools.usb2ws:main',
+              'pyluos-bootloader = pyluos.tools.bootloader:main',
           ],
       },
       )

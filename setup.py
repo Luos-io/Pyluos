@@ -24,6 +24,7 @@ setup(name='pyluos',
                         'zeroconf',
                         'numpy',
                         'anytree',
+                        'crc8',
                         ],
       extras_require={
           'tests': ['pytest', 'flake8'],

@@ -1,8 +1,8 @@
-from .container import Container, interact
+from .service import Service, interact
 from copy import copy
 import time
 
-class Stepper(Container):
+class Stepper(Service):
     # target modes
     _MODE_COMPLIANT = 13
     _MODE_POWER = 12
@@ -20,7 +20,7 @@ class Stepper(Container):
     _TORQUE = 0
 
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'Stepper', id, alias, device)
+        Service.__init__(self, 'Stepper', id, alias, device)
         self._config = [False] * (Stepper._MODE_COMPLIANT + 1)
         # default configs, enable compliant, power_mode, and rotation position report
         self._config[Stepper._MODE_ROT_POSITION] = True
@@ -104,13 +104,13 @@ class Stepper(Container):
     @property
     def target_rot_position(self):
         if (self._config[Stepper._MODE_ROT_POSITION] != True):
-            print("rotation position mode is not enabled in the container please use 'device.container.rot_position_mode(True)' to enable it")
+            print("rotation position mode is not enabled in the service please use 'device.service.rot_position_mode(True)' to enable it")
         return self._target_rot_position
 
     @target_rot_position.setter
     def target_rot_position(self, s):
         if (self._config[Stepper._MODE_ROT_POSITION] != True):
-            print("rotation position mode is not enabled in the container please use 'device.container.rot_position_mode(True)' to enable it")
+            print("rotation position mode is not enabled in the service please use 'device.service.rot_position_mode(True)' to enable it")
         self._target_rot_position = s
         self._push_value("target_rot_position", s)
 
@@ -154,13 +154,13 @@ class Stepper(Container):
     @property
     def target_trans_position(self):
         if (self._config[Stepper._MODE_TRANS_POSITION] != True):
-            print("translation speed mode is not enabled in the container please use 'device.container.trans_speed_mode(True)' to enable it")
+            print("translation speed mode is not enabled in the service please use 'device.service.trans_speed_mode(True)' to enable it")
         return self._target_trans_position
 
     @target_trans_position.setter
     def target_trans_position(self, s):
         if (self._config[Stepper._MODE_TRANS_POSITION] != True):
-            print("translation speed mode is not enabled in the container please use 'device.container.trans_speed_mode(True)' to enable it")
+            print("translation speed mode is not enabled in the service please use 'device.service.trans_speed_mode(True)' to enable it")
         self._target_trans_position = s
         self._push_value("target_trans_position", s)
 
@@ -181,7 +181,7 @@ class Stepper(Container):
 #************************** controls and updates *****************************
 
     def _update(self, new_state):
-        Container._update(self, new_state)
+        Service._update(self, new_state)
 
     def control(self):
         def change_config(compliant_mode, rot_speed, rot_position_mode, rot_position, trans_speed, trans_position_mode, trans_position):

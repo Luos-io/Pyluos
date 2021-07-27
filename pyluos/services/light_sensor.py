@@ -1,12 +1,12 @@
-from .container import Container
+from .service import Service
 
 
-class LightSensor(Container):
+class LightSensor(Service):
     possible_events = {'changed', 'filter_changed'}
     threshold = 10
 
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'LightSensor', id, alias, device)
+        Service.__init__(self, 'LightSensor', id, alias, device)
         self._value = 0.0
 
     @property
@@ -15,7 +15,7 @@ class LightSensor(Container):
         return self._value
 
     def _update(self, new_state):
-        Container._update(self, new_state)
+        Service._update(self, new_state)
         if 'lux' in new_state:
             new_light = new_state['lux']
             if new_light != self._value:

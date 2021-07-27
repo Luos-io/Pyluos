@@ -4,11 +4,11 @@ import collections
 from copy import copy
 import time
 
-from .container import Container, interact
+from .service import Service, interact
 import numpy as np
 
 
-class ControllerMotor(Container):
+class ControllerMotor(Service):
     # target modes
     _MODE_COMPLIANT = 13
     _MODE_POWER = 12
@@ -32,7 +32,7 @@ class ControllerMotor(Container):
     _REC = 4
 
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'ControllerMotor', id, alias, device)
+        Service.__init__(self, 'ControllerMotor', id, alias, device)
         self._config = [False] * (ControllerMotor._MODE_COMPLIANT + 1)
         # default configs, enable compliant, power_mode, and rotation position report
         self._config[ControllerMotor._MODE_COMPLIANT] = True
@@ -256,14 +256,14 @@ class ControllerMotor(Container):
     @property
     def power_ratio(self):
         if (self._config[ControllerMotor._MODE_POWER] != True):
-            print("power mode is not enabled in the container please use 'device.container.power_mode = True' to enable it")
+            print("power mode is not enabled in the service please use 'device.service.power_mode = True' to enable it")
             return
         return self._target_power
 
     @power_ratio.setter
     def power_ratio(self, s):
         if (self._config[ControllerMotor._MODE_POWER] != True):
-            print("power mode is not enabled in the container please use 'device.container.power_mode = True' to enable it")
+            print("power mode is not enabled in the service please use 'device.service.power_mode = True' to enable it")
         s = min(max(s, -100.0), 100.0)
         #if s != self._target_power:
         self._target_power = s
@@ -288,13 +288,13 @@ class ControllerMotor(Container):
     @property
     def target_rot_speed(self):
         if (self._config[ControllerMotor._MODE_ROT_SPEED] != True):
-            print("rotation speed mode could be not enabled in the container please use 'device.container.rot_speed_mode = True' to enable it")
+            print("rotation speed mode could be not enabled in the service please use 'device.service.rot_speed_mode = True' to enable it")
         return self._target_rot_speed
 
     @target_rot_speed.setter
     def target_rot_speed(self, s):
         if (self._config[ControllerMotor._MODE_ROT_SPEED] != True):
-            print("rotation speed mode could be not enabled in the container please use 'device.container.rot_speed_mode = True' to enable it")
+            print("rotation speed mode could be not enabled in the service please use 'device.service.rot_speed_mode = True' to enable it")
         self._target_rot_speed = s
         self._push_value("target_rot_speed", s)
 
@@ -315,13 +315,13 @@ class ControllerMotor(Container):
     @property
     def target_rot_position(self):
         if (self._config[ControllerMotor._MODE_ROT_POSITION] != True):
-            print("rotation position mode could be not enabled in the container please use 'device.container.rot_position_mode = True' to enable it")
+            print("rotation position mode could be not enabled in the service please use 'device.service.rot_position_mode = True' to enable it")
         return self._target_rot_position
 
     @target_rot_position.setter
     def target_rot_position(self, s):
         if (self._config[ControllerMotor._MODE_ROT_POSITION] != True):
-            print("rotation position mode could be not enabled in the container please use 'device.container.rot_position_mode = True' to enable it")
+            print("rotation position mode could be not enabled in the service please use 'device.service.rot_position_mode = True' to enable it")
         self._target_rot_position = s
         if hasattr(s, "__len__"):
             self._push_data('target_rot_position', [len(s) * 4], np.array(s, dtype=np.float32)) # multiplying by the size of float32
@@ -345,13 +345,13 @@ class ControllerMotor(Container):
     @property
     def target_trans_speed(self):
         if (self._config[ControllerMotor._MODE_TRANS_SPEED] != True):
-            print("translation speed mode could be not enabled in the container please use 'device.container.trans_speed_mode = True' to enable it")
+            print("translation speed mode could be not enabled in the service please use 'device.service.trans_speed_mode = True' to enable it")
         return self._target_trans_speed
 
     @target_trans_speed.setter
     def target_trans_speed(self, s):
         if (self._config[ControllerMotor._MODE_TRANS_SPEED] != True):
-            print("translation speed mode could be not enabled in the container please use 'device.container.trans_speed_mode = True' to enable it")
+            print("translation speed mode could be not enabled in the service please use 'device.service.trans_speed_mode = True' to enable it")
         self._target_trans_speed = s
         self._push_value("target_trans_speed", s)
 
@@ -372,13 +372,13 @@ class ControllerMotor(Container):
     @property
     def target_trans_position(self):
         if (self._config[ControllerMotor._MODE_TRANS_POSITION] != True):
-            print("translation speed mode could be not enabled in the container please use 'device.container.trans_pos_mode = True' to enable it")
+            print("translation speed mode could be not enabled in the service please use 'device.service.trans_pos_mode = True' to enable it")
         return self._target_trans_position
 
     @target_trans_position.setter
     def target_trans_position(self, s):
         if (self._config[ControllerMotor._MODE_TRANS_POSITION] != True):
-            print("translation speed mode could be not enabled in the container please use 'device.container.trans_position_mode = True' to enable it")
+            print("translation speed mode could be not enabled in the service please use 'device.service.trans_position_mode = True' to enable it")
         self._target_trans_position = s
         if hasattr(s, "__len__"):
             self._push_value('target_trans_position', [len(s) * 4]) # multiplying by the size of float32
@@ -494,7 +494,7 @@ class ControllerMotor(Container):
 #************************** controls and updates *****************************
 
     def _update(self, new_state):
-        Container._update(self, new_state)
+        Service._update(self, new_state)
         if 'rot_position' in new_state:
             self._rot_position = new_state['rot_position']
         if 'rot_speed' in new_state:

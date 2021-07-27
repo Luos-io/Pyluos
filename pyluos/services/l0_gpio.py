@@ -1,10 +1,10 @@
-from .container import Container, interact
+from .service import Service, interact
 from .gpio import AnalogInputPin, DigitalInputPin, DigitalOutputPin, Pwm
 
 
-class GPIO(Container):
+class GPIO(Service):
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'GPIO', id, alias, device)
+        Service.__init__(self, 'GPIO', id, alias, device)
 
         self.analog_1 = AnalogInputPin('p1')
 
@@ -19,7 +19,7 @@ class GPIO(Container):
         self.analog_9 = AnalogInputPin('p9')
 
     def _update(self, new_state):
-        Container._update(self, new_state)
+        Service._update(self, new_state)
 
         if 'p1' in new_state:
             self.analog_1._update(new_state['p1'])

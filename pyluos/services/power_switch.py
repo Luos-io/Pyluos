@@ -1,9 +1,9 @@
-from .container import Container, interact
+from .service import Service, interact
 
 
-class PowerSwitch(Container):
+class PowerSwitch(Service):
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'PowerSwitch', id, alias, device)
+        Service.__init__(self, 'PowerSwitch', id, alias, device)
         self._value = False
 
     @property
@@ -16,7 +16,7 @@ class PowerSwitch(Container):
         self._push_value("io_state",s)
 
     def _update(self, new_state):
-        Container._update(self, new_state)
+        Service._update(self, new_state)
 
     def control(self):
         def switch(state):

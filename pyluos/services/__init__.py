@@ -16,6 +16,7 @@ from .controller_motor import ControllerMotor
 from .void import Void
 from .load import Load
 from .voltage import Voltage
+from .pipe import Pipe
 from .unknown import Unknown
 
 
@@ -39,6 +40,7 @@ __all__ = [
     'Void',
     'Load',
     'Voltage',
+    'Pipe',
     'Unknown'
 ]
 
@@ -61,5 +63,6 @@ name2mod = {
     'Void' : Void,
     'Load' : Load,
     'Voltage' : Voltage,
+    'Pipe' : Pipe,
     'Unknown' : Unknown
 }

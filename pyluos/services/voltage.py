@@ -1,11 +1,11 @@
-from .container import Container
+from .service import Service
 
 
-class Voltage(Container):
+class Voltage(Service):
     possible_events = {'changed', 'filter_changed'}
 
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'Voltage', id, alias, device)
+        Service.__init__(self, 'Voltage', id, alias, device)
         self._value = 0
         self.threshold = 1.0
 
@@ -20,7 +20,7 @@ class Voltage(Container):
         self._push_value('volt', new_val)
 
     def _update(self, new_state):
-        Container._update(self, new_state)
+        Service._update(self, new_state)
         if 'volt' in new_state:
             new_val = new_state['volt']
             if new_val != self._value:

@@ -66,10 +66,10 @@ class FakeRobot(WebSocketHandler):
         self.ioloop.add_callback(self.pub_state)
 
     def pub_routing_table(self):
-        state = {'routing_table': [{'uuid': [4456498, 1347571976, 540555569], 'port_table': [65535, 2], 'containers': [{'type': 'Gate', 'id': 1, 'alias': 'gate'}]}, {'uuid': [3932192, 1194612503, 540554032], 'port_table': [3, 1], 'containers': [{'type': 'Angle', 'id': 2, 'alias': 'potentiometer_m'}]}, {'uuid': [2949157, 1194612501, 540554032], 'port_table': [65535, 2], 'containers': [{'type': 'Gate', 'id': 3, 'alias': 'gate1'}]}]}
+        state = {'routing_table': [{'uuid': [4456498, 1347571976, 540555569], 'port_table': [65535, 2], 'services': [{'type': 'Gate', 'id': 1, 'alias': 'gate'}]}, {'uuid': [3932192, 1194612503, 540554032], 'port_table': [3, 1], 'services': [{'type': 'Angle', 'id': 2, 'alias': 'potentiometer_m'}]}, {'uuid': [2949157, 1194612501, 540554032], 'port_table': [65535, 2], 'services': [{'type': 'Gate', 'id': 3, 'alias': 'gate1'}]}]}
     def pub_state(self):
         state = {
-            'containers': [
+            'services': [
                 {
                     'alias': 'my_gate',
                     'id': 1,

@@ -1,9 +1,9 @@
-from .container import Container, interact
+from .service import Service, interact
 
 
-class GenericMotorController(Container):
+class GenericMotorController(Service):
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'generic_motor_controller', id, alias, device)
+        Service.__init__(self, 'generic_motor_controller', id, alias, device)
         self._power = None
 
     @property

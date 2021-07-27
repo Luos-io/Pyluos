@@ -1,8 +1,8 @@
-from .container import Container, interact
+from .service import Service, interact
 
-class Handy(Container):
+class Handy(Service):
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'Handy', id, alias, device)
+        Service.__init__(self, 'Handy', id, alias, device)
 
         self.fingers = {'index': 0.0, 'middle': 0.0, 'ring': 0.0, 'pinky': 0.0, 'thumb': 0.0, }
 

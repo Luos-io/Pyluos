@@ -1,11 +1,11 @@
 from __future__ import division
 
-from .container import Container, interact
+from .service import Service, interact
 
 
-class DCMotor(Container):
+class DCMotor(Service):
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'DCMotor', id, alias, device)
+        Service.__init__(self, 'DCMotor', id, alias, device)
 
     @property
     def power_ratio(self):
@@ -18,7 +18,7 @@ class DCMotor(Container):
         self._push_value("power_ratio",s)
 
     def _update(self, new_state):
-        Container._update(self, new_state)
+        Service._update(self, new_state)
 
     def control(self):
         def move(power_ratio):

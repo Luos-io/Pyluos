@@ -3,9 +3,9 @@ from __future__ import division
 from .service import Service, interact
 
 
-class DCMotor(Service):
+class Motor(Service):
     def __init__(self, id, alias, device):
-        Service.__init__(self, 'DCMotor', id, alias, device)
+        Service.__init__(self, 'Motor', id, alias, device)
 
     @property
     def power_ratio(self):

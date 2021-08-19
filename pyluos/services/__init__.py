@@ -1,18 +1,12 @@
-from .gate import Gate
-from .generic_motor_controller import GenericMotorController
-from .distance import Distance
-from .l0_gpio import GPIO
-from .dc_motor import DCMotor
 from .state import State
-from .angle import Angle
-from .servo import Servo
 from .color import Color
-from .handy import Handy
+from .motor import Motor
+from .servoMotor import ServoMotor
+from .angle import Angle
+from .distance import Distance
+from .gate import Gate
 from .imu import Imu
-from .stepper import Stepper
-from .power_switch import PowerSwitch
-from .light_sensor import LightSensor
-from .controller_motor import ControllerMotor
+from .light import Light
 from .void import Void
 from .load import Load
 from .voltage import Voltage
@@ -22,21 +16,15 @@ from .unknown import Unknown
 
 __all__ = [
     'name2mod',
-    'Gate',
-    'GenericMotorController',
-    'Distance',
     'State',
-    'GPIO',
-    'Angle',
-    'Servo',
     'Color',
-    'DCMotor',
-    'Handy',
+    'Motor',
+    'ServoMotor',
+    'Angle',
+    'Distance',
+    'Gate',
     'Imu' ,
-    'Stepper',
-    'PowerSwitch',
-    'LightSensor',
-    'ControllerMotor',
+    'Light',
     'Void',
     'Load',
     'Voltage',
@@ -45,21 +33,15 @@ __all__ = [
 ]
 
 name2mod = {
-    'Gate': Gate,
-    'GenericMotor': GenericMotorController,
-    'DistanceSensor': Distance,
-    'GPIO': GPIO,
-    'Motor': DCMotor,
     'State': State,
-    'Angle': Angle,
-    'ServoMotor': ControllerMotor,
     'Color': Color,
-    'Handy': Handy,
+    'Motor': Motor,
+    'ServoMotor': ServoMotor,
+    'Angle': Angle,
+    'DistanceSensor': Distance,
+    'Gate': Gate,
     'Imu': Imu,
-    'Stepper' : ControllerMotor,
-    'PowerSwitch' : PowerSwitch,
-    'LightSensor' : LightSensor,
-    'ControllerMotor' : ControllerMotor,
+    'Light' : Light,
     'Void' : Void,
     'Load' : Load,
     'Voltage' : Voltage,

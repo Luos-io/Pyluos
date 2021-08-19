@@ -1,12 +1,12 @@
 from .service import Service
 
 
-class LightSensor(Service):
+class Light(Service):
     possible_events = {'changed', 'filter_changed'}
     threshold = 10
 
     def __init__(self, id, alias, device):
-        Service.__init__(self, 'LightSensor', id, alias, device)
+        Service.__init__(self, 'Light', id, alias, device)
         self._value = 0.0
 
     @property

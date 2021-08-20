@@ -12,15 +12,16 @@ class ServoMotor(Service):
     # target modes
     _MODE_COMPLIANT = 13
     _MODE_POWER = 12
-    _MODE_ROT_SPEED = 10
-    _MODE_ROT_POSITION = 9
-    _MODE_TRANS_SPEED = 8
-    _MODE_TRANS_POSITION = 7
+    _MODE_TORQUE = 11
+    _MODE_ANGULAR_SPEED = 10
+    _MODE_ANGULAR_POSITION = 9
+    _MODE_LINEAR_SPEED = 8
+    _MODE_LINEAR_POSITION = 7
     # report modes
-    _ROTATION_POSITION = 6
-    _ROTATION_SPEED = 5
-    _TRANSLATION_POSITION = 4
-    _TRANSLATION_SPEED = 3
+    _ANGULAR_POSITION = 6
+    _ANGULAR_SPEED = 5
+    _LINEAR_POSITION = 4
+    _LINEAR_SPEED = 3
     _CURRENT = 2
     _TEMPERATURE = 1
     _TORQUE = 0
@@ -37,7 +38,7 @@ class ServoMotor(Service):
         # default configs, enable compliant, power_mode, and rotation position report
         self._config[ServoMotor._MODE_COMPLIANT] = True
         self._config[ServoMotor._MODE_POWER] = True
-        self._config[ServoMotor._ROTATION_POSITION] = True
+        self._config[ServoMotor._ANGULAR_POSITION] = True
 
         #configuration
         self._positionPid = [0.0, 0.0, 0.0]
@@ -277,36 +278,36 @@ class ServoMotor(Service):
     def power_mode(self, enable):
         self._config[ServoMotor._MODE_POWER] = True if enable != 0  else False
         if (enable == True) :
-            self._config[ServoMotor._MODE_ROT_SPEED] = False
-            self._config[ServoMotor._MODE_ROT_POSITION] = False
-            self._config[ServoMotor._MODE_TRANS_SPEED] = False
-            self._config[ServoMotor._MODE_TRANS_POSITION] = False
+            self._config[ServoMotor._MODE_ANGULAR_SPEED] = False
+            self._config[ServoMotor._MODE_ANGULAR_POSITION] = False
+            self._config[ServoMotor._MODE_LINEAR_SPEED] = False
+            self._config[ServoMotor._MODE_LINEAR_POSITION] = False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # rotation speed
     @property
     def target_rot_speed(self):
-        if (self._config[ServoMotor._MODE_ROT_SPEED] != True):
+        if (self._config[ServoMotor._MODE_ANGULAR_SPEED] != True):
             print("rotation speed mode could be not enabled in the service please use 'device.service.rot_speed_mode = True' to enable it")
         return self._target_rot_speed
 
     @target_rot_speed.setter
     def target_rot_speed(self, s):
-        if (self._config[ServoMotor._MODE_ROT_SPEED] != True):
+        if (self._config[ServoMotor._MODE_ANGULAR_SPEED] != True):
             print("rotation speed mode could be not enabled in the service please use 'device.service.rot_speed_mode = True' to enable it")
         self._target_rot_speed = s
         self._push_value("target_rot_speed", s)
 
     @property
     def rot_speed_mode(self):
-        return self._config[ServoMotor._MODE_ROT_SPEED]
+        return self._config[ServoMotor._MODE_ANGULAR_SPEED]
 
     @rot_speed_mode.setter
     def rot_speed_mode(self, enable):
-        self._config[ServoMotor._MODE_ROT_SPEED] = True if enable != 0  else False
+        self._config[ServoMotor._MODE_ANGULAR_SPEED] = True if enable != 0  else False
         if (enable == True) :
-            self._config[ServoMotor._MODE_TRANS_SPEED] = False
+            self._config[ServoMotor._MODE_LINEAR_SPEED] = False
             self._config[ServoMotor._MODE_POWER] = False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
@@ -314,13 +315,13 @@ class ServoMotor(Service):
     # rotation position
     @property
     def target_rot_position(self):
-        if (self._config[ServoMotor._MODE_ROT_POSITION] != True):
+        if (self._config[ServoMotor._MODE_ANGULAR_POSITION] != True):
             print("rotation position mode could be not enabled in the service please use 'device.service.rot_position_mode = True' to enable it")
         return self._target_rot_position
 
     @target_rot_position.setter
     def target_rot_position(self, s):
-        if (self._config[ServoMotor._MODE_ROT_POSITION] != True):
+        if (self._config[ServoMotor._MODE_ANGULAR_POSITION] != True):
             print("rotation position mode could be not enabled in the service please use 'device.service.rot_position_mode = True' to enable it")
         self._target_rot_position = s
         if hasattr(s, "__len__"):
@@ -330,13 +331,13 @@ class ServoMotor(Service):
 
     @property
     def rot_position_mode(self):
-        return self._config[ServoMotor._MODE_ROT_POSITION]
+        return self._config[ServoMotor._MODE_ANGULAR_POSITION]
 
     @rot_position_mode.setter
     def rot_position_mode(self, enable):
-        self._config[ServoMotor._MODE_ROT_POSITION] = True if enable != 0  else False
+        self._config[ServoMotor._MODE_ANGULAR_POSITION] = True if enable != 0  else False
         if (enable == True) :
-            self._config[ServoMotor._MODE_TRANS_POSITION] = False
+            self._config[ServoMotor._MODE_LINEAR_POSITION] = False
             self._config[ServoMotor._MODE_POWER] = False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
@@ -344,26 +345,26 @@ class ServoMotor(Service):
     # translation speed
     @property
     def target_trans_speed(self):
-        if (self._config[ServoMotor._MODE_TRANS_SPEED] != True):
+        if (self._config[ServoMotor._MODE_LINEAR_SPEED] != True):
             print("translation speed mode could be not enabled in the service please use 'device.service.trans_speed_mode = True' to enable it")
         return self._target_trans_speed
 
     @target_trans_speed.setter
     def target_trans_speed(self, s):
-        if (self._config[ServoMotor._MODE_TRANS_SPEED] != True):
+        if (self._config[ServoMotor._MODE_LINEAR_SPEED] != True):
             print("translation speed mode could be not enabled in the service please use 'device.service.trans_speed_mode = True' to enable it")
         self._target_trans_speed = s
         self._push_value("target_trans_speed", s)
 
     @property
     def trans_speed_mode(self):
-        return self._config[ServoMotor._MODE_TRANS_SPEED]
+        return self._config[ServoMotor._MODE_LINEAR_SPEED]
 
     @trans_speed_mode.setter
     def trans_speed_mode(self, enable):
-        self._config[ServoMotor._MODE_TRANS_SPEED] = True if enable != 0  else False
+        self._config[ServoMotor._MODE_LINEAR_SPEED] = True if enable != 0  else False
         if (enable == True) :
-            self._config[ServoMotor._MODE_ROT_SPEED] = False
+            self._config[ServoMotor._MODE_ANGULAR_SPEED] = False
             self._config[ServoMotor._MODE_POWER] = False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
@@ -371,13 +372,13 @@ class ServoMotor(Service):
     # translation position
     @property
     def target_trans_position(self):
-        if (self._config[ServoMotor._MODE_TRANS_POSITION] != True):
+        if (self._config[ServoMotor._MODE_LINEAR_POSITION] != True):
             print("translation speed mode could be not enabled in the service please use 'device.service.trans_pos_mode = True' to enable it")
         return self._target_trans_position
 
     @target_trans_position.setter
     def target_trans_position(self, s):
-        if (self._config[ServoMotor._MODE_TRANS_POSITION] != True):
+        if (self._config[ServoMotor._MODE_LINEAR_POSITION] != True):
             print("translation speed mode could be not enabled in the service please use 'device.service.trans_position_mode = True' to enable it")
         self._target_trans_position = s
         if hasattr(s, "__len__"):
@@ -388,13 +389,13 @@ class ServoMotor(Service):
 
     @property
     def trans_position_mode(self):
-        return self._config[ServoMotor._MODE_TRANS_POSITION]
+        return self._config[ServoMotor._MODE_LINEAR_POSITION]
 
     @trans_position_mode.setter
     def trans_position_mode(self, enable):
-        self._config[ServoMotor._MODE_TRANS_POSITION] = True if enable != 0  else False
+        self._config[ServoMotor._MODE_LINEAR_POSITION] = True if enable != 0  else False
         if (enable == True) :
-            self._config[ServoMotor._MODE_ROT_POSITION] = False
+            self._config[ServoMotor._MODE_ANGULAR_POSITION] = False
             self._config[ServoMotor._MODE_POWER] = False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
@@ -403,52 +404,52 @@ class ServoMotor(Service):
     # rotation position
     @property
     def rot_position(self):
-        if (self._config[ServoMotor._ROTATION_POSITION] != True):
+        if (self._config[ServoMotor._ANGULAR_POSITION] != True):
             self.rot_position = True
         return self._rot_position
 
     @rot_position.setter
     def rot_position(self, enable):
-        self._config[ServoMotor._ROTATION_POSITION] = True if enable != 0  else False
+        self._config[ServoMotor._ANGULAR_POSITION] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # rotation speed
     @property
     def rot_speed(self):
-        if (self._config[ServoMotor._ROTATION_SPEED] != True):
+        if (self._config[ServoMotor._ANGULAR_SPEED] != True):
             self.rot_speed = True
         return self._rot_speed
 
     @rot_speed.setter
     def rot_speed(self, enable):
-        self._config[ServoMotor._ROTATION_SPEED] = True if enable != 0  else False
+        self._config[ServoMotor._ANGULAR_SPEED] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # translation position
     @property
     def trans_position(self):
-        if (self._config[ServoMotor._TRANSLATION_POSITION] != True):
+        if (self._config[ServoMotor._LINEAR_POSITION] != True):
             self.trans_position = True
         return self._rot_position
 
     @trans_position.setter
     def trans_position(self, enable):
-        self._config[ServoMotor._TRANSLATION_POSITION] = True if enable != 0  else False
+        self._config[ServoMotor._LINEAR_POSITION] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
     # translation speed
     @property
     def trans_speed(self):
-        if (self._config[ServoMotor._TRANSLATION_SPEED] != True):
+        if (self._config[ServoMotor._LINEAR_SPEED] != True):
             self.trans_speed = True
         return self._rot_speed
 
     @trans_speed.setter
     def trans_speed(self, enable):
-        self._config[ServoMotor._TRANSLATION_SPEED] = True if enable != 0  else False
+        self._config[ServoMotor._LINEAR_SPEED] = True if enable != 0  else False
         self._push_value('parameters', self._convert_config())
         time.sleep(0.01)
 
@@ -539,21 +540,21 @@ class ServoMotor(Service):
                 self.target_trans_position = trans_position
 
         w = interact(change_config,
-                        rot_speed_report = self._config[ServoMotor._ROTATION_SPEED],
-                        rot_position_report = self._config[ServoMotor._ROTATION_POSITION],
-                        trans_speed_report = self._config[ServoMotor._TRANSLATION_SPEED],
-                        trans_position_report = self._config[ServoMotor._TRANSLATION_POSITION],
+                        rot_speed_report = self._config[ServoMotor._ANGULAR_SPEED],
+                        rot_position_report = self._config[ServoMotor._ANGULAR_POSITION],
+                        trans_speed_report = self._config[ServoMotor._LINEAR_SPEED],
+                        trans_position_report = self._config[ServoMotor._LINEAR_POSITION],
                         current_report = self._config[ServoMotor._CURRENT],
                         temperature_report = self._config[ServoMotor._TEMPERATURE],
 
                         compliant_mode = self._config[ServoMotor._MODE_COMPLIANT],
                         power_mode = self._config[ServoMotor._MODE_POWER],
                         power_ratio=(-100.0, 100.0, 1.0),
-                        rot_speed_mode = self._config[ServoMotor._MODE_ROT_SPEED],
+                        rot_speed_mode = self._config[ServoMotor._MODE_ANGULAR_SPEED],
                         rot_speed = (-300.0, 300.0, 1.0),
-                        rot_position_mode = self._config[ServoMotor._MODE_ROT_POSITION],
+                        rot_position_mode = self._config[ServoMotor._MODE_ANGULAR_POSITION],
                         rot_position = (-360.0, 360.0, 1.0),
-                        trans_speed_mode = self._config[ServoMotor._MODE_TRANS_SPEED],
+                        trans_speed_mode = self._config[ServoMotor._MODE_LINEAR_SPEED],
                         trans_speed = (-1000.0, 1000.0, 1.0),
-                        trans_position_mode = self._config[ServoMotor._MODE_TRANS_POSITION],
+                        trans_position_mode = self._config[ServoMotor._MODE_LINEAR_POSITION],
                         trans_position = (-1000.0, 1000.0, 1.0))

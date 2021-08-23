@@ -14,6 +14,11 @@ class Angle(Service):
         """ Position in degrees. """
         return self._value
 
+    @rot_position.setter
+    def rot_position(self, new_val):
+        self._value = new_val
+        self._push_value('target_rot_position', new_val)
+
     def _update(self, new_state):
         Service._update(self, new_state)
         if 'rot_position' in new_state:

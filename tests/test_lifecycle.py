@@ -17,9 +17,9 @@ import fakerobot
 #         robot.close()
 #         self.assertFalse(robot.alive)
 
-#     def test_containers(self):
+#     def test_services(self):
 #         with closing(Device(fakerobot.host)) as robot:
-#             for mod in robot.containers:
+#             for mod in robot.services:
 #                 self.assertTrue(hasattr(robot, mod.alias))
 
 #     def test_cmd(self):
@@ -30,7 +30,7 @@ import fakerobot
 
 #     def test_possible_events(self):
 #         with closing(Device(fakerobot.host)) as robot:
-#             for mod in robot.containers:
+#             for mod in robot.services:
 #                 self.assertTrue(isinstance(mod.possible_events, set))
 
 #             self.assertTrue('pressed' in robot.my_button.possible_events)

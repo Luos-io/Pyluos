@@ -1,7 +1,7 @@
-from .container import Container
+from .service import Service
 
 
-class Unknown(Container):
+class Unknown(Service):
     possible_events = {'changed', 'pressed', 'released'}
 
     # control modes
@@ -11,7 +11,7 @@ class Unknown(Container):
     _REC = 4
 
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'Unknown', id, alias, device)
+        Service.__init__(self, 'Unknown', id, alias, device)
         self._control = 0
         self._state = False
         self._angular_position = 0.0
@@ -30,7 +30,7 @@ class Unknown(Container):
         self._volt = 0.0
 
     def _update(self, new_state):
-        Container._update(self, new_state)
+        Service._update(self, new_state)
         if 'io_state' in new_state:
             val = new_state['io_state']
             if val != self._state:

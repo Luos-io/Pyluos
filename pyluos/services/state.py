@@ -1,11 +1,11 @@
-from .container import Container
+from .service import Service
 
 
-class State(Container):
+class State(Service):
     possible_events = {'changed', 'pressed', 'released'}
 
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'State', id, alias, device)
+        Service.__init__(self, 'State', id, alias, device)
         self._value = False
 
     @property
@@ -18,7 +18,7 @@ class State(Container):
         self._push_value('io_state', new_val)
 
     def _update(self, new_state):
-        Container._update(self, new_state)
+        Service._update(self, new_state)
         if 'io_state' in new_state:
             new_state = new_state['io_state']
             if new_state != self._value:

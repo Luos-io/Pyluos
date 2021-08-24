@@ -1,14 +1,14 @@
-from .container import Container
+from .service import Service
 import time
 
-class Void(Container):
+class Void(Service):
 
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'Void', id, alias, device)
+        Service.__init__(self, 'Void', id, alias, device)
         self._baudrate = 1000000
 
     def _update(self, new_state):
-        Container._update(self, new_state)
+        Service._update(self, new_state)
 
     def dxl_detect(self):
         self._push_value('reinit', 0)

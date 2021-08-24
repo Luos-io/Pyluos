@@ -1,10 +1,10 @@
-from .container import Container, interact
+from .service import Service, interact
 import numpy as np
 
 
-class Color(Container):
+class Color(Service):
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'Color', id, alias, device)
+        Service.__init__(self, 'Color', id, alias, device)
         self._time = None
         self._size = None
         self._color = None
@@ -41,7 +41,7 @@ class Color(Container):
         self._push_value('parameters', new_size)
 
     def _update(self, new_state):
-        Container._update(self, new_state)
+        Service._update(self, new_state)
 
     def control(self):
         def change_color(red, green, blue):

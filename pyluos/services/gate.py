@@ -1,13 +1,13 @@
-from .container import Container
+from .service import Service
 
 
-class Gate(Container):
+class Gate(Service):
 
     def __init__(self, id, alias, device):
-        Container.__init__(self, 'Gate', id, alias, device)
+        Service.__init__(self, 'Gate', id, alias, device)
 
     def _update(self, new_state):
-        Container._update(self, new_state)
+        Service._update(self, new_state)
 
     def control(self):
         def delay(delay):

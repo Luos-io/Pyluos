@@ -38,7 +38,7 @@ name2mod = {
     'Motor': Motor,
     'ServoMotor': ServoMotor,
     'Angle': Angle,
-    'DistanceSensor': Distance,
+    'Distance': Distance,
     'Gate': Gate,
     'Imu': Imu,
     'Light' : Light,

@@ -48,12 +48,14 @@ class Void(Service):
     def retrieve_dxl(self):
         values = [9600, 19200, 57600, 115200, 200000, 250000, 400000, 500000, 1000000]
         for baud in values :
-            self._baudrate(baud)
+            self._set_baudrate(baud)
             time.sleep(0.1)
-            slef._factory_reset()
-            time.sleep(0.1)
-        self.baudrate(1000000)
-        time.sleep(0.1)
+            #self._factory_reset()
+            #time.sleep(0.1)
+        #self._set_baudrate(57600)
+        #time.sleep(0.5)
+        self._set_baudrate(1000000)
+        time.sleep(0.5)
         self.dxl_detect()
         print("Motor reseted => baudrate : 1000000, ID : same")
         print("recreate your Pyluos object.")

@@ -14,15 +14,16 @@ def serial_discover():
     for serial_host in serial_hosts:
         print("Testing " + str(serial_host))
         try:
-            port = serial.Serial(serial_host, 1000000, timeout=0.5)
-            port.flush()
+            port = serial.Serial(serial_host, 1000000, timeout=0.05)
         except:
             continue
         port.write("{\"discover\": {}}\r".encode())
-        startTime = time.time()
-        state = port.read(14)
-        if ('gate'.encode() in state):
-            available_serial.append(serial_host)
+        port.flush()
+        for x in range(10):
+            state = port.readline()
+            if ('gate'.encode() in state):
+                available_serial.append(serial_host)
+                continue
 
         port.close()
     return available_serial

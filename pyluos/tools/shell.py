@@ -13,6 +13,7 @@ from IPython import embed
 
 import pyluos
 from pyluos import Device
+from pyluos.tools.discover import serial_discover
 
 
 # *******************************************************************************
@@ -47,13 +48,15 @@ def main():
         if args.version == True:
             print_version()
 
-        elif args.port is not None:
+        if args.port is not None:
             # Ready to rocks
             device = Device(args.port)
             embed(banner1 = "\n Hit Ctrl-D to exit this interpreter.\n\nYour luos device have been successfully mounted into a \"device\" object:\n" + str(device.nodes) + "\n")
-
         else:
-            raise Exception("unknown command: " + args.command)
+            Gates = serial_discover()
+            if Gates:
+                device = Device(Gates[0])
+                embed(banner1 = "\n Hit Ctrl-D to exit this interpreter.\n\nYour luos device have been successfully mounted into a \"device\" object:\n" + str(device.nodes) + "\n")
 
     except OperationAbortedException:
         logger.info("Operation aborted.")

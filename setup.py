@@ -24,6 +24,7 @@ setup(name='pyluos',
                         'zeroconf',
                         'numpy',
                         'anytree',
+                        'crc8'
                         ],
       extras_require={
           'tests': ['pytest', 'flake8'],
@@ -35,6 +36,8 @@ setup(name='pyluos',
               'pyluos-usb-gate = pyluos.tools.usb_gate:main',
               'pyluos-usb2ws = pyluos.tools.usb2ws:main',
               'pyluos-bootloader = pyluos.tools.bootloader:main',
+              'pyluos-shell = pyluos.tools.shell:main',
+              'pyluos-discover = pyluos.tools.discover:main'
           ],
       },
       )

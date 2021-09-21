@@ -12,13 +12,13 @@ from datetime import datetime
 from collections import defaultdict
 
 from .io import discover_hosts, io_from_host, Ws
-from .containers import name2mod
+from .services import name2mod
 
 from anytree import AnyNode, RenderTree, DoubleStyle
 
 
 def run_from_unittest():
-    return 'unittest' in sys.containers
+    return 'unittest' in sys.services
 
 
 known_host = {
@@ -72,8 +72,8 @@ class nodeList(list):
             else:
                 s += '{:^41s}'.format("/!\\ Not certified") + "┃\n"
             s += fill + "  ┃  │  " + '{:<20s}{:<20s}{:<5s}'.format("Type", "Alias", "ID")+ "┃\n"
-            for y,elem in enumerate(node.containers):
-                if (y == (len(node.containers)-1)):
+            for y,elem in enumerate(node.services):
+                if (y == (len(node.services)-1)):
                     s += fill + "  ┃  ╰> " + '{:<20s}{:<20s}{:<5d}'.format(elem.type, elem.alias, elem.id)+ "┃\n"
                 else:
                     s += fill + "  ┃  ├> " + '{:<20s}{:<20s}{:<5d}'.format(elem.type, elem.alias, elem.id) + "┃\n"
@@ -199,14 +199,14 @@ class Device(object):
                 self._send({'detection': {}})
                 startTime = time.time()
         # Create nodes
-        self._containers = []
+        self._services = []
         self._nodes = []
         for i, node in enumerate(state['routing_table']):
             if ('node_id' not in node):
                 self.logger.info("Watch out the Luos revision you are using on your board is too old to work with this revision on pyluos.\n Please consider updating Luos on your boards")
             parent_elem = None
             # find a parent and create a link
-            if (min(node["port_table"]) < node["containers"][0]["id"]):
+            if (min(node["port_table"]) < node["services"][0]["id"]):
                 parent_id = min(node["port_table"])
                 for elem in self._nodes:
                     if (elem.id == parent_id):
@@ -215,19 +215,19 @@ class Device(object):
             # create the node
             self._nodes.append(AnyNode(id=node["node_id"], certified=node["certified"], parent=parent_elem, port_table=node["port_table"]))
 
-            filtered_containers = contList([mod for mod in node["containers"]
+            filtered_services = contList([mod for mod in node["services"]
                                 if 'type' in mod and mod['type'] in name2mod.keys()])
-            # Create a list of containers in the node
-            self._nodes[i].containers = [
+            # Create a list of services in the node
+            self._nodes[i].services = [
                 name2mod[mod['type']](id=mod['id'],
                                       alias=mod['alias'],
                                       device=self)
-                for mod in filtered_containers
+                for mod in filtered_services
                 if 'type' in mod and 'id' in mod and 'alias' in mod
             ]
-            # Create a list of containers of the entire device
-            self._containers = self._containers + self._nodes[i].containers
-            for mod in self._nodes[i].containers:
+            # Create a list of services of the entire device
+            self._services = self._services + self._nodes[i].services
+            for mod in self._nodes[i].services:
                 setattr(self, mod.alias, mod)
 
         self._cmd = defaultdict(lambda: defaultdict(lambda: None))
@@ -239,8 +239,8 @@ class Device(object):
         self._push_once()
 
     @property
-    def containers(self):
-        return contList(self._containers)
+    def services(self):
+        return contList(self._services)
 
     @property
     def nodes(self):
@@ -263,9 +263,9 @@ class Device(object):
 
     # Update our model with the new state.
     def _update(self, new_state):
-        if 'dead_container' in new_state :
-            #we have lost a container put a flag on this container
-            alias = new_state['dead_container']
+        if 'dead_service' in new_state :
+            #we have lost a service put a flag on this service
+            alias = new_state['dead_service']
             if hasattr(self, alias):
                 getattr(self, alias)._kill()
         if 'assert' in new_state :
@@ -275,10 +275,10 @@ class Device(object):
                 s += "*  Node " + str(new_state['assert']['node_id']) + " assert in file " + new_state['assert']['file'] + " line " + str(new_state['assert']['line'])
                 s += "\n**********************************************************"
                 print (s)
-        if 'containers' not in new_state:
+        if 'services' not in new_state:
             return
 
-        for alias, mod in new_state['containers'].items():
+        for alias, mod in new_state['services'].items():
             if hasattr(self, alias):
                 getattr(self, alias)._update(mod)
 
@@ -296,11 +296,11 @@ class Device(object):
     def _push_once(self):
         with self._cmd_lock:
             if self._cmd:
-                self._write( json.dumps({'containers': self._cmd}).encode())
+                self._write( json.dumps({'services': self._cmd}).encode())
                 self._cmd = defaultdict(lambda: defaultdict(lambda: None))
             for cmd, binary in zip(self._cmd_data, self._binary):
                 time.sleep(0.01)
-                self._write( json.dumps({'containers': cmd}).encode() + '\r'.encode() + binary)
+                self._write( json.dumps({'services': cmd}).encode() + '\r'.encode() + binary)
 
             self._cmd_data = []
             self._binary = []

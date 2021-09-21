@@ -73,14 +73,14 @@ def create_target_list(args, state):
     nodes_to_program = []
     nodes_to_reboot = []
     for node in state['routing_table']:
-        # bypass if node contains a Gate container
+        # bypass if node contains a Gate service
         # prevent programmation of a Gate
-        for container in node['containers']:
+        for service in node['services']:
             bypass_node = False
-            if(container['type'] == 'Gate'):
+            if(service['type'] == 'Gate'):
                 bypass_node = True
                 break
-            if(container['alias'] == 'Pipe_mod'):
+            if(service['alias'] == 'Pipe_mod'):
                 bypass_node = True
         # check if node is in target list
         if not (bypass_node):
@@ -541,6 +541,7 @@ def luos_options():
     # declare "flash" subcommand
     flash_parser = subparsers.add_parser('flash',
                                          help='tool to program luos nodes')
+    flash_parser.add_argument('port', help='port used to detect network')
     flash_parser.add_argument('-g', '--gate',
                               help='id of the gate used to access the luos network')
     flash_parser.add_argument('-b', '--binary',
@@ -549,15 +550,12 @@ def luos_options():
                               help='target node to flash',
                               default=['2'],
                               nargs='*')
-    flash_parser.add_argument('-p', '--port',
-                              help='serial port used to detect network')
     flash_parser.set_defaults(func=luos_flash)
 
     # declare "detect" subcommand
     detect_parser = subparsers.add_parser('detect',
                                           help='tool to detect luos network')
-    detect_parser.add_argument('-p', '--port',
-                               help='serial port used to detect network')
+    detect_parser.add_argument('port', help='port used to detect network')
     detect_parser.set_defaults(func=luos_detect)
 
     return parser

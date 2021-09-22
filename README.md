@@ -11,7 +11,7 @@ Pyluos lets you easily connect, interact and program your [luos](https://www.luo
 
 The API was designed to be as simple as possible and let you focus on **bringing life to your ideas!**
 
-Read the complete [documentation of Pyluos](https://docs.luos.io/pages/high/pyluos.html).
+Read the complete [documentation of Pyluos](https://docs.luos.io/pages/tools/pyluos.html).
 
 ## Install Pyluos
 

@@ -223,12 +223,10 @@ def erase_flash(device, node):
 # @return binary size
 # *******************************************************************************
 def loading_bar(loading_progress):
-    init_time = time.time()
     period = 0.2
     while(1):
-        if(time.time() - init_time > period):
-            init_time = time.time()
-            print("\r  ╰> loading : {} %".format(loading_progress.value), end='')
+        time.sleep(period)
+        print("\r  ╰> loading : {} %".format(loading_progress.value), end='')
 
 # *******************************************************************************
 # @brief send the binary file to the node

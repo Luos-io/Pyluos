@@ -157,34 +157,32 @@ def send_ready_cmd(device, node):
 # @return binary size
 # *******************************************************************************
 def waiting_erase():
-    init_time = time.time()
     count = 0
     period = 0.4
     print("\r                        ", end='')
     print("\r  ╰> Erase flash        ", end='')
     while(1):
-        if(time.time() - init_time > period):
-            init_time = time.time()
-            if(count == 0):
-                print("\r                        ", end='')
-                print("\r  ╰> Erase flash .      ", end='')
-                count += 1
-                continue
-            if(count == 1):
-                print("\r                        ", end='')
-                print("\r  ╰> Erase flash ..     ", end='')
-                count += 1
-                continue
-            if(count == 2):
-                print("\r                        ", end='')
-                print("\r  ╰> Erase flash ...    ", end='')
-                count += 1
-                continue
-            if(count == 3):
-                print("\r                        ", end='')
-                print("\r  ╰> Erase flash        ", end='')
-                count = 0
-                continue
+        time.sleep(period)
+        if(count == 0):
+            print("\r                        ", end='')
+            print("\r  ╰> Erase flash .      ", end='')
+            count += 1
+            continue
+        if(count == 1):
+            print("\r                        ", end='')
+            print("\r  ╰> Erase flash ..     ", end='')
+            count += 1
+            continue
+        if(count == 2):
+            print("\r                        ", end='')
+            print("\r  ╰> Erase flash ...    ", end='')
+            count += 1
+            continue
+        if(count == 3):
+            print("\r                        ", end='')
+            print("\r  ╰> Erase flash        ", end='')
+            count = 0
+            continue
 
 # *******************************************************************************
 # @brief send erase command

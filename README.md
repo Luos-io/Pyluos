@@ -79,6 +79,15 @@ You can then uses the found name to connect to it via Pyluos:
 from pyluos import Device
 device = Device('/dev/cu.usbmodem2964691')
 ```
+## The most for the community​
+Most of the embedded developments are made from scratch. By using Luos, you will be able to capitalize on the development you, your company, or the Luos community already did. The re-usability of features encapsulated in Luos services will fasten the time your products reach the market and reassure the robustness and the universality of your applications.
+
+* → Join the [Luos Slack Community](http://bit.ly/JoinLuosSlack)
+* → Join the [Luos Discord Community](http://bit.ly/JoinLuosDiscord)
+* → Join the [Luos Reddit Community](http://bit.ly/JoinLuosReddit)
+* → Join the [Luos Forum](http://bit.ly/JoinLuosForum)
+
+Need dedicated help with your project? Check out [Luos' support packages](https://www.luos.io/support).
 
 ## Contributing
 

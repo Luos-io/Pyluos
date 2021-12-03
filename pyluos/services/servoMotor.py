@@ -297,7 +297,10 @@ class ServoMotor(Service):
         if (self._config[ServoMotor._MODE_ANGULAR_SPEED] != True):
             print("rotation speed mode could be not enabled in the service please use 'device.service.rot_speed_mode = True' to enable it")
         self._target_rot_speed = s
-        self._push_value("target_rot_speed", s)
+        if hasattr(s, "__len__"):
+            self._push_data('target_rot_speed', [len(s) * 4], np.array(s, dtype=np.float32)) # multiplying by the size of float32
+        else :
+            self._push_value("target_rot_speed", s)
 
     @property
     def rot_speed_mode(self):

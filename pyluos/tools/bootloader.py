@@ -325,7 +325,7 @@ def send_data(device, node, command, size, data):
         }
     }
     # send json command
-    device._write(json.dumps(bootloader_cmd).encode() + '\r'.encode() + data)
+    device._write(json.dumps(bootloader_cmd).encode() + '\n'.encode() + data)
 
 # *******************************************************************************
 # @brief send the binary end command

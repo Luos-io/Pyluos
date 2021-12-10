@@ -40,6 +40,12 @@ NB_SAMPLE_BY_FRAME_MAX = 127
 RESP_TIMEOUT = 3
 ERASE_TIMEOUT = 10
 PROGRAM_TIMEOUT = 5
+
+BOOTLOADER_SUCCESS = 0
+BOOTLOADER_DETECT_ERROR = 1
+BOOTLOADER_FLASH_ERROR = 2
+BOOTLOADER_FLASH_BINARY_ERROR = 3
+BOOTLOADER_FLASH_PORT_ERROR = 4
 # *******************************************************************************
 # Function
 # *******************************************************************************
@@ -427,7 +433,7 @@ def luos_flash(args):
 
     if not (args.port):
         print('Please specify a port to access the network.')
-        sys.exit()
+        return BOOTLOADER_FLASH_PORT_ERROR
 
     # state used to check each step
     machine_state = True
@@ -439,7 +445,7 @@ def luos_flash(args):
         f = open(FILEPATH, mode="rb")
     except IOError:
         print("Cannot open :", FILEPATH)
-        sys.exit()
+        return BOOTLOADER_FLASH_BINARY_ERROR
     else:
         f.close()
 
@@ -496,7 +502,7 @@ def luos_flash(args):
         if( machine_state != True):
             break
 
-        # Say to the bootloader that the integrity 
+        # Say to the bootloader that the integrity
         # of the app saved in flash has been verified
         send_command(device, node, BOOTLOADER_APP_SAVED)
 
@@ -510,6 +516,9 @@ def luos_flash(args):
     if (machine_state == True):
         print("** Reboot all nodes in application mode **")
         reboot_network(device, nodes_to_reboot)
+        return BOOTLOADER_SUCCESS
+    else:
+        return BOOTLOADER_FLASH_ERROR
 
 
 # *******************************************************************************
@@ -522,12 +531,14 @@ def luos_detect(args):
 
     if not (args.port):
         print('Please specify a port to access the network.')
-        sys.exit()
+        return BOOTLOADER_DETECT_ERROR
 
     # detect network
     device = Device(args.port)
     # print network to user
     print(device.nodes)
+
+    return BOOTLOADER_SUCCESS
 
 # *******************************************************************************
 # @brief command used to detect network
@@ -576,10 +587,7 @@ def main():
     args = parser.parse_args()
 
     # execute CLI subcommand
-    args.func(args)
-
-    return 0
-
+    return args.func(args)
 
 if __name__ == '__main__':
     sys.exit(main())

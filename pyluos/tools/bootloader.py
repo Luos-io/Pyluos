@@ -25,6 +25,7 @@ BOOTLOADER_ERASE = 4
 BOOTLOADER_BIN_CHUNK = 5
 BOOTLOADER_BIN_END = 6
 BOOTLOADER_CRC_TEST = 7
+BOOTLOADER_APP_SAVED = 8
 BOOTLOADER_READY_RESP = 16
 BOOTLOADER_BIN_HEADER_RESP = 17
 BOOTLOADER_ERASE_RESP = 18
@@ -325,7 +326,7 @@ def send_data(device, node, command, size, data):
         }
     }
     # send json command
-    device._write(json.dumps(bootloader_cmd).encode() + '\r'.encode() + data)
+    device._write(json.dumps(bootloader_cmd).encode() + '\n'.encode() + data)
 
 # *******************************************************************************
 # @brief send the binary end command
@@ -499,6 +500,13 @@ def luos_flash(args):
         machine_state = check_crc(device, node)
         if( machine_state != True):
             break
+
+        # Say to the bootloader that the integrity 
+        # of the app saved in flash has been verified
+        send_command(device, node, BOOTLOADER_APP_SAVED)
+
+        # wait before next step
+        time.sleep(0.1)
 
     # wait before next step
     time.sleep(0.1)

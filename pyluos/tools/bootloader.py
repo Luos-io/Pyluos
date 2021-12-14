@@ -137,18 +137,17 @@ def send_ready_cmd(device, node):
     # wait ready response
     state = device._poll_once()
     init_time = time.time()
-    while ('bootloader' not in state):
+    while ('bootloader' not in state) and return_value:
         state = device._poll_once()
         if(time.time() - init_time > RESP_TIMEOUT):
             print("  ╰> Node n°", node, "is not responding.")
             print("  ╰> Loading program aborted, please reboot the system.")
             return_value = False
-            break
-    if (state['bootloader']['response'] == BOOTLOADER_ERROR_SIZE):
+    if return_value and (state['bootloader']['response'] == BOOTLOADER_ERROR_SIZE):
         print("  ╰> Node n°", node, "has not enough space in flash memory.")
         # don't load binary if there is not enough place in flash memory
         return_value = False
-    if (state['bootloader']['response'] == BOOTLOADER_READY_RESP):
+    if return_value and (state['bootloader']['response'] == BOOTLOADER_READY_RESP):
         print("  ╰> Node n°", node, "is ready.")
 
     return return_value

@@ -60,8 +60,8 @@ class Serial(IOHandler):
         return self._msg.get()
 
     def write(self, data):
-        self._serial.write(data + '\r'.encode() + '\n'.encode())
-        #print(data + '\r'.encode())
+        self._serial.write(data + '\n'.encode())
+        #print(data + '\n'.encode())
 
     def close(self):
         self._running = False

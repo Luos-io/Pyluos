@@ -64,7 +64,7 @@ class Ws(IOHandler):
         return self._msg.get()
 
     def write(self, data):
-        self._ws.send(data + '\r'.encode() + '\n'.encode())
+        self._ws.send(data + '\n'.encode())
 
     def close(self):
         self._running = False

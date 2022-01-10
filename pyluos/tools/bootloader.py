@@ -289,7 +289,7 @@ def send_frame_from_binary(device, node, frame_size, file_offset):
         f.seek(file_offset)
         # read binary data
         data_bytes = f.read(1)
-        for sample in range(frame_size):
+        for sample in range(frame_size-1):
             data_bytes = data_bytes + f.read(1)
 
     send_data(device, node, BOOTLOADER_BIN_CHUNK, frame_size, data_bytes)

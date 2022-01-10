@@ -321,9 +321,9 @@ def send_data(device, node, command, size, data):
     bootloader_cmd = {
         'bootloader': {
             'command': {
+                'size': [size],
                 'type': command,
                 'node': node,
-                'size': size
             },
         }
     }

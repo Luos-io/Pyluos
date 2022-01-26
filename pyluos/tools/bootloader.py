@@ -10,6 +10,7 @@ import time
 from multiprocessing import Process, Value
 import json
 from pyluos import Device
+from pyluos.tools.discover import serial_discover
 import numpy as np
 import math
 import crc8
@@ -544,7 +545,10 @@ def luos_options():
     # declare "flash" subcommand
     flash_parser = subparsers.add_parser('flash',
                                          help='tool to program luos nodes')
-    flash_parser.add_argument('port', help='port used to detect network')
+    flash_parser.add_argument('port',
+                              help='port used to detect network',
+                              nargs='?',
+                              default= serial_discover()[0])
     flash_parser.add_argument('-g', '--gate',
                               help='id of the gate used to access the luos network')
     flash_parser.add_argument('-b', '--binary',

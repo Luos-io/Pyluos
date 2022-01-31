@@ -27,6 +27,7 @@ BOOTLOADER_BIN_CHUNK = 5
 BOOTLOADER_BIN_END = 6
 BOOTLOADER_CRC_TEST = 7
 BOOTLOADER_APP_SAVED = 8
+BOOTLOADER_RESET = 9
 BOOTLOADER_READY_RESP = 16
 BOOTLOADER_BIN_HEADER_RESP = 17
 BOOTLOADER_ERASE_RESP = 18
@@ -540,6 +541,28 @@ def luos_detect(args):
     return BOOTLOADER_SUCCESS
 
 # *******************************************************************************
+# @brief command used to force reset a node in bootloader mode
+# @param detect function arguments : -p
+# @return None
+# *******************************************************************************
+def luos_reset(args):
+    print('Luos detect subcommand on port : ', args.port)
+
+    if not (args.port):
+        args.port= serial_discover()[0]
+
+    # detect network
+    device = Device(args.port, background_task=False)
+    # send rescue command
+    send_command(device, 0, BOOTLOADER_RESET)
+    # sleep
+    time.sleep(0.1)
+    # re-detect network
+    device = Device(args.port, background_task=False)
+    # print network to user
+    print(device.nodes)
+
+# *******************************************************************************
 # @brief command used to detect network
 # @param detect function arguments : -p
 # @return None
@@ -573,6 +596,13 @@ def luos_options():
     detect_parser.add_argument('port', help='port used to detect network',
                               nargs='?')
     detect_parser.set_defaults(func=luos_detect)
+
+    # declare "rescue" subcommand
+    rescue_parser = subparsers.add_parser('reset',
+                                          help='tool to reset a blocked node in rescue mode')
+    rescue_parser.add_argument('port', help='port used to access to the network',
+                              nargs='?')
+    rescue_parser.set_defaults(func=luos_reset)
 
     return parser
 

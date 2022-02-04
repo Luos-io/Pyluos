@@ -10,6 +10,7 @@ import time
 from multiprocessing import Process, Value
 import json
 from pyluos import Device
+from pyluos.tools.discover import serial_discover
 import numpy as np
 import math
 import crc8
@@ -143,18 +144,17 @@ def send_ready_cmd(device, node):
     # wait ready response
     state = device._poll_once()
     init_time = time.time()
-    while ('bootloader' not in state):
+    while ('bootloader' not in state) and return_value:
         state = device._poll_once()
         if(time.time() - init_time > RESP_TIMEOUT):
             print("  ╰> Node n°", node, "is not responding.")
             print("  ╰> Loading program aborted, please reboot the system.")
             return_value = False
-            break
-    if (state['bootloader']['response'] == BOOTLOADER_ERROR_SIZE):
+    if return_value and (state['bootloader']['response'] == BOOTLOADER_ERROR_SIZE):
         print("  ╰> Node n°", node, "has not enough space in flash memory.")
         # don't load binary if there is not enough place in flash memory
         return_value = False
-    if (state['bootloader']['response'] == BOOTLOADER_READY_RESP):
+    if return_value and (state['bootloader']['response'] == BOOTLOADER_READY_RESP):
         print("  ╰> Node n°", node, "is ready.")
 
     return return_value
@@ -164,34 +164,32 @@ def send_ready_cmd(device, node):
 # @return binary size
 # *******************************************************************************
 def waiting_erase():
-    init_time = time.time()
     count = 0
     period = 0.4
     print("\r                        ", end='')
     print("\r  ╰> Erase flash        ", end='')
     while(1):
-        if(time.time() - init_time > period):
-            init_time = time.time()
-            if(count == 0):
-                print("\r                        ", end='')
-                print("\r  ╰> Erase flash .      ", end='')
-                count += 1
-                continue
-            if(count == 1):
-                print("\r                        ", end='')
-                print("\r  ╰> Erase flash ..     ", end='')
-                count += 1
-                continue
-            if(count == 2):
-                print("\r                        ", end='')
-                print("\r  ╰> Erase flash ...    ", end='')
-                count += 1
-                continue
-            if(count == 3):
-                print("\r                        ", end='')
-                print("\r  ╰> Erase flash        ", end='')
-                count = 0
-                continue
+        time.sleep(period)
+        if(count == 0):
+            print("\r                        ", end='')
+            print("\r  ╰> Erase flash .      ", end='')
+            count += 1
+            continue
+        if(count == 1):
+            print("\r                        ", end='')
+            print("\r  ╰> Erase flash ..     ", end='')
+            count += 1
+            continue
+        if(count == 2):
+            print("\r                        ", end='')
+            print("\r  ╰> Erase flash ...    ", end='')
+            count += 1
+            continue
+        if(count == 3):
+            print("\r                        ", end='')
+            print("\r  ╰> Erase flash        ", end='')
+            count = 0
+            continue
 
 # *******************************************************************************
 # @brief send erase command
@@ -230,12 +228,10 @@ def erase_flash(device, node):
 # @return binary size
 # *******************************************************************************
 def loading_bar(loading_progress):
-    init_time = time.time()
     period = 0.2
     while(1):
-        if(time.time() - init_time > period):
-            init_time = time.time()
-            print("\r  ╰> loading : {} %".format(loading_progress.value), end='')
+        time.sleep(period)
+        print("\r  ╰> loading : {} %".format(loading_progress.value), end='')
 
 # *******************************************************************************
 # @brief send the binary file to the node
@@ -437,8 +433,7 @@ def luos_flash(args):
     print('\t--port : ', args.port)
 
     if not (args.port):
-        print('Please specify a port to access the network.')
-        return BOOTLOADER_FLASH_PORT_ERROR
+        args.port= serial_discover()[0]
 
     # state used to check each step
     machine_state = True
@@ -535,8 +530,7 @@ def luos_detect(args):
     print('Luos detect subcommand on port : ', args.port)
 
     if not (args.port):
-        print('Please specify a port to access the network.')
-        return BOOTLOADER_DETECT_ERROR
+        args.port= serial_discover()[0]
 
     # detect network
     device = Device(args.port)
@@ -560,7 +554,9 @@ def luos_options():
     # declare "flash" subcommand
     flash_parser = subparsers.add_parser('flash',
                                          help='tool to program luos nodes')
-    flash_parser.add_argument('port', help='port used to detect network')
+    flash_parser.add_argument('port',
+                              help='port used to detect network',
+                              nargs='?')
     flash_parser.add_argument('-g', '--gate',
                               help='id of the gate used to access the luos network')
     flash_parser.add_argument('-b', '--binary',
@@ -574,7 +570,8 @@ def luos_options():
     # declare "detect" subcommand
     detect_parser = subparsers.add_parser('detect',
                                           help='tool to detect luos network')
-    detect_parser.add_argument('port', help='port used to detect network')
+    detect_parser.add_argument('port', help='port used to detect network',
+                              nargs='?')
     detect_parser.set_defaults(func=luos_detect)
 
     return parser

@@ -189,6 +189,8 @@ class Device(object):
 
     def _setup(self):
         self.logger.info('Sending detection signal.')
+        self._send({})
+        time.sleep(0.01)
         self._send({'detection': {}})
         self.logger.info('Waiting for routing table...')
         startTime = time.time()

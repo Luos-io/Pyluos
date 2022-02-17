@@ -17,6 +17,8 @@ def serial_discover():
             port = serial.Serial(serial_host, 1000000, timeout=0.05)
         except:
             continue
+        port.write("{}\r\n".encode())
+        time.sleep(0.01)
         port.write("{\"discover\": {}}\r\n".encode())
         port.flush()
         for x in range(10):

@@ -10,6 +10,7 @@ import time
 from multiprocessing import Process, Value
 import json
 from pyluos import Device
+from pyluos.tools.discover import serial_discover
 import numpy as np
 import math
 import crc8
@@ -26,6 +27,7 @@ BOOTLOADER_BIN_CHUNK = 5
 BOOTLOADER_BIN_END = 6
 BOOTLOADER_CRC_TEST = 7
 BOOTLOADER_APP_SAVED = 8
+BOOTLOADER_RESET = 9
 BOOTLOADER_READY_RESP = 16
 BOOTLOADER_BIN_HEADER_RESP = 17
 BOOTLOADER_ERASE_RESP = 18
@@ -40,6 +42,12 @@ NB_SAMPLE_BY_FRAME_MAX = 127
 RESP_TIMEOUT = 3
 ERASE_TIMEOUT = 10
 PROGRAM_TIMEOUT = 5
+
+BOOTLOADER_SUCCESS = 0
+BOOTLOADER_DETECT_ERROR = 1
+BOOTLOADER_FLASH_ERROR = 2
+BOOTLOADER_FLASH_BINARY_ERROR = 3
+BOOTLOADER_FLASH_PORT_ERROR = 4
 # *******************************************************************************
 # Function
 # *******************************************************************************
@@ -282,7 +290,7 @@ def send_frame_from_binary(device, node, frame_size, file_offset):
         f.seek(file_offset)
         # read binary data
         data_bytes = f.read(1)
-        for sample in range(frame_size):
+        for sample in range(frame_size-1):
             data_bytes = data_bytes + f.read(1)
 
     send_data(device, node, BOOTLOADER_BIN_CHUNK, frame_size, data_bytes)
@@ -314,9 +322,9 @@ def send_data(device, node, command, size, data):
     bootloader_cmd = {
         'bootloader': {
             'command': {
+                'size': [size],
                 'type': command,
                 'node': node,
-                'size': size
             },
         }
     }
@@ -426,8 +434,7 @@ def luos_flash(args):
     print('\t--port : ', args.port)
 
     if not (args.port):
-        print('Please specify a port to access the network.')
-        sys.exit()
+        args.port= serial_discover()[0]
 
     # state used to check each step
     machine_state = True
@@ -439,7 +446,7 @@ def luos_flash(args):
         f = open(FILEPATH, mode="rb")
     except IOError:
         print("Cannot open :", FILEPATH)
-        sys.exit()
+        return BOOTLOADER_FLASH_BINARY_ERROR
     else:
         f.close()
 
@@ -496,7 +503,7 @@ def luos_flash(args):
         if( machine_state != True):
             break
 
-        # Say to the bootloader that the integrity 
+        # Say to the bootloader that the integrity
         # of the app saved in flash has been verified
         send_command(device, node, BOOTLOADER_APP_SAVED)
 
@@ -510,6 +517,9 @@ def luos_flash(args):
     if (machine_state == True):
         print("** Reboot all nodes in application mode **")
         reboot_network(device, nodes_to_reboot)
+        return BOOTLOADER_SUCCESS
+    else:
+        return BOOTLOADER_FLASH_ERROR
 
 
 # *******************************************************************************
@@ -521,11 +531,34 @@ def luos_detect(args):
     print('Luos detect subcommand on port : ', args.port)
 
     if not (args.port):
-        print('Please specify a port to access the network.')
-        sys.exit()
+        args.port= serial_discover()[0]
 
     # detect network
     device = Device(args.port)
+    # print network to user
+    print(device.nodes)
+
+    return BOOTLOADER_SUCCESS
+
+# *******************************************************************************
+# @brief command used to force reset a node in bootloader mode
+# @param detect function arguments : -p
+# @return None
+# *******************************************************************************
+def luos_reset(args):
+    print('Luos detect subcommand on port : ', args.port)
+
+    if not (args.port):
+        args.port= serial_discover()[0]
+
+    # detect network
+    device = Device(args.port, background_task=False)
+    # send rescue command
+    send_command(device, 0, BOOTLOADER_RESET)
+    # sleep
+    time.sleep(0.1)
+    # re-detect network
+    device = Device(args.port, background_task=False)
     # print network to user
     print(device.nodes)
 
@@ -544,7 +577,9 @@ def luos_options():
     # declare "flash" subcommand
     flash_parser = subparsers.add_parser('flash',
                                          help='tool to program luos nodes')
-    flash_parser.add_argument('port', help='port used to detect network')
+    flash_parser.add_argument('port',
+                              help='port used to detect network',
+                              nargs='?')
     flash_parser.add_argument('-g', '--gate',
                               help='id of the gate used to access the luos network')
     flash_parser.add_argument('-b', '--binary',
@@ -558,8 +593,16 @@ def luos_options():
     # declare "detect" subcommand
     detect_parser = subparsers.add_parser('detect',
                                           help='tool to detect luos network')
-    detect_parser.add_argument('port', help='port used to detect network')
+    detect_parser.add_argument('port', help='port used to detect network',
+                              nargs='?')
     detect_parser.set_defaults(func=luos_detect)
+
+    # declare "rescue" subcommand
+    rescue_parser = subparsers.add_parser('reset',
+                                          help='tool to reset one or multiple blocked nodes in rescue mode')
+    rescue_parser.add_argument('port', help='port used to access to the network',
+                              nargs='?')
+    rescue_parser.set_defaults(func=luos_reset)
 
     return parser
 
@@ -576,10 +619,7 @@ def main():
     args = parser.parse_args()
 
     # execute CLI subcommand
-    args.func(args)
-
-    return 0
-
+    return args.func(args)
 
 if __name__ == '__main__':
     sys.exit(main())

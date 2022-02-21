@@ -599,7 +599,7 @@ def luos_options():
 
     # declare "rescue" subcommand
     rescue_parser = subparsers.add_parser('reset',
-                                          help='tool to reset a blocked node in rescue mode')
+                                          help='tool to reset one or multiple blocked nodes in rescue mode')
     rescue_parser.add_argument('port', help='port used to access to the network',
                               nargs='?')
     rescue_parser.set_defaults(func=luos_reset)

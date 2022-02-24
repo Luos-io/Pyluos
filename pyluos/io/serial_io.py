@@ -61,7 +61,7 @@ class Serial(IOHandler):
         return self._msg.get()
 
     def write(self, data):
-        self._serial.write(b'\x7E' + struct.pack('>H', len(data)) + data + b'\x81')
+        self._serial.write(b'\x7E' + struct.pack('<H', len(data)) + data + b'\x81')
 
     def close(self):
         self._running = False
@@ -79,7 +79,7 @@ class Serial(IOHandler):
             else:
                 # Header found, get size
                 try:
-                    size = struct.unpack('>H', s[H+1:H+3])[0]
+                    size = struct.unpack('<H', s[H+1:H+3])[0]
                 except:
                     # size not completely received
                     return b'', s[H:]

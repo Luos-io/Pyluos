@@ -14,6 +14,7 @@ from pyluos.tools.discover import serial_discover
 import numpy as np
 import math
 import crc8
+import os
 
 # *******************************************************************************
 # Global Variables
@@ -451,7 +452,7 @@ def luos_flash(args):
         f.close()
 
     # init device
-    device = Device(args.port, background_task=False)
+    device = Device(args.port, background_task=False, baudrate=os.getenv('LUOS_BAUDRATE', 1000000))
 
     # find routing table
     state = find_network(device)
@@ -534,7 +535,7 @@ def luos_detect(args):
         args.port= serial_discover()[0]
 
     # detect network
-    device = Device(args.port)
+    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', 1000000))
     # print network to user
     print(device.nodes)
 

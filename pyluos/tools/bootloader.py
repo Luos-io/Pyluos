@@ -435,7 +435,11 @@ def luos_flash(args):
     print('\t--port : ', args.port)
 
     if not (args.port):
-        args.port= serial_discover()[0]
+        try:
+            args.port= serial_discover()[0]
+        except:
+            print("Can't find any Gate interface")
+            return
 
     # state used to check each step
     machine_state = True
@@ -532,7 +536,11 @@ def luos_detect(args):
     print('Luos detect subcommand on port : ', args.port)
 
     if not (args.port):
-        args.port= serial_discover()[0]
+        try:
+            args.port= serial_discover()[0]
+        except:
+            print("Can't find any Gate interface")
+            return
 
     # detect network
     device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', 1000000))

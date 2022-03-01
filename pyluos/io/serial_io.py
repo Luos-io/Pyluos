@@ -5,6 +5,7 @@ import time
 import serial as _serial
 import platform
 import sys
+import struct
 if sys.version_info >= (3, 0):
     import queue
 else:
@@ -60,8 +61,7 @@ class Serial(IOHandler):
         return self._msg.get()
 
     def write(self, data):
-        self._serial.write(data + '\r'.encode() + '\n'.encode())
-        #print(data + '\r'.encode())
+        self._serial.write(b'\x7E' + struct.pack('<H', len(data)) + data + b'\x81')
 
     def close(self):
         self._running = False
@@ -71,17 +71,40 @@ class Serial(IOHandler):
 
     def _poll(self):
         def extract_line(s):
-            j = s.find(b'\n')
-            if j == -1:
-                return b'', s
-            # Sometimes the begin of serial data can be wrong remove it
-            # Find the first '{'
-
-            x = s.find(b'{')
-            if x == -1:
-                return b'', s[j + 1:]
-
-            return s[x:j], s[j + 1:]
+            # Find a serial header
+            H = s.find(b'\x7E')
+            if H == -1:
+                # No header found
+                return b'', s[0:0]
+            else:
+                # Header found, get size
+                try:
+                    size = struct.unpack('<H', s[H+1:H+3])[0]
+                except:
+                    # size not completely received
+                    return b'', s[H:]
+                if (size == 0) or (size > 20000):
+                    # Bad header
+                    # Remove the header and do it again
+                    return extract_line(s[H+1:])
+                else:
+                    # Size seems ok
+                    # Check if we receive the entire data
+                    if len(s[H+3:]) < size+1:
+                        # We don't have the entire data
+                        return b'', s
+                    else:
+                        # We have the complete data
+                        # Check the footer
+                        data_start = H+3
+                        data_end = data_start + size
+                        if (s[data_end] != ord(b'\x81')):
+                            # The footer is not ok, this mean we don't have a good header
+                            # Remove the header and do it again
+                            return extract_line(s[H+1:])
+                        else:
+                            # Footer is ok
+                            return s[data_start:data_end], s[data_end + 1:]
 
         period = 1 / self.poll_frequency
         buff = b''

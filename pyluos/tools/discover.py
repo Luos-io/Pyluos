@@ -3,6 +3,7 @@ import time
 
 from ..io.serial_io import Serial
 import serial
+import struct
 
 def serial_ports():
     return Serial.available_hosts()
@@ -17,9 +18,12 @@ def serial_discover():
             port = serial.Serial(serial_host, 1000000, timeout=0.05)
         except:
             continue
-        port.write("{}\r\n".encode())
+
+        s = b'{}'
+        port.write(b'\x7E' + struct.pack('<H', len(s)) + s + b'\x81')
         time.sleep(0.01)
-        port.write("{\"discover\": {}}\r\n".encode())
+        s = b'{\"discover\": {}}'
+        port.write(b'\x7E' + struct.pack('<H', len(s)) + s + b'\x81')
         port.flush()
         for x in range(10):
             state = port.readline()

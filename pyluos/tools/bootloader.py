@@ -438,7 +438,7 @@ def luos_flash(args):
         try:
             args.port= serial_discover()[0]
         except:
-            print("Can't find any Gate interface")
+            sys.exit("Can't find any Gate interface")
             return
 
     # state used to check each step
@@ -450,7 +450,7 @@ def luos_flash(args):
     try:
         f = open(FILEPATH, mode="rb")
     except IOError:
-        print("Cannot open :", FILEPATH)
+        sys.exit("Cannot open :", FILEPATH)
         return BOOTLOADER_FLASH_BINARY_ERROR
     else:
         f.close()
@@ -541,7 +541,7 @@ def luos_detect(args):
         try:
             args.port= serial_discover()[0]
         except:
-            print("Can't find any Gate interface")
+            sys.exit("Can't find any Gate interface")
             return
 
     # detect network

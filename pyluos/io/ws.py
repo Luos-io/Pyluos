@@ -61,7 +61,11 @@ class Ws(IOHandler):
         return True
 
     def recv(self):
-        return self._msg.get()
+        try:
+            data = self._msg.get(True, 1)
+        except queue.Empty:
+            data = None
+        return data
 
     def write(self, data):
         self._ws.send(data + '\r'.encode() + '\n'.encode())

@@ -62,12 +62,17 @@ def find_network(device):
     device._send({'detection': {}})
     startTime = time.time()
     state = device._poll_once()
+    retry = 0
     while ('routing_table' not in state):
         if ('route_table' in state):
             print('version of luos not supported')
             return
         state = device._poll_once()
         if (time.time()-startTime > 1):
+            retry = retry +1
+            if retry > 5:
+                # detection is not working
+                sys.exit("Detection failed.")
             device._send({'detection': {}})
             startTime = time.time()
 
@@ -464,6 +469,10 @@ def luos_flash(args):
     # searching nodes to program in network
     (nodes_to_reboot, nodes_to_program) = create_target_list(args, state)
 
+    # check if we have available node to program
+    if not nodes_to_program:
+        sys.exit("No target found :\n" + str(device.nodes))
+
     # reboot all nodes in bootloader mode
     print("** Reboot all nodes in bootloader mode **")
     for node in nodes_to_reboot:
@@ -526,8 +535,8 @@ def luos_flash(args):
         return BOOTLOADER_SUCCESS
     else:
         device.close()
+        print("Load failed, please retry.")
         return BOOTLOADER_FLASH_ERROR
-
 
 # *******************************************************************************
 # @brief command used to detect network

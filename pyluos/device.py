@@ -20,14 +20,6 @@ from anytree import AnyNode, RenderTree, DoubleStyle
 def run_from_unittest():
     return 'unittest' in sys.services
 
-
-known_host = {
-    'ergo': ['/dev/cu.usbserial-DN2AAOVK', '/dev/cu.usbserial-DN2YEFLN'],
-    'handy': ['/dev/cu.usbserial-DN2X236E'],
-    'eddy': ['pi-gate.local'],
-}
-
-
 class contList(list):
     def __repr__(self):
         s = '-------------------------------------------------\n'
@@ -91,17 +83,6 @@ class Device(object):
     _max_alias_length = 15
     _base_log_conf = os.path.join(os.path.dirname(__file__),
                                   'logging_conf.json')
-
-    @classmethod
-    def discover(cls):
-        hosts = discover_hosts()
-
-        possibilities = {
-            k: [h for h in v if h in hosts]
-            for k, v in known_host.items()
-        }
-
-        return possibilities
 
     def __init__(self, host,
                  IO=None,

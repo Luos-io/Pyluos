@@ -149,15 +149,15 @@ def send_ready_cmd(device, node):
     while ('bootloader' not in state) and return_value:
         state = device._poll_once()
         if(time.time() - init_time > RESP_TIMEOUT):
-            print("  ╰> Node n°", node, "is not responding.")
-            print("  ╰> Loading program aborted, please reboot the system.")
+            print(u"  ╰> Node n°", node, "is not responding.")
+            print(u"  ╰> Loading program aborted, please reboot the system.")
             return_value = False
     if return_value and (state['bootloader']['response'] == BOOTLOADER_ERROR_SIZE):
-        print("  ╰> Node n°", node, "has not enough space in flash memory.")
+        print(u"  ╰> Node n°", node, "has not enough space in flash memory.")
         # don't load binary if there is not enough place in flash memory
         return_value = False
     if return_value and (state['bootloader']['response'] == BOOTLOADER_READY_RESP):
-        print("  ╰> Node n°", node, "is ready.")
+        print(u"  ╰> Node n°", node, "is ready.")
 
     return return_value
 # *******************************************************************************
@@ -169,27 +169,27 @@ def waiting_erase():
     count = 0
     period = 0.4
     print("\r                        ", end='')
-    print("\r  ╰> Erase flash        ", end='')
+    print(u"\r  ╰> Erase flash        ", end='')
     while(1):
         time.sleep(period)
         if(count == 0):
             print("\r                        ", end='')
-            print("\r  ╰> Erase flash .      ", end='')
+            print(u"\r  ╰> Erase flash .      ", end='')
             count += 1
             continue
         if(count == 1):
             print("\r                        ", end='')
-            print("\r  ╰> Erase flash ..     ", end='')
+            print(u"\r  ╰> Erase flash ..     ", end='')
             count += 1
             continue
         if(count == 2):
             print("\r                        ", end='')
-            print("\r  ╰> Erase flash ...    ", end='')
+            print(u"\r  ╰> Erase flash ...    ", end='')
             count += 1
             continue
         if(count == 3):
             print("\r                        ", end='')
-            print("\r  ╰> Erase flash        ", end='')
+            print(u"\r  ╰> Erase flash        ", end='')
             count = 0
             continue
 
@@ -214,13 +214,13 @@ def erase_flash(device, node):
     while ('bootloader' not in state):
         state = device._poll_once()
         if(time.time() - init_time > ERASE_TIMEOUT):
-            print("  ╰> Node n°", node, "is not responding.")
-            print("  ╰> Loading program aborted, please reboot the system.")
+            print(u"  ╰> Node n°", node, "is not responding.")
+            print(u"  ╰> Loading program aborted, please reboot the system.")
             return_value = False
             break
     if (state['bootloader']['response'] == BOOTLOADER_ERASE_RESP):
         waiting_bg.terminate()
-        print("\r\n  ╰> Flash memory erased.")
+        print(u"\r\n  ╰> Flash memory erased.")
 
     return return_value
 
@@ -233,7 +233,7 @@ def loading_bar(loading_progress):
     period = 0.2
     while(1):
         time.sleep(period)
-        print("\r  ╰> loading : {} %".format(loading_progress.value), end='')
+        print(u"\r  ╰> loading : {} %".format(loading_progress.value), end='')
 
 # *******************************************************************************
 # @brief send the binary file to the node
@@ -274,7 +274,7 @@ def send_binary_data(device, node):
     # kill the progress bar at the end of the loading
     loading_bar_bg.terminate()
     if( loading_state == True):
-        print("\r  ╰> loading : 100.0 %")
+        print(u"\r  ╰> loading : 100.0 %")
 
     return loading_state
 
@@ -302,8 +302,8 @@ def send_frame_from_binary(device, node, frame_size, file_offset):
     init_time = time.time()
     while (lock):
         if(time.time() - init_time > PROGRAM_TIMEOUT):
-            print("\r\n  ╰> Node n°", node, "is not responding.")
-            print("  ╰> Loading program aborted, please reboot the system.")
+            print(u"\r\n  ╰> Node n°", node, "is not responding.")
+            print(u"  ╰> Loading program aborted, please reboot the system.")
             return_value = False
             break
         if 'bootloader' in state:
@@ -348,12 +348,12 @@ def send_binary_end(device, node):
     while ('bootloader' not in state):
         state = device._poll_once()
         if(time.time() - init_time > RESP_TIMEOUT):
-            print("  ╰> Node n°", node, "is not responding.")
-            print("  ╰> Loading program aborted, please reboot the system.")
+            print(u"  ╰> Node n°", node, "is not responding.")
+            print(u"  ╰> Loading program aborted, please reboot the system.")
             return_value = False
             break
     if (state['bootloader']['response'] == BOOTLOADER_BIN_END_RESP):
-        print("  ╰> Node acknowledge received, loading is complete.")
+        print(u"  ╰> Node acknowledge received, loading is complete.")
 
     return return_value
 
@@ -393,21 +393,21 @@ def check_crc(device, node):
     while ('bootloader' not in state):
         state = device._poll_once()
         if(time.time() - init_time > RESP_TIMEOUT):
-            print("  ╰> Node n°", node, "is not responding.")
-            print("  ╰> Loading program aborted, please reboot the system.")
+            print(u"  ╰> Node n°", node, "is not responding.")
+            print(u"  ╰> Loading program aborted, please reboot the system.")
             return_value = False
             break
     if (state['bootloader']['response'] == BOOTLOADER_CRC_RESP):
         source_crc = int.from_bytes(compute_crc(), byteorder='big')
         node_crc = state['bootloader']['crc_value']
         if ( source_crc == node_crc ):
-            print("  ╰> CRC test : OK.")
+            print(u"  ╰> CRC test : OK.")
         else:
-            print("  ╰> CRC test : NOK.")
-            print("  ╰> waited :", hex(source_crc), ", received :", hex(node_crc))
+            print(u"  ╰> CRC test : NOK.")
+            print(u"  ╰> waited :", hex(source_crc), ", received :", hex(node_crc))
             return_value = False
     else:
-        print("  ╰> CRC note received.")
+        print(u"  ╰> CRC note received.")
         return_value = False
 
     return return_value

@@ -522,8 +522,10 @@ def luos_flash(args):
     if (machine_state == True):
         print("** Reboot all nodes in application mode **")
         reboot_network(device, nodes_to_reboot)
+        device.close()
         return BOOTLOADER_SUCCESS
     else:
+        device.close()
         return BOOTLOADER_FLASH_ERROR
 
 
@@ -546,6 +548,7 @@ def luos_detect(args):
     device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', 1000000))
     # print network to user
     print(device.nodes)
+    device.close()
 
     return BOOTLOADER_SUCCESS
 

@@ -143,10 +143,13 @@ class Device(object):
 
     def close(self):
         self._running = False
-        self._poll_bg.join(timeout=2.0)
-        if self._poll_bg.is_alive():
-            # _poll_bg didn't terminate within the timeout
-            print("Warning: device closed on timeout, background thread is still running.")
+
+        if hasattr(self, "_poll_bg"):
+            self._poll_bg.join(timeout=2.0)
+
+            if self._poll_bg.is_alive():
+                # _poll_bg didn't terminate within the timeout
+                print("Warning: device closed on timeout, background thread is still running.")
         self._io.close()
 
     @property

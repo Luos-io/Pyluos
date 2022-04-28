@@ -103,6 +103,9 @@ def create_target_list(args, state):
             for target in args.target:
                 if(int(node['node_id']) == int(target)):
                     nodes_to_program.append(node['node_id'])
+    for target in args.target:
+        if not(int(target) in nodes_to_program):
+            print ("**** Node " + target + " is not available and will be ignored. ****")
 
     return (nodes_to_reboot, nodes_to_program)
 
@@ -485,7 +488,7 @@ def luos_flash(args):
 
     # program nodes
     for node in nodes_to_program:
-        print("** Programming node n°", node, "**")
+        print("\n** Programming node n°", node, "**")
 
         # go to header state if node is ready
         print("--> Check if node n°", node, "is ready.")
@@ -574,14 +577,10 @@ def luos_reset(args):
 
     # detect network
     device = Device(args.port, background_task=False)
-    # send rescue command
-    send_command(device, 0, BOOTLOADER_RESET)
-    # sleep
-    time.sleep(0.1)
-    # re-detect network
-    device = Device(args.port, background_task=False)
-    # print network to user
     print(device.nodes)
+    # send rescue command
+    print("Send reset command")
+    send_command(device, 0, BOOTLOADER_RESET)
 
 # *******************************************************************************
 # @brief command used to detect network

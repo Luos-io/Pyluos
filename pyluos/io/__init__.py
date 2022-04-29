@@ -36,7 +36,8 @@ class IOHandler(object):
     def loads(self, data):
         if type(data) == bytes:
             data = data.decode()
-        return json.loads(data)
+            return json.loads(data)
+        return []
 
     def dumps(self, msg):
         return json.dumps(msg).encode()

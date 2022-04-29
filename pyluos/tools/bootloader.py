@@ -62,12 +62,17 @@ def find_network(device):
     device._send({'detection': {}})
     startTime = time.time()
     state = device._poll_once()
+    retry = 0
     while ('routing_table' not in state):
         if ('route_table' in state):
             print('version of luos not supported')
             return
         state = device._poll_once()
         if (time.time()-startTime > 1):
+            retry = retry +1
+            if retry > 5:
+                # detection is not working
+                sys.exit("Detection failed.")
             device._send({'detection': {}})
             startTime = time.time()
 
@@ -98,6 +103,9 @@ def create_target_list(args, state):
             for target in args.target:
                 if(int(node['node_id']) == int(target)):
                     nodes_to_program.append(node['node_id'])
+    for target in args.target:
+        if not(int(target) in nodes_to_program):
+            print ("**** Node " + target + " is not available and will be ignored. ****")
 
     return (nodes_to_reboot, nodes_to_program)
 
@@ -438,7 +446,7 @@ def luos_flash(args):
         try:
             args.port= serial_discover()[0]
         except:
-            print("Can't find any Gate interface")
+            sys.exit("Can't find any Gate interface")
             return
 
     # state used to check each step
@@ -450,7 +458,7 @@ def luos_flash(args):
     try:
         f = open(FILEPATH, mode="rb")
     except IOError:
-        print("Cannot open :", FILEPATH)
+        sys.exit("Cannot open :", FILEPATH)
         return BOOTLOADER_FLASH_BINARY_ERROR
     else:
         f.close()
@@ -464,6 +472,10 @@ def luos_flash(args):
     # searching nodes to program in network
     (nodes_to_reboot, nodes_to_program) = create_target_list(args, state)
 
+    # check if we have available node to program
+    if not nodes_to_program:
+        sys.exit("No target found :\n" + str(device.nodes))
+
     # reboot all nodes in bootloader mode
     print("** Reboot all nodes in bootloader mode **")
     for node in nodes_to_reboot:
@@ -476,7 +488,7 @@ def luos_flash(args):
 
     # program nodes
     for node in nodes_to_program:
-        print("** Programming node n°", node, "**")
+        print("\n** Programming node n°", node, "**")
 
         # go to header state if node is ready
         print("--> Check if node n°", node, "is ready.")
@@ -526,8 +538,8 @@ def luos_flash(args):
         return BOOTLOADER_SUCCESS
     else:
         device.close()
+        print("Load failed, please retry.")
         return BOOTLOADER_FLASH_ERROR
-
 
 # *******************************************************************************
 # @brief command used to detect network
@@ -541,7 +553,7 @@ def luos_detect(args):
         try:
             args.port= serial_discover()[0]
         except:
-            print("Can't find any Gate interface")
+            sys.exit("Can't find any Gate interface")
             return
 
     # detect network
@@ -565,14 +577,10 @@ def luos_reset(args):
 
     # detect network
     device = Device(args.port, background_task=False)
-    # send rescue command
-    send_command(device, 0, BOOTLOADER_RESET)
-    # sleep
-    time.sleep(0.1)
-    # re-detect network
-    device = Device(args.port, background_task=False)
-    # print network to user
     print(device.nodes)
+    # send rescue command
+    print("Send reset command")
+    send_command(device, 0, BOOTLOADER_RESET)
 
 # *******************************************************************************
 # @brief command used to detect network

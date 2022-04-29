@@ -20,14 +20,6 @@ from anytree import AnyNode, RenderTree, DoubleStyle
 def run_from_unittest():
     return 'unittest' in sys.services
 
-
-known_host = {
-    'ergo': ['/dev/cu.usbserial-DN2AAOVK', '/dev/cu.usbserial-DN2YEFLN'],
-    'handy': ['/dev/cu.usbserial-DN2X236E'],
-    'eddy': ['pi-gate.local'],
-}
-
-
 class contList(list):
     def __repr__(self):
         s = '-------------------------------------------------\n'
@@ -91,17 +83,6 @@ class Device(object):
     _max_alias_length = 15
     _base_log_conf = os.path.join(os.path.dirname(__file__),
                                   'logging_conf.json')
-
-    @classmethod
-    def discover(cls):
-        hosts = discover_hosts()
-
-        possibilities = {
-            k: [h for h in v if h in hosts]
-            for k, v in known_host.items()
-        }
-
-        return possibilities
 
     def __init__(self, host,
                  IO=None,
@@ -198,12 +179,17 @@ class Device(object):
         self.logger.info('Waiting for routing table...')
         startTime = time.time()
         state = self._poll_once()
+        retry = 0
         while ('routing_table' not in state):
             if ('route_table' in state):
                 self.logger.info("Watch out the Luos revision you are using on your board is too old to work with this revision on pyluos.\n Please consider updating Luos on your boards")
                 return
             state = self._poll_once()
             if (time.time()-startTime > 1):
+                retry = retry +1
+                if retry > 5:
+                    # detection is not working
+                    sys.exit("Detection failed.")
                 self._send({'detection': {}})
                 startTime = time.time()
         # Create nodes
@@ -257,15 +243,18 @@ class Device(object):
     # Poll state from hardware.
     def _poll_once(self):
         self._state = self._io.read()
-        self._state['timestamp'] = time.time()
-        return self._state
+        if self._state != []:
+            self._state['timestamp'] = time.time()
+            return self._state
+        return []
 
     def _poll_and_up(self):
         while self._running:
             if not self._pause :
                 state = self._poll_once()
-                self._update(state)
-                self._push_once()
+                if self._state != []:
+                    self._update(state)
+                    self._push_once()
             else :
                 time.sleep(0.1)
 

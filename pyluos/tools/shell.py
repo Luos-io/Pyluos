@@ -51,12 +51,12 @@ def main():
         if args.port is not None:
             # Ready to rocks
             device = Device(args.port)
-            embed(banner1 = "\n Hit Ctrl-D to exit this interpreter.\n\nYour luos device have been successfully mounted into a \"device\" object:\n" + str(device.nodes) + "\n")
+            embed(banner1 = "\n Hit Ctrl-D to exit this interpreter.\n\nYour luos device has been successfully mounted into a \"device\" object:\n" + str(device.nodes) + "\n")
         else:
             Gates = serial_discover()
             if Gates:
                 device = Device(Gates[0])
-                embed(banner1 = "\n Hit Ctrl-D to exit this interpreter.\n\nYour luos device have been successfully mounted into a \"device\" object:\n" + str(device.nodes) + "\n")
+                embed(banner1 = "\n Hit Ctrl-D to exit this interpreter.\n\nYour luos device has been successfully mounted into a \"device\" object:\n" + str(device.nodes) + "\n")
 
     except OperationAbortedException:
         logger.info("Operation aborted.")

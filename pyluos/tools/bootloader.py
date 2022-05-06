@@ -15,6 +15,9 @@ import numpy as np
 import math
 import crc8
 import os
+from ..io.serial_io import Serial
+import serial
+import struct
 
 # *******************************************************************************
 # Global Variables
@@ -570,17 +573,35 @@ def luos_detect(args):
 # @return None
 # *******************************************************************************
 def luos_reset(args):
-    print('Luos detect subcommand on port : ', args.port)
+    print('Luos discover subcommand on port : ', args.port)
 
     if not (args.port):
-        args.port= serial_discover()[0]
+        try:
+            args.port= serial_discover()[0]
+        except:
+            sys.exit("Can't find any Gate interface")
+            return
+
+
+    # send rescue command
+    print('Send reset command.')
+    port = serial.Serial(args.port, 1000000, timeout=0.05)
+    rst_cmd = {
+        'bootloader': {
+            'command': {
+                'type': BOOTLOADER_RESET,
+                'node': 0,
+                'size': 0
+            },
+        }
+    }
+    s = json.dumps(rst_cmd).encode()
+    port.write(b'\x7E' + struct.pack('<H', len(s)) + s + b'\x81')
+    port.close()
 
     # detect network
     device = Device(args.port, background_task=False)
     print(device.nodes)
-    # send rescue command
-    print("Send reset command")
-    send_command(device, 0, BOOTLOADER_RESET)
 
 # *******************************************************************************
 # @brief command used to detect network

@@ -15,6 +15,9 @@ import numpy as np
 import math
 import crc8
 import os
+from ..io.serial_io import Serial
+import serial
+import struct
 
 # *******************************************************************************
 # Global Variables
@@ -62,12 +65,17 @@ def find_network(device):
     device._send({'detection': {}})
     startTime = time.time()
     state = device._poll_once()
+    retry = 0
     while ('routing_table' not in state):
         if ('route_table' in state):
             print('version of luos not supported')
             return
         state = device._poll_once()
         if (time.time()-startTime > 1):
+            retry = retry +1
+            if retry > 5:
+                # detection is not working
+                sys.exit("Detection failed.")
             device._send({'detection': {}})
             startTime = time.time()
 
@@ -98,6 +106,9 @@ def create_target_list(args, state):
             for target in args.target:
                 if(int(node['node_id']) == int(target)):
                     nodes_to_program.append(node['node_id'])
+    for target in args.target:
+        if not(int(target) in nodes_to_program):
+            print ("**** Node " + target + " is not available and will be ignored. ****")
 
     return (nodes_to_reboot, nodes_to_program)
 
@@ -149,15 +160,15 @@ def send_ready_cmd(device, node):
     while ('bootloader' not in state) and return_value:
         state = device._poll_once()
         if(time.time() - init_time > RESP_TIMEOUT):
-            print("  ╰> Node n°", node, "is not responding.")
-            print("  ╰> Loading program aborted, please reboot the system.")
+            print(u"  ╰> Node n°", node, "is not responding.")
+            print(u"  ╰> Loading program aborted, please reboot the system.")
             return_value = False
     if return_value and (state['bootloader']['response'] == BOOTLOADER_ERROR_SIZE):
-        print("  ╰> Node n°", node, "has not enough space in flash memory.")
+        print(u"  ╰> Node n°", node, "has not enough space in flash memory.")
         # don't load binary if there is not enough place in flash memory
         return_value = False
     if return_value and (state['bootloader']['response'] == BOOTLOADER_READY_RESP):
-        print("  ╰> Node n°", node, "is ready.")
+        print(u"  ╰> Node n°", node, "is ready.")
 
     return return_value
 # *******************************************************************************
@@ -169,27 +180,27 @@ def waiting_erase():
     count = 0
     period = 0.4
     print("\r                        ", end='')
-    print("\r  ╰> Erase flash        ", end='')
+    print(u"\r  ╰> Erase flash        ", end='')
     while(1):
         time.sleep(period)
         if(count == 0):
             print("\r                        ", end='')
-            print("\r  ╰> Erase flash .      ", end='')
+            print(u"\r  ╰> Erase flash .      ", end='')
             count += 1
             continue
         if(count == 1):
             print("\r                        ", end='')
-            print("\r  ╰> Erase flash ..     ", end='')
+            print(u"\r  ╰> Erase flash ..     ", end='')
             count += 1
             continue
         if(count == 2):
             print("\r                        ", end='')
-            print("\r  ╰> Erase flash ...    ", end='')
+            print(u"\r  ╰> Erase flash ...    ", end='')
             count += 1
             continue
         if(count == 3):
             print("\r                        ", end='')
-            print("\r  ╰> Erase flash        ", end='')
+            print(u"\r  ╰> Erase flash        ", end='')
             count = 0
             continue
 
@@ -214,13 +225,13 @@ def erase_flash(device, node):
     while ('bootloader' not in state):
         state = device._poll_once()
         if(time.time() - init_time > ERASE_TIMEOUT):
-            print("  ╰> Node n°", node, "is not responding.")
-            print("  ╰> Loading program aborted, please reboot the system.")
+            print(u"  ╰> Node n°", node, "is not responding.")
+            print(u"  ╰> Loading program aborted, please reboot the system.")
             return_value = False
             break
     if (state['bootloader']['response'] == BOOTLOADER_ERASE_RESP):
         waiting_bg.terminate()
-        print("\r\n  ╰> Flash memory erased.")
+        print(u"\r\n  ╰> Flash memory erased.")
 
     return return_value
 
@@ -233,7 +244,7 @@ def loading_bar(loading_progress):
     period = 0.2
     while(1):
         time.sleep(period)
-        print("\r  ╰> loading : {} %".format(loading_progress.value), end='')
+        print(u"\r  ╰> loading : {} %".format(loading_progress.value), end='')
 
 # *******************************************************************************
 # @brief send the binary file to the node
@@ -274,7 +285,7 @@ def send_binary_data(device, node):
     # kill the progress bar at the end of the loading
     loading_bar_bg.terminate()
     if( loading_state == True):
-        print("\r  ╰> loading : 100.0 %")
+        print(u"\r  ╰> loading : 100.0 %")
 
     return loading_state
 
@@ -302,8 +313,8 @@ def send_frame_from_binary(device, node, frame_size, file_offset):
     init_time = time.time()
     while (lock):
         if(time.time() - init_time > PROGRAM_TIMEOUT):
-            print("\r\n  ╰> Node n°", node, "is not responding.")
-            print("  ╰> Loading program aborted, please reboot the system.")
+            print(u"\r\n  ╰> Node n°", node, "is not responding.")
+            print(u"  ╰> Loading program aborted, please reboot the system.")
             return_value = False
             break
         if 'bootloader' in state:
@@ -348,12 +359,12 @@ def send_binary_end(device, node):
     while ('bootloader' not in state):
         state = device._poll_once()
         if(time.time() - init_time > RESP_TIMEOUT):
-            print("  ╰> Node n°", node, "is not responding.")
-            print("  ╰> Loading program aborted, please reboot the system.")
+            print(u"  ╰> Node n°", node, "is not responding.")
+            print(u"  ╰> Loading program aborted, please reboot the system.")
             return_value = False
             break
     if (state['bootloader']['response'] == BOOTLOADER_BIN_END_RESP):
-        print("  ╰> Node acknowledge received, loading is complete.")
+        print(u"  ╰> Node acknowledge received, loading is complete.")
 
     return return_value
 
@@ -393,21 +404,21 @@ def check_crc(device, node):
     while ('bootloader' not in state):
         state = device._poll_once()
         if(time.time() - init_time > RESP_TIMEOUT):
-            print("  ╰> Node n°", node, "is not responding.")
-            print("  ╰> Loading program aborted, please reboot the system.")
+            print(u"  ╰> Node n°", node, "is not responding.")
+            print(u"  ╰> Loading program aborted, please reboot the system.")
             return_value = False
             break
     if (state['bootloader']['response'] == BOOTLOADER_CRC_RESP):
         source_crc = int.from_bytes(compute_crc(), byteorder='big')
         node_crc = state['bootloader']['crc_value']
         if ( source_crc == node_crc ):
-            print("  ╰> CRC test : OK.")
+            print(u"  ╰> CRC test : OK.")
         else:
-            print("  ╰> CRC test : NOK.")
-            print("  ╰> waited :", hex(source_crc), ", received :", hex(node_crc))
+            print(u"  ╰> CRC test : NOK.")
+            print(u"  ╰> waited :", hex(source_crc), ", received :", hex(node_crc))
             return_value = False
     else:
-        print("  ╰> CRC note received.")
+        print(u"  ╰> CRC note received.")
         return_value = False
 
     return return_value
@@ -438,7 +449,7 @@ def luos_flash(args):
         try:
             args.port= serial_discover()[0]
         except:
-            print("Can't find any Gate interface")
+            sys.exit("Can't find any Gate interface")
             return
 
     # state used to check each step
@@ -450,7 +461,7 @@ def luos_flash(args):
     try:
         f = open(FILEPATH, mode="rb")
     except IOError:
-        print("Cannot open :", FILEPATH)
+        sys.exit("Cannot open :", FILEPATH)
         return BOOTLOADER_FLASH_BINARY_ERROR
     else:
         f.close()
@@ -464,6 +475,10 @@ def luos_flash(args):
     # searching nodes to program in network
     (nodes_to_reboot, nodes_to_program) = create_target_list(args, state)
 
+    # check if we have available node to program
+    if not nodes_to_program:
+        sys.exit("No target found :\n" + str(device.nodes))
+
     # reboot all nodes in bootloader mode
     print("** Reboot all nodes in bootloader mode **")
     for node in nodes_to_reboot:
@@ -476,7 +491,7 @@ def luos_flash(args):
 
     # program nodes
     for node in nodes_to_program:
-        print("** Programming node n°", node, "**")
+        print("\n** Programming node n°", node, "**")
 
         # go to header state if node is ready
         print("--> Check if node n°", node, "is ready.")
@@ -522,10 +537,12 @@ def luos_flash(args):
     if (machine_state == True):
         print("** Reboot all nodes in application mode **")
         reboot_network(device, nodes_to_reboot)
+        device.close()
         return BOOTLOADER_SUCCESS
     else:
+        device.close()
+        print("Load failed, please retry.")
         return BOOTLOADER_FLASH_ERROR
-
 
 # *******************************************************************************
 # @brief command used to detect network
@@ -539,13 +556,14 @@ def luos_detect(args):
         try:
             args.port= serial_discover()[0]
         except:
-            print("Can't find any Gate interface")
+            sys.exit("Can't find any Gate interface")
             return
 
     # detect network
     device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', 1000000))
     # print network to user
     print(device.nodes)
+    device.close()
 
     return BOOTLOADER_SUCCESS
 
@@ -555,20 +573,34 @@ def luos_detect(args):
 # @return None
 # *******************************************************************************
 def luos_reset(args):
-    print('Luos detect subcommand on port : ', args.port)
+    print('Luos discover subcommand on port : ', args.port)
 
     if not (args.port):
-        args.port= serial_discover()[0]
+        try:
+            args.port= serial_discover()[0]
+        except:
+            sys.exit("Can't find any Gate interface")
+            return
+
+
+    # send rescue command
+    print('Send reset command.')
+    port = serial.Serial(args.port, 1000000, timeout=0.05)
+    rst_cmd = {
+        'bootloader': {
+            'command': {
+                'type': BOOTLOADER_RESET,
+                'node': 0,
+                'size': 0
+            },
+        }
+    }
+    s = json.dumps(rst_cmd).encode()
+    port.write(b'\x7E' + struct.pack('<H', len(s)) + s + b'\x81')
+    port.close()
 
     # detect network
     device = Device(args.port, background_task=False)
-    # send rescue command
-    send_command(device, 0, BOOTLOADER_RESET)
-    # sleep
-    time.sleep(0.1)
-    # re-detect network
-    device = Device(args.port, background_task=False)
-    # print network to user
     print(device.nodes)
 
 # *******************************************************************************

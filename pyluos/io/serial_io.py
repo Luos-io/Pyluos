@@ -58,7 +58,11 @@ class Serial(IOHandler):
             return False
 
     def recv(self):
-        return self._msg.get()
+        try:
+            data = self._msg.get(True, 1)
+        except queue.Empty:
+            data = None
+        return data
 
     def write(self, data):
         self._serial.write(b'\x7E' + struct.pack('<H', len(data)) + data + b'\x81')

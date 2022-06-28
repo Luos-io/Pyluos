@@ -91,15 +91,10 @@ def create_target_list(args, state):
     nodes_to_program = []
     nodes_to_reboot = []
     for node in state['routing_table']:
-        # bypass if node contains a Gate service
-        # prevent programmation of a Gate
-        for service in node['services']:
-            bypass_node = False
-            if(service['type'] == 'Gate'):
-                bypass_node = True
-                break
-            if(service['alias'] == 'Pipe_mod'):
-                bypass_node = True
+        # prevent programmation of node 1
+        bypass_node = False
+        if(node['node_id'] == 1):
+            bypass_node = True
         # check if node is in target list
         if not (bypass_node):
             nodes_to_reboot.append(node['node_id'])

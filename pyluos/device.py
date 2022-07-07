@@ -233,11 +233,13 @@ class Device(object):
         self._binary = []
 
         if (self.telemetry == True):
+            from pyluos.version import version
             self.logger.info('Sending telemetry...')
             luos_telemetry = {"telemetry_type": "pyluos",
                   "mac": hex(uuid.getnode()),
                   "system": sys.platform,
                   "unix_time": int(time.time()),
+                  "pyluos_rev": version,
                   "routing_table":state['routing_table']}
             try:
                 requests.post("https://monorepo-services.vercel.app/api/telemetry",

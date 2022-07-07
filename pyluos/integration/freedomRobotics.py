@@ -9,11 +9,12 @@ class FreedomLink(object):
         self._delegate = device
 
     def callback(msg):
-        self._link.log("info", "I heard " + str(msg) )
         print("I receive:" + str(msg) )
+        self._link.log("info", "I heard " + str(msg) )
         # Topic represent services.
         if hasattr(self._delegate, msg["topic"][1:]):
             service = getattr(self._delegate, msg["topic"][1:])
+            print ("we have this service")
             # We have this service.
             if hasattr(service, msg["message"]):
                 service_data = getattr(service, msg["message"])

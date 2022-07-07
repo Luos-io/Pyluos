@@ -40,7 +40,8 @@ def main():
     args = parser.parse_args()
 
     def print_version():
-        sys.stderr.write("luos control utility v" + pyluos.__version__ + "\n")
+        from pyluos.version import version
+        sys.stderr.write("luos control utility v" + version + "\n")
         sys.stderr.flush()
         return 0
 

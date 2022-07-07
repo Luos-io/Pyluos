@@ -30,3 +30,11 @@ This section details the features of Luos technology as an embedded development 
 * Definition of [Packages](https://docs.luos.io/docs/luos-technology/package/package), and how to make a portable and reusable development.
 * Definition of [Services](https://docs.luos.io/docs/luos-technology/services/services), how to create and declare features in your product.
 * Definition of [Messages](https://docs.luos.io/docs/luos-technology/message/message), when, why, and how to handle them, explaining the more advanced features of Luos.
+
+## Disclaimer
+This library send some anonymous information to Luos allowing to improve Pyluos experience.
+To disable the telemetry please add `telemetry=False` parameter at Device creation.
+For example:
+```python
+device = Device('/dev/cu.usbserial-DN2EUDGP', telemetry=False)
+```

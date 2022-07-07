@@ -3,7 +3,9 @@ import os
 import sys
 import json
 import time
+import uuid
 import logging
+import requests
 import threading
 import logging.config
 import numpy as np
@@ -89,6 +91,7 @@ class Device(object):
                  log_conf=_base_log_conf,
                  test_mode=False,
                  background_task=True,
+                 telemetry=True,
                  *args, **kwargs):
         if IO is not None:
             self._io = IO(host=host, *args, **kwargs)
@@ -101,6 +104,7 @@ class Device(object):
                 config = json.load(f)
             logging.config.dictConfig(config)
 
+        self.telemetry = telemetry
         self.logger = logging.getLogger(__name__)
         self.logger.info('Connected to "{}".'.format(host))
 
@@ -227,6 +231,23 @@ class Device(object):
         self._cmd = defaultdict(lambda: defaultdict(lambda: None))
         self._cmd_data = []
         self._binary = []
+
+        if (self.telemetry == True):
+            from pyluos.version import version
+            self.logger.info('Sending telemetry...')
+            luos_telemetry = {"telemetry_type": "pyluos",
+                  "mac": hex(uuid.getnode()),
+                  "system": sys.platform,
+                  "unix_time": int(time.time()),
+                  "pyluos_rev": version,
+                  "routing_table":state['routing_table']}
+            try:
+                requests.post("https://monorepo-services.vercel.app/api/telemetry",
+                           data=luos_telemetry)
+            except:
+                print("Telemetry request failed.")
+        else:
+            self.logger.info("Telemetry disabled, please consider enabling it by removing the 'telemetry=False' argument of your Device creation.")
 
         # We push our current state to make sure that
         # both our model and the hardware are synced.

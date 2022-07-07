@@ -25,7 +25,8 @@ setup(name='pyluos',
                         'numpy',
                         'anytree',
                         'crc8',
-                        'ipython'
+                        'ipython',
+                        'requests'
                         ],
       extras_require={
           'tests': ['pytest', 'flake8'],

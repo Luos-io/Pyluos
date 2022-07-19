@@ -597,6 +597,9 @@ def luos_reset(args):
     # detect network
     device = Device(args.port, background_task=False)
     print(device.nodes)
+    device.close()
+
+    return BOOTLOADER_SUCCESS
 
 # *******************************************************************************
 # @brief command used to detect network

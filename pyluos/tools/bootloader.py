@@ -580,7 +580,7 @@ def luos_reset(args):
 
     # send rescue command
     print('Send reset command.')
-    port = serial.Serial(args.port, 1000000, timeout=0.05)
+    port = serial.Serial(args.port, os.getenv('LUOS_BAUDRATE', 1000000), timeout=0.05)
     rst_cmd = {
         'bootloader': {
             'command': {

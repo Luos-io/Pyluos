@@ -15,7 +15,7 @@ def serial_discover():
     for serial_host in serial_hosts:
         print("Testing " + str(serial_host))
         try:
-            port = serial.Serial(serial_host, 1000000, timeout=0.05)
+            port = serial.Serial(serial_host, os.getenv('LUOS_BAUDRATE', 1000000), timeout=0.05)
         except:
             continue
 

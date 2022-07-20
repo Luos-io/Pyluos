@@ -1,5 +1,6 @@
 from __future__ import division
 
+import os
 import json
 import time
 import serial as _serial
@@ -36,7 +37,10 @@ class Serial(IOHandler):
     def is_host_compatible(cls, host):
         return host in cls.available_hosts()
 
-    def __init__(self, host, baudrate=1000000):
+    def __init__(self, host, baudrate=None):
+        if baudrate is None:
+            baudrate = os.getenv('LUOS_BAUDRATE', 1000000)
+
         self._serial = _serial.Serial(host, baudrate)
         self._serial.flush()
 

@@ -1,6 +1,7 @@
 import os
 import socket
 import websocket
+import struct
 
 import sys
 if sys.version_info >= (3, 0):
@@ -16,7 +17,6 @@ def resolve_hostname(hostname, port):
     # to enforce we only search for IPV4 address
     # and avoid a 5s timeout in the websocket on the ESP
     # See https://github.com/esp8266/Arduino/issues/2110
-
     addrinfo = socket.getaddrinfo(hostname, port,
                                   socket.AF_INET, 0,
                                   socket.SOL_TCP)
@@ -32,7 +32,7 @@ class Ws(IOHandler):
             socket.inet_pton(socket.AF_INET, host)
             return True
         except socket.error:
-            return host.endswith('.local')
+            return host.endswith('.local') or (host == "localhost")
 
     @classmethod
     def available_hosts(cls):
@@ -47,8 +47,8 @@ class Ws(IOHandler):
     def __init__(self, host, port=9342):
         host = resolve_hostname(host, port)
 
-        self._ws = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._ws.connect((host, port))
+        self._ws = websocket.WebSocket()
+        self._ws.connect("ws://" + str(host) + ":" + str(port)+"/ws")
 
         self._msg = queue.Queue(500)
         self._running = True
@@ -68,7 +68,7 @@ class Ws(IOHandler):
         return data
 
     def write(self, data):
-        self._ws.send(data + '\r'.encode() + '\n'.encode())
+        self._ws.send(b'\x7E' + struct.pack('<H', len(data)) + data + b'\x81')
 
     def close(self):
         self._running = False
@@ -76,23 +76,47 @@ class Ws(IOHandler):
         self._ws.close()
 
     def _poll(self):
+
         def extract_line(s):
-            j = s.find(b'\n')
-            if j == -1:
-                return b'', s
-            # Sometimes the begin of serial data can be wrong remove it
-            # Find the first '{'
-
-            x = s.find(b'{')
-            if x == -1:
-                return b'', s[j + 1:]
-
-            return s[x:j], s[j + 1:]
+            # Find a serial header
+            H = s.find(b'\x7E')
+            if H == -1:
+                # No header found
+                return b'', s[0:0]
+            else:
+                # Header found, get size
+                try:
+                    size = struct.unpack('<H', s[H+1:H+3])[0]
+                except:
+                    # size not completely received
+                    return b'', s[H:]
+                if (size == 0) or (size > 20000):
+                    # Bad header
+                    # Remove the header and do it again
+                    return extract_line(s[H+1:])
+                else:
+                    # Size seems ok
+                    # Check if we receive the entire data
+                    if len(s[H+3:]) < size+1:
+                        # We don't have the entire data
+                        return b'', s
+                    else:
+                        # We have the complete data
+                        # Check the footer
+                        data_start = H+3
+                        data_end = data_start + size
+                        if (s[data_end] != ord(b'\x81')):
+                            # The footer is not ok, this mean we don't have a good header
+                            # Remove the header and do it again
+                            return extract_line(s[H+1:])
+                        else:
+                            # Footer is ok
+                            return s[data_start:data_end], s[data_end + 1:]
 
         buff = b''
 
         while self._running:
-            s = self._ws.recv(4096)
+            s = self._ws.recv()
 
             buff = buff + s
             while self._running:

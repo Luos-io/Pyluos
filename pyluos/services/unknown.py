@@ -20,6 +20,7 @@ class Unknown(Service):
         self._trans_speed = 0.0
         self._current = 0.0
         self._temperature = 0.0
+        self._pressure = 0.0
         self._color = [0, 0, 0]
         self._time = 0.0
         self._parameters = 0
@@ -52,6 +53,8 @@ class Unknown(Service):
             self._current = new_state['current']
         if 'temperature' in new_state:
             self._temperature = new_state['temperature']
+        if 'pressure' in new_state:
+            self._pressure = new_state['pressure']
         if 'lux' in new_state:
             self._lux = new_state['lux']
         if 'force' in new_state:
@@ -146,6 +149,15 @@ class Unknown(Service):
         return self._temperature
 
     @property
+    def pressure(self):
+        return self._pressure
+
+    @pressure.setter
+    def pressure(self, new_pressure):
+        self._pressure = new_pressure
+        self._push_value('pressure', new_pressure)
+
+    @property
     def color(self):
         return self._color
 
@@ -166,6 +178,8 @@ class Unknown(Service):
     def time(self, new_time):
         self._time = new_time
         self._push_value('time', new_time)
+
+
 
     @property
     def parameters(self):

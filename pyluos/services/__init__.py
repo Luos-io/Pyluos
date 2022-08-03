@@ -11,6 +11,7 @@ from .void import Void
 from .load import Load
 from .voltage import Voltage
 from .pipe import Pipe
+from .pressure import Pressure
 from .unknown import Unknown
 
 
@@ -29,6 +30,7 @@ __all__ = [
     'Load',
     'Voltage',
     'Pipe',
+    'Pressure',
     'Unknown'
 ]
 
@@ -46,5 +48,6 @@ name2mod = {
     'Load' : Load,
     'Voltage' : Voltage,
     'Pipe' : Pipe,
+    'Pressure': Pressure,
     'Unknown' : Unknown
 }

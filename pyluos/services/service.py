@@ -62,6 +62,7 @@ class Service(object):
             self._uuid = new_state['uuid']
         if 'luos_statistics' in new_state:
             self._luos_statistics = new_state['luos_statistics']
+            self._luos_statistics['alias'] = self.alias
 
     def _kill(self):
         self._killed = True

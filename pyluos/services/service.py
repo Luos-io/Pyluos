@@ -117,9 +117,9 @@ class Service(object):
             s = s + "\n.Max luos loop delay \t\t= " + repr(self._luos_statistics["loop_ms"])
             s = s + "ms\n.msg max retry number \t\t= " + repr(self._luos_statistics["max_retry"])
             s = s + "\n"
-            print(s)
+            return self._luos_statistics
         except:
-            print(self.alias + " statistics collection failed.\n")
+            return None
 
     def rename(self, name):
         # check if the string start with a number before sending

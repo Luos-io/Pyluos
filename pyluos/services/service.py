@@ -103,8 +103,15 @@ class Service(object):
 
     @property
     def luos_statistics(self):
+        """Get service statistics with a timeout of 1 second."""
+
+        self._luos_statistics = None
         self._push_value('luos_statistics', "")
-        time.sleep(0.3)
+
+        tick_start = time.time()
+        while time.time() - tick_start < 1 and self._luos_statistics is None:
+            time.sleep(0.01)
+
         try:
             max_table = [self._luos_statistics["rx_msg_stack"], self._luos_statistics["luos_stack"], self._luos_statistics["tx_msg_stack"], self._luos_statistics["buffer_occupation"]]
             max_val = max(max_table)

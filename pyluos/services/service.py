@@ -85,20 +85,35 @@ class Service(object):
 
     @property
     def firmware_revision(self):
+        self._firmware_revision = None
         self._push_value('revision', "")
-        time.sleep(0.03)
+
+        tick_start = time.time()
+        while time.time() - tick_start < 1 and self._firmware_revision is None:
+            time.sleep(0.01)
+
         return self._firmware_revision
 
     @property
     def luos_revision(self):
+        self._luos_revision = None
         self._push_value('luos_revision', "")
-        time.sleep(0.03)
+
+        tick_start = time.time()
+        while time.time() - tick_start < 1 and self._luos_revision is None:
+            time.sleep(0.01)
+
         return self._luos_revision
 
     @property
     def uuid(self):
+        self._uuid = None
         self._push_value('uuid', "")
-        time.sleep(0.03)
+
+        tick_start = time.time()
+        while time.time() - tick_start < 1 and self._uuid is None:
+            time.sleep(0.01)
+
         return self._uuid
 
     @property

@@ -19,6 +19,7 @@ except ImportError:
 
 Event = namedtuple('Event', ('name', 'old_value', 'new_value'))
 
+READ_TIMEOUT = 0.3
 
 class Service(object):
     possible_events = set()
@@ -89,7 +90,7 @@ class Service(object):
         self._push_value('revision', "")
 
         tick_start = time.time()
-        while time.time() - tick_start < 1 and self._firmware_revision is None:
+        while time.time() - tick_start < READ_TIMEOUT and self._firmware_revision is None:
             time.sleep(0.01)
 
         return self._firmware_revision
@@ -100,7 +101,7 @@ class Service(object):
         self._push_value('luos_revision', "")
 
         tick_start = time.time()
-        while time.time() - tick_start < 1 and self._luos_revision is None:
+        while time.time() - tick_start < READ_TIMEOUT and self._luos_revision is None:
             time.sleep(0.01)
 
         return self._luos_revision
@@ -111,7 +112,7 @@ class Service(object):
         self._push_value('uuid', "")
 
         tick_start = time.time()
-        while time.time() - tick_start < 1 and self._uuid is None:
+        while time.time() - tick_start < READ_TIMEOUT and self._uuid is None:
             time.sleep(0.01)
 
         return self._uuid

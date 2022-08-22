@@ -147,27 +147,6 @@ class Device(object):
         self._baudrate = baudrate
         time.sleep(0.01)
 
-    def benchmark(self, target_id, data, repetition):
-        data = np.array(data, dtype=np.uint8)
-        self._bench_settings = {'benchmark': {'target': target_id, 'repetitions': repetition, 'data': [len(data)]}}
-        self._bench_Data = data.tobytes()
-        self._write( json.dumps(self._bench_settings).encode() + '\n'.encode() + self._bench_Data)
-
-        state = self._poll_once()
-        startTime = time.time()
-        retry = 0
-        while ('benchmark' not in state):
-            state = self._poll_once()
-            if (time.time()-startTime > 30):
-                self._write( json.dumps(self._bench_settings).encode() + '\n'.encode() + self._bench_Data)
-                retry = retry+1
-                if (retry == 3):
-                    return (0, 100)
-                startTime = time.time()
-
-        #self._pause = False
-        return (state['benchmark']['data_rate'], state['benchmark']['fail_rate'])
-
     def pause(self):
         self._pause = True
         time.sleep(1)

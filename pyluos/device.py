@@ -124,7 +124,6 @@ class Device(object):
             self._poll_bg = threading.Thread(target=self._poll_and_up)
             self._poll_bg.daemon = True
             self._poll_bg.start()
-        self._baudrate = 1000000
 
     def close(self):
         self._running = False
@@ -136,16 +135,6 @@ class Device(object):
                 # _poll_bg didn't terminate within the timeout
                 print("Warning: device closed on timeout, background thread is still running.")
         self._io.close()
-
-    @property
-    def baudrate(self):
-        return self._baudrate
-
-    @baudrate.setter
-    def baudrate(self, baudrate):
-        self._send({'baudrate': baudrate})
-        self._baudrate = baudrate
-        time.sleep(0.01)
 
     def pause(self):
         self._pause = True

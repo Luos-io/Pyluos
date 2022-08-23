@@ -132,5 +132,6 @@ class Serial(IOHandler):
                 if not len(line):
                     break
                 if self._msg.full():
+                    print("Warning: Serial message queue is full. Some datas could be lost")
                     self._msg.get()
                 self._msg.put(line)

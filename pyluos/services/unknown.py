@@ -137,7 +137,7 @@ class Unknown(Service):
     @angular_speed.setter
     def translation_speed(self, s):
         self._angular_speed = s
-        self._push_value("target_rot_speed", s)
+        self._push_value("target_trans_speed", s)
 
     @property
     def current(self):

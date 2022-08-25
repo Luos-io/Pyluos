@@ -435,6 +435,7 @@ def reboot_network(device, nodes_to_reboot):
 # *******************************************************************************
 def luos_flash(args):
     print('Luos flash subcommand with parameters :')
+    print('\tbaudrate : ', args.baudrate)
     print('\t--gate : ', args.gate)
     print('\t--target : ', args.target)
     print('\t--binary : ', args.binary)
@@ -442,7 +443,7 @@ def luos_flash(args):
 
     if not (args.port):
         try:
-            args.port= serial_discover()[0]
+            args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
             sys.exit("Can't find any Gate interface")
             return
@@ -462,7 +463,7 @@ def luos_flash(args):
         f.close()
 
     # init device
-    device = Device(args.port, background_task=False, baudrate=os.getenv('LUOS_BAUDRATE', 1000000))
+    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate), background_task=False)
 
     # find routing table
     state = find_network(device)
@@ -546,16 +547,17 @@ def luos_flash(args):
 # *******************************************************************************
 def luos_detect(args):
     print('Luos detect subcommand on port : ', args.port)
+    print('\tbaudrate : ', args.baudrate)
 
     if not (args.port):
         try:
-            args.port= serial_discover()[0]
+            args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
             sys.exit("Can't find any Gate interface")
             return
 
     # detect network
-    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', 1000000))
+    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate))
     # print network to user
     print(device.nodes)
     device.close()
@@ -569,10 +571,11 @@ def luos_detect(args):
 # *******************************************************************************
 def luos_reset(args):
     print('Luos discover subcommand on port : ', args.port)
+    print('\tbaudrate : ', args.baudrate)
 
     if not (args.port):
         try:
-            args.port= serial_discover()[0]
+            args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
             sys.exit("Can't find any Gate interface")
             return
@@ -580,7 +583,7 @@ def luos_reset(args):
 
     # send rescue command
     print('Send reset command.')
-    port = serial.Serial(args.port, os.getenv('LUOS_BAUDRATE', 1000000), timeout=0.05)
+    port = serial.Serial(args.port, os.getenv('LUOS_BAUDRATE', args.baudrate), timeout=0.05)
     rst_cmd = {
         'bootloader': {
             'command': {
@@ -595,7 +598,8 @@ def luos_reset(args):
     port.close()
 
     # detect network
-    device = Device(args.port, background_task=False)
+    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate), background_task=False)
+
     print(device.nodes)
     device.close()
 
@@ -627,6 +631,9 @@ def luos_options():
                               help='target node to flash',
                               default=['2'],
                               nargs='*')
+    flash_parser.add_argument('--baudrate',
+                              help='Choose pyluos serial baudrate default value = 1000000',
+                              default=1000000)
     flash_parser.set_defaults(func=luos_flash)
 
     # declare "detect" subcommand
@@ -634,6 +641,9 @@ def luos_options():
                                           help='tool to detect luos network')
     detect_parser.add_argument('port', help='port used to detect network',
                               nargs='?')
+    detect_parser.add_argument('--baudrate',
+                               help='Choose pyluos serial baudrate default value = 1000000',
+                               default=1000000)
     detect_parser.set_defaults(func=luos_detect)
 
     # declare "rescue" subcommand
@@ -641,6 +651,9 @@ def luos_options():
                                           help='tool to reset one or multiple blocked nodes in rescue mode')
     rescue_parser.add_argument('port', help='port used to access to the network',
                               nargs='?')
+    rescue_parser.add_argument('--baudrate',
+                               help='Choose pyluos serial baudrate default value = 1000000',
+                               default=1000000)
     rescue_parser.set_defaults(func=luos_reset)
 
     return parser

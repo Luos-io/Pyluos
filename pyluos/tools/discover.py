@@ -4,18 +4,19 @@ import time
 from ..io.serial_io import Serial
 import serial
 import struct
+import argparse
 
 def serial_ports():
     return Serial.available_hosts()
 
-def serial_discover():
+def serial_discover(baudrate=1000000):
     serial_hosts = serial_ports()
     available_serial = []
     print("Searching for a gate available")
     for serial_host in serial_hosts:
         print("Testing " + str(serial_host))
         try:
-            port = serial.Serial(serial_host, os.getenv('LUOS_BAUDRATE', 1000000), timeout=0.05)
+            port = serial.Serial(serial_host, baudrate, timeout=0.05)
         except:
             continue
 
@@ -35,7 +36,13 @@ def serial_discover():
     return available_serial
 
 def main():
-    gate_list = serial_discover()
+    parser.add_argument("--baudrate", action="store",
+                        help="Choose pyluos serial baudrate default value = 1000000",
+                        default=1000000)
+
+    args = parser.parse_args()
+
+    gate_list = serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))
 
     if gate_list:
         print("Available Luos gate on port : " + str(gate_list))

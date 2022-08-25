@@ -37,6 +37,10 @@ def main():
     parser.add_argument("--version", action="store_true",
                         help="print version information and exit")
 
+    parser.add_argument("--baudrate", action="store",
+                        help="Choose pyluos serial baudrate default value = 1000000",
+                        default=1000000)
+
     args = parser.parse_args()
 
     def print_version():
@@ -51,12 +55,12 @@ def main():
 
         if args.port is not None:
             # Ready to rocks
-            device = Device(args.port)
+            device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate))
             embed(banner1 = "\n Hit Ctrl-D to exit this interpreter.\n\nYour luos device has been successfully mounted into a \"device\" object:\n" + str(device.nodes) + "\n")
         else:
-            Gates = serial_discover()
+            Gates = serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))
             if Gates:
-                device = Device(Gates[0])
+                device = Device(Gates[0], baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate))
                 embed(banner1 = "\n Hit Ctrl-D to exit this interpreter.\n\nYour luos device has been successfully mounted into a \"device\" object:\n" + str(device.nodes) + "\n")
 
     except OperationAbortedException:

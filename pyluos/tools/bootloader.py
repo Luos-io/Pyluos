@@ -435,7 +435,7 @@ def reboot_network(device, nodes_to_reboot):
 # *******************************************************************************
 def luos_flash(args):
     print('Luos flash subcommand with parameters :')
-    print('\tbaudrate : ', args.baudrate)
+    print('\t--baudrate : ', args.baudrate)
     print('\t--gate : ', args.gate)
     print('\t--target : ', args.target)
     print('\t--binary : ', args.binary)
@@ -547,7 +547,7 @@ def luos_flash(args):
 # *******************************************************************************
 def luos_detect(args):
     print('Luos detect subcommand on port : ', args.port)
-    print('\tbaudrate : ', args.baudrate)
+    print('\tLuos detect subcommand at baudrate : ', args.baudrate)
 
     if not (args.port):
         try:
@@ -571,7 +571,7 @@ def luos_detect(args):
 # *******************************************************************************
 def luos_reset(args):
     print('Luos discover subcommand on port : ', args.port)
-    print('\tbaudrate : ', args.baudrate)
+    print('\tLuos discover subcommand at baudrate : ', args.baudrate)
 
     if not (args.port):
         try:

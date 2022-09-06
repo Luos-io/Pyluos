@@ -210,8 +210,10 @@ class Device(object):
                   "pyluos_rev": version,
                   "routing_table":state['routing_table']}
             try:
-                requests.post("https://monorepo-services.vercel.app/api/telemetry",
+                r = requests.post("https://monorepo-services.vercel.app/api/telemetry",
                            data=luos_telemetry)
+                if not r:
+                    print("Telemetry request failed : error " + str(r.status_code))
             except:
                 print("Telemetry request failed.")
         else:

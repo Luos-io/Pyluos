@@ -53,6 +53,7 @@ def serial_discover(baudrate=1000000):
         return []
 
 def main():
+    parser = argparse.ArgumentParser()
     parser.add_argument("--baudrate", action="store",
                         help="Choose pyluos serial baudrate default value = 1000000",
                         default=1000000)

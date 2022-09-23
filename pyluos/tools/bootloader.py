@@ -160,24 +160,25 @@ def get_binary_size():
 # *******************************************************************************
 def send_ready_cmd(device, node, topic):
     return_value = True
-
     # send ready command to the node
     send_node_command(device, node, topic, BOOTLOADER_READY, get_binary_size())
-
     # wait ready response
     state = device._poll_once()
     init_time = time.time()
-    while ('bootloader' not in state) and return_value:
-        if(time.time() - init_time > RESP_TIMEOUT):
-            return_value = False
+    while (time.time() - init_time <= RESP_TIMEOUT):
+        if 'bootloader' in state:
+            for response in state['bootloader']:
+                if response['response'] == BOOTLOADER_ERROR_SIZE:
+                    print(u"  ╰> Node n°", response['node'], "has not enough space in flash memory.")
+                    # don't load binary if there is not enough place in flash memory
+                    return_value = False
+                else:
+                    print(u"  ╰> Node n°", response['node'], "is ready.")
+                    return_value = True
             break
+
         state = device._poll_once()
-    if return_value and (state['bootloader']['response'] == BOOTLOADER_ERROR_SIZE):
-        print(u"  ╰> Node n°", state['bootloader']['node'], "has not enough space in flash memory.")
-        # don't load binary if there is not enough place in flash memory
         return_value = False
-    if return_value and (state['bootloader']['response'] == BOOTLOADER_READY_RESP):
-        print(u"  ╰> Node n°", state['bootloader']['node'], "is ready.")
 
     return return_value
 # *******************************************************************************
@@ -222,6 +223,7 @@ def erase_flash(device, topic, nodes_to_program):
     return_value = True
     failed_nodes = []
     failed_nodes.extend(nodes_to_program)
+    timeout = ERASE_TIMEOUT * len(nodes_to_program)
 
     # send erase command
     send_topic_command(device, topic, BOOTLOADER_ERASE)
@@ -230,18 +232,26 @@ def erase_flash(device, topic, nodes_to_program):
     waiting_bg = Process(target=waiting_erase)
     waiting_bg.start()
 
-    # wait ready response
-    for node in nodes_to_program:
+    # pull serial data
+    state = device._poll_once()
+    # initialize the timer that counts until node number * response time
+    init_time = time.time()
+    # check if all messages are received
+    while len(failed_nodes):
+        # timeout for exiting loop in case of fails
+        if(time.time() - init_time > timeout):
+            return_value = False
+            break
+        # check if it is a response message
+        if 'bootloader' in state:  
+            for response in state['bootloader']:
+                if (response['response'] == BOOTLOADER_ERASE_RESP):
+                    # this node responded, delete it from the failed nodes list
+                    if response['node'] in failed_nodes:
+                        timeout -= ERASE_TIMEOUT
+                        failed_nodes.remove(response['node'])
+                        print(u"\r\n  ╰> Flash memory of node ", response['node'], " erased.")
         state = device._poll_once()
-        init_time = time.time()
-        while ('bootloader' not in state):
-            state = device._poll_once()
-            if(time.time() - init_time > ERASE_TIMEOUT):
-                return_value = False
-                break
-        if (state['bootloader']['response'] == BOOTLOADER_ERASE_RESP):
-            failed_nodes.remove(state['bootloader']['node'])
-            print(u"\r\n  ╰> Flash memory of node ", state['bootloader']['node'], " erased.")
 
     waiting_bg.terminate()
     return return_value, failed_nodes
@@ -298,7 +308,6 @@ def send_binary_data(device, topic, nodes_to_program):
         file_offset += frame_size
         # update loading progress
         loading_progress.value = math.trunc(frame_index / nb_frames * 100)
-
         if not len(nodes_to_program):
             break;
 
@@ -319,6 +328,7 @@ def send_frame_from_binary(device, topic, frame_size, file_offset, nodes_to_prog
     return_value = True
     failed_nodes = []
     failed_nodes.extend(nodes_to_program)
+    timeout = PROGRAM_TIMEOUT * len(nodes_to_program)
 
     with open(FILEPATH, mode="rb") as f:
         # put the cursor at the beginning of the file
@@ -329,20 +339,25 @@ def send_frame_from_binary(device, topic, frame_size, file_offset, nodes_to_prog
             data_bytes = data_bytes + f.read(1)
 
     send_data(device, topic, BOOTLOADER_BIN_CHUNK, frame_size, data_bytes)
+    # pull serial data
     state = device._poll_once()
-    # wait node response
-    for node in nodes_to_program:
-        lock = 1
-        init_time = time.time()
-        while (lock):
-            if(time.time() - init_time > PROGRAM_TIMEOUT):
-                return_value = False
-                break
-            if 'bootloader' in state:
-                if (state['bootloader']['response'] == BOOTLOADER_BIN_CHUNK_RESP):
-                    lock = 0
-                    failed_nodes.remove(state['bootloader']['node'])
-            state = device._poll_once()
+    # wait nodes response
+    init_time = time.time()
+    while len(failed_nodes):
+        # check for timeout of nodes
+        if(time.time() - init_time > timeout):
+            return_value = False
+            break
+        # check if it is a response message
+        if 'bootloader' in state:
+            for response in state['bootloader']:
+                if (response['response'] == BOOTLOADER_BIN_CHUNK_RESP):
+                    # the node responsed, remove it for fails list
+                    if response['node'] in failed_nodes:
+                        timeout -= PROGRAM_TIMEOUT
+                        failed_nodes.remove(response['node'])
+        # wait for next message
+        state = device._poll_once()
     return return_value, failed_nodes
 
 # *******************************************************************************
@@ -373,20 +388,27 @@ def send_binary_end(device, topic, nodes_to_program):
     return_value = True
     failed_nodes = []
     failed_nodes.extend(nodes_to_program)
+    timeout = RESP_TIMEOUT * len(nodes_to_program)
     # send command
     send_topic_command(device, topic, BOOTLOADER_BIN_END)
+    # poll serial data
     state = device._poll_once()
-    for node in nodes_to_program:
-        # wait bin_end response
-        init_time = time.time()
-        while ('bootloader' not in state):
-            state = device._poll_once()
-            if(time.time() - init_time > RESP_TIMEOUT):
-                return_value = False
-                break
-        if (state['bootloader']['response'] == BOOTLOADER_BIN_END_RESP):
-            print(u"  ╰> Node", state['bootloader']['node'], "acknowledge received, loading is complete.")
-            failed_nodes.remove(state['bootloader']['node'])
+    # wait bin_end response
+    init_time = time.time()
+    while len(failed_nodes) > 0:
+        # check if we exit with timeout
+        if(time.time() - init_time > timeout):
+            return_value = False
+            break
+        if 'bootloader' in state:
+            for response in state['bootloader']:
+                # check each node response
+                if (response['response'] == BOOTLOADER_BIN_END_RESP):
+                    print(u"  ╰> Node", response['node'], "acknowledge received, loading is complete.")
+                    # remove node from fails list
+                    if response['node'] in failed_nodes:
+                        timeout -= RESP_TIMEOUT
+                        failed_nodes.remove(response['node'])
         state = device._poll_once()
 
     return return_value, failed_nodes
@@ -420,29 +442,38 @@ def check_crc(device, topic, nodes_to_program):
     return_value = True
     failed_nodes = []
     failed_nodes.extend(nodes_to_program)
+    timeout = RESP_TIMEOUT * len(nodes_to_program)
 
     # send crc command
     send_topic_command(device, topic, BOOTLOADER_CRC_TEST)
+    
+    state = device._poll_once()
     # wait bin_end response
-    for node in nodes_to_program:
+    init_time = time.time()
+    while len(failed_nodes):
+        # check for timeout exit
+        if(time.time() - init_time > timeout):
+            return_value = False
+            break
+        # check the response
+        if 'bootloader' in state:
+            for response in state['bootloader']:
+                if (response['response'] == BOOTLOADER_CRC_RESP):
+                    source_crc = int.from_bytes(compute_crc(), byteorder='big')
+                    node_crc = response['crc_value']
+                    node_id = response['node']
+                        # crc properly received 
+                    if (source_crc == node_crc):
+                        print(u"  ╰> CRC test for node", node_id, " : OK.")
+                        if node_id in failed_nodes:
+                            timeout -= RESP_TIMEOUT
+                            failed_nodes.remove(node_id)
+                    else:
+                        # not a good crc
+                        print(u"  ╰> CRC test for node", node_id, ": NOK.")
+                        print(u"  ╰> waited :", hex(source_crc), ", received :", hex(node_crc))
+                        return_value = False
         state = device._poll_once()
-        init_time = time.time()
-        while ('bootloader' not in state):
-            state = device._poll_once()
-            if(time.time() - init_time > RESP_TIMEOUT):
-                return_value = False
-                break
-        if (state['bootloader']['response'] == BOOTLOADER_CRC_RESP):
-            source_crc = int.from_bytes(compute_crc(), byteorder='big')
-            node_crc = state['bootloader']['crc_value']
-            node_id = state['bootloader']['node']
-            if ( source_crc == node_crc ):
-                print(u"  ╰> CRC test for node", node_id, " : OK.")
-                failed_nodes.remove(node_id)
-            else:
-                print(u"  ╰> CRC test for node", node_id, ": NOK.")
-                print(u"  ╰> waited :", hex(source_crc), ", received :", hex(node_crc))
-                return_value = False
 
     return return_value, failed_nodes
 
@@ -521,20 +552,22 @@ def luos_flash(args):
     state = find_network(device)
 
     # wait before next step
-    time.sleep(0.1)
+    time.sleep(0.4)
 
     print("\n** Programming nodes **")
-
+    
     # go to header state if node is ready
     for node in nodes_to_program:
+        print("--> Check if node", node, " is ready.")
         machine_state = send_ready_cmd(device, node, topic)
-        print("--> Check if nodes are ready.")
         if not machine_state:
-            nodes_to_program.remove(node)
             total_fails.append(node)
             machine_state = True
             print("Node ", node, "failed to load!")
         time.sleep(0.01)
+
+    for node in total_fails:
+        nodes_to_program.remove(node)
 
     # erase node flash memory
     print("--> Erase flash memory.")
@@ -553,7 +586,6 @@ def luos_flash(args):
         total_fails.extend(failed_nodes)
         machine_state = True
         print("Flash of node: ", failed_nodes, "failed!")
-    
     
     # inform the node of the end of the loading
     print("--> Programmation finished, waiting for acknowledge.")

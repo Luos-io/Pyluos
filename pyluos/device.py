@@ -80,11 +80,13 @@ class nodeList(list):
             prefill = fill
         return s
 
+
 class Device(object):
     _heartbeat_timeout = 5  # in sec.
     _max_alias_length = 15
     _base_log_conf = os.path.join(os.path.dirname(__file__),
                                   'logging_conf.json')
+    _freedomLink = None
 
     def __init__(self, host,
                  IO=None,
@@ -135,6 +137,10 @@ class Device(object):
                 # _poll_bg didn't terminate within the timeout
                 print("Warning: device closed on timeout, background thread is still running.")
         self._io.close()
+
+    def link_to_freedomrobotics(self):
+        from .integration.freedomRobotics import FreedomLink
+        self._freedomLink = FreedomLink(self)
 
     def pause(self):
         self._pause = True
@@ -256,6 +262,8 @@ class Device(object):
             alias = new_state['dead_service']
             if hasattr(self, alias):
                 getattr(self, alias)._kill()
+            if (self._freedomLink != None):
+                self._freedomLink._kill(alias)
         if 'assert' in new_state.keys() :
             # A node assert, print assert informations
             if (('node_id' in new_state['assert']) and ('file' in new_state['assert']) and ('line' in new_state['assert'])):
@@ -263,12 +271,16 @@ class Device(object):
                 s += "*  Node " + str(new_state['assert']['node_id']) + " assert in file " + new_state['assert']['file'] + " line " + str(new_state['assert']['line'])
                 s += "\n**********************************************************"
                 print (s)
+            if (self._freedomLink != None):
+                self._freedomLink._assert(alias)
         if 'services' not in new_state.keys():
             return
 
         for alias, mod in new_state['services'].items():
             if hasattr(self, alias):
                 getattr(self, alias)._update(mod)
+            if (self._freedomLink != None):
+                self._freedomLink._update(alias, mod)
 
         self._last_update = time.time()
 

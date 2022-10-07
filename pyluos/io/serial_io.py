@@ -112,7 +112,13 @@ class Serial(IOHandler):
                             return extract_line(s[H+1:])
                         else:
                             # Footer is ok
-                            return s[data_start:data_end], s[data_end + 1:]
+                            data =  s[data_start:data_end]
+                            if data == b'{}\n':
+                                # Datas are void
+                                return b'', s[data_end + 1:]
+                            else:
+                                # Datas are not void
+                                return data, s[data_end + 1:]
 
         period = 1 / self.poll_frequency
         buff = b''

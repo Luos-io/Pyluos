@@ -50,7 +50,7 @@ class Ws(IOHandler):
         self._ws = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._ws.connect((host, port))
 
-        self._msg = queue.Queue(100)
+        self._msg = queue.Queue(500)
         self._running = True
 
         self._poll_loop = Thread(target=self._poll)

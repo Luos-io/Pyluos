@@ -44,7 +44,7 @@ class Serial(IOHandler):
         self._serial = _serial.Serial(host, baudrate)
         self._serial.flush()
 
-        self._msg = queue.Queue(100)
+        self._msg = queue.Queue(500)
         self._running = True
 
         self._poll_loop = Thread(target=self._poll)

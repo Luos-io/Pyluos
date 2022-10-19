@@ -21,7 +21,7 @@ class Angle(Service):
 
     def _update(self, new_state):
         Service._update(self, new_state)
-        if 'rot_position' in new_state:
+        if 'rot_position' in new_state.keys():
             new_val = new_state['rot_position']
             if new_val != self._value:
                 self._pub_event('changed', self._value, new_val)

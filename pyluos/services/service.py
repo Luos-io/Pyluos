@@ -55,13 +55,13 @@ class Service(object):
         if ((time.time() - self._last_update) != 0):
             self.refresh_freq = ((200.0 * self.refresh_freq) + (1.0 / (time.time() - self._last_update))) / 201.0
             self._last_update = time.time()
-        if 'revision' in new_state:
+        if 'revision' in new_state.keys():
             self._firmware_revision = new_state['revision']
-        if 'luos_revision' in new_state:
+        if 'luos_revision' in new_state.keys():
             self._luos_revision = new_state['luos_revision']
-        if 'uuid' in new_state:
+        if 'uuid' in new_state.keys():
             self._uuid = new_state['uuid']
-        if 'luos_statistics' in new_state:
+        if 'luos_statistics' in new_state.keys():
             self._luos_statistics = new_state['luos_statistics']
             self._luos_statistics['alias'] = self.alias
 

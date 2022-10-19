@@ -19,7 +19,7 @@ class State(Service):
 
     def _update(self, new_state):
         Service._update(self, new_state)
-        if 'io_state' in new_state:
+        if 'io_state' in new_state.keys():
             new_state = new_state['io_state']
             if new_state != self._value:
                 self._pub_event('changed', self._value, new_state)

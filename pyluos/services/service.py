@@ -41,7 +41,6 @@ class Service(object):
         self._firmware_revision = "Unknown"
         self._luos_revision = "Unknown"
         self._robus_revision = "Unknown"
-        self._uuid = [0, 0, 0]
         self._killed = False
         self._last_update = time.time()
         self._luos_statistics = {}
@@ -59,8 +58,6 @@ class Service(object):
             self._firmware_revision = new_state['revision']
         if 'luos_revision' in new_state.keys():
             self._luos_revision = new_state['luos_revision']
-        if 'uuid' in new_state.keys():
-            self._uuid = new_state['uuid']
         if 'luos_statistics' in new_state.keys():
             self._luos_statistics = new_state['luos_statistics']
             self._luos_statistics['alias'] = self.alias
@@ -107,16 +104,6 @@ class Service(object):
         return self._luos_revision
 
     @property
-    def uuid(self):
-        self._uuid = None
-        self._push_value('uuid', "")
-
-        tick_start = time.time()
-        while time.time() - tick_start < READ_TIMEOUT and self._uuid is None:
-            time.sleep(0.01)
-
-        return self._uuid
-
     @property
     def luos_statistics(self):
         """Get service statistics with a timeout of 1 second."""

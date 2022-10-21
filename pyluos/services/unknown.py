@@ -32,7 +32,7 @@ class Unknown(Service):
 
     def _update(self, new_state):
         Service._update(self, new_state)
-        if 'io_state' in new_state:
+        if 'io_state' in new_state.keys():
             val = new_state['io_state']
             if val != self._state:
                 self._pub_event('changed', self._state, val)
@@ -41,25 +41,25 @@ class Unknown(Service):
                 self._pub_event(evt, self._state, val)
 
                 self._state = val
-        if 'rot_position' in new_state:
+        if 'rot_position' in new_state.keys():
             self._angular_position = new_state['rot_position']
-        if 'rot_speed' in new_state:
+        if 'rot_speed' in new_state.keys():
             self._angular_speed = new_state['rot_speed']
-        if 'trans_position' in new_state:
+        if 'trans_position' in new_state.keys():
             self._trans_position = new_state['trans_position']
-        if 'trans_speed' in new_state:
+        if 'trans_speed' in new_state.keys():
             self._trans_speed = new_state['trans_speed']
-        if 'current' in new_state:
+        if 'current' in new_state.keys():
             self._current = new_state['current']
-        if 'temperature' in new_state:
+        if 'temperature' in new_state.keys():
             self._temperature = new_state['temperature']
-        if 'pressure' in new_state:
+        if 'pressure' in new_state.keys():
             self._pressure = new_state['pressure']
-        if 'lux' in new_state:
+        if 'lux' in new_state.keys():
             self._lux = new_state['lux']
-        if 'force' in new_state:
+        if 'force' in new_state.keys():
             self._load = new_state['force']
-        if 'volt' in new_state:
+        if 'volt' in new_state.keys():
             self._volt = new_state['volt']
 
 

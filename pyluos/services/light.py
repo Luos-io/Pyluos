@@ -16,7 +16,7 @@ class Light(Service):
 
     def _update(self, new_state):
         Service._update(self, new_state)
-        if 'lux' in new_state:
+        if 'lux' in new_state.keys():
             new_light = new_state['lux']
             if new_light != self._value:
                 self._pub_event('changed', self._value, new_light)

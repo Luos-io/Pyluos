@@ -41,7 +41,7 @@ class Load(Service):
 
     def _update(self, new_state):
         Service._update(self, new_state)
-        if 'force' in new_state:
+        if 'force' in new_state.keys():
             new_force = new_state['force']
             if new_force != self._value:
                 self._pub_event('changed', self._value, new_force)

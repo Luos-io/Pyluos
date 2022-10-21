@@ -26,6 +26,8 @@ except AttributeError:
 
 class Serial(IOHandler):
     poll_frequency = 200
+    period = 1 / poll_frequency
+    message_rate = 12000 # Max messages per seconds
 
     @classmethod
     def available_hosts(cls):
@@ -44,7 +46,7 @@ class Serial(IOHandler):
         self._serial = _serial.Serial(host, baudrate)
         self._serial.flush()
 
-        self._msg = queue.Queue(500)
+        self._msg = queue.Queue(int((self.message_rate / self.period) / 1000))
         self._running = True
 
         self._poll_loop = Thread(target=self._poll)
@@ -112,22 +114,22 @@ class Serial(IOHandler):
                             return extract_line(s[H+1:])
                         else:
                             # Footer is ok
-                            data =  s[data_start:data_end]
-                            if data == b'{}\n':
-                                # Datas are void
-                                return b'', s[data_end + 1:]
-                            else:
-                                # Datas are not void
-                                return data, s[data_end + 1:]
+                            for _, search_void in enumerate(s[data_start:6]):
+                                if search_void == b'{}\n':
+                                    # Drop void datas
+                                    for index, search_header in enumerate(data):
+                                        if search_header == b'\x7E':
+                                            return extract_line(s[(data_start + index + 1):])
+                            # Return the data
+                            return s[data_start:data_end], s[data_end + 1:]
 
-        period = 1 / self.poll_frequency
         buff = b''
 
         while self._running:
             to_read = self._serial.in_waiting
 
-            if to_read == 0:
-                time.sleep(period)
+            if (to_read == 0) and (len(buff) == 0):
+                time.sleep(self.period)
                 continue
 
             s = self._serial.read(to_read)

@@ -51,6 +51,9 @@ class Service(object):
                 'id={self.id}>'.format(self=self))
 
     def _update(self, new_state):
+        if not isinstance(new_state, dict):
+            new_state = {new_state: ""}
+
         if ((time.time() - self._last_update) != 0):
             self.refresh_freq = ((200.0 * self.refresh_freq) + (1.0 / (time.time() - self._last_update))) / 201.0
             self._last_update = time.time()

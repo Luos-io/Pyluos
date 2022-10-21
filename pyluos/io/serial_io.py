@@ -114,13 +114,6 @@ class Serial(IOHandler):
                             return extract_line(s[H+1:])
                         else:
                             # Footer is ok
-                            for _, search_void in enumerate(s[data_start:6]):
-                                if search_void == b'{}\n':
-                                    # Drop void datas
-                                    for index, search_header in enumerate(data):
-                                        if search_header == b'\x7E':
-                                            return extract_line(s[(data_start + index + 1):])
-                            # Return the data
                             return s[data_start:data_end], s[data_end + 1:]
 
         buff = b''
@@ -128,7 +121,7 @@ class Serial(IOHandler):
         while self._running:
             to_read = self._serial.in_waiting
 
-            if (to_read == 0) and (len(buff) == 0):
+            if to_read == 0:
                 time.sleep(self.period)
                 continue
 

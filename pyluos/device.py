@@ -258,7 +258,7 @@ class Device(object):
                 getattr(self, alias)._kill()
         if 'assert' in new_state.keys() :
             # A node assert, print assert informations
-            if (('node_id' in new_state.keys()['assert']) and ('file' in new_state.keys()['assert']) and ('line' in new_state.keys()['assert'])):
+            if (('node_id' in new_state['assert']) and ('file' in new_state['assert']) and ('line' in new_state['assert'])):
                 s = "************************* ASSERT *************************\n"
                 s += "*  Node " + str(new_state['assert']['node_id']) + " assert in file " + new_state['assert']['file'] + " line " + str(new_state['assert']['line'])
                 s += "\n**********************************************************"
@@ -266,7 +266,7 @@ class Device(object):
         if 'services' not in new_state.keys():
             return
 
-        for alias, mod in new_state.keys()['services'].items():
+        for alias, mod in new_state['services'].items():
             if hasattr(self, alias):
                 getattr(self, alias)._update(mod)
 

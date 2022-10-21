@@ -499,17 +499,17 @@ class ServoMotor(Service):
 
     def _update(self, new_state):
         Service._update(self, new_state)
-        if 'rot_position' in new_state:
+        if 'rot_position' in new_state.keys():
             self._rot_position = new_state['rot_position']
-        if 'rot_speed' in new_state:
+        if 'rot_speed' in new_state.keys():
             self._rot_speed = new_state['rot_speed']
-        if 'trans_position' in new_state:
+        if 'trans_position' in new_state.keys():
             self._trans_position = new_state['trans_position']
-        if 'trans_speed' in new_state:
+        if 'trans_speed' in new_state.keys():
             self._trans_speed = new_state['trans_speed']
-        if 'current' in new_state:
+        if 'current' in new_state.keys():
             self._current = new_state['current']
-        if 'temperature' in new_state:
+        if 'temperature' in new_state.keys():
             self._temperature = new_state['temperature']
 
     def control(self):

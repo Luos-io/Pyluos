@@ -184,27 +184,27 @@ class Imu(Service):
 
     def _update(self, new_state):
         Service._update(self, new_state)
-        if 'quaternion' in new_state:
+        if 'quaternion' in new_state.keys():
             self._quaternion = new_state['quaternion']
-        if 'accel' in new_state:
+        if 'accel' in new_state.keys():
             self._acceleration = new_state['accel']
-        if 'gyro' in new_state:
+        if 'gyro' in new_state.keys():
             self._gyro = new_state['gyro']
-        if 'compass' in new_state:
+        if 'compass' in new_state.keys():
             self._compass = new_state['compass']
-        if 'euler' in new_state:
+        if 'euler' in new_state.keys():
             self._euler = new_state['euler']
-        if 'rotational_matrix' in new_state:
+        if 'rotational_matrix' in new_state.keys():
             self._rotational_matrix = new_state['rotational_matrix']
-        if 'pedometer' in new_state:
+        if 'pedometer' in new_state.keys():
             self._pedometer = new_state['pedometer']
-        if 'walk_time' in new_state:
+        if 'walk_time' in new_state.keys():
             self._walk_time = new_state['walk_time']
-        if 'linear_accel' in new_state:
+        if 'linear_accel' in new_state.keys():
             self._linear_acceleration = new_state['linear_accel']
-        if 'gravity_vector' in new_state:
+        if 'gravity_vector' in new_state.keys():
             self._gravity_vector = new_state['gravity_vector']
-        if 'heading' in new_state:
+        if 'heading' in new_state.keys():
             self._heading = new_state['heading']
 
     def control(self):

@@ -445,7 +445,7 @@ def luos_flash(args):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
-            sys.exit("Can't find any Gate interface")
+            sys.exit()
             return
 
     # state used to check each step
@@ -553,7 +553,7 @@ def luos_detect(args):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
-            sys.exit("Can't find any Gate interface")
+            sys.exit()
             return
 
     # detect network
@@ -577,7 +577,7 @@ def luos_reset(args):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
-            sys.exit("Can't find any Gate interface")
+            sys.exit()
             return
 
 

@@ -16,7 +16,7 @@ class Distance(Service):
 
     def _update(self, new_state):
         Service._update(self, new_state)
-        if 'trans_position' in new_state:
+        if 'trans_position' in new_state.keys():
             new_dist = new_state['trans_position']
             if new_dist != self._value:
                 self._pub_event('changed', self._value, new_dist)

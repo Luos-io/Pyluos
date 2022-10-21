@@ -21,7 +21,7 @@ class Voltage(Service):
 
     def _update(self, new_state):
         Service._update(self, new_state)
-        if 'volt' in new_state:
+        if 'volt' in new_state.keys():
             new_val = new_state['volt']
             if new_val != self._value:
                 self._pub_event('changed', self._value, new_val)

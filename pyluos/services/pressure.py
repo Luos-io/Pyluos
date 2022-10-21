@@ -21,7 +21,7 @@ class Pressure(Service):
 
     def _update(self, new_state):
         Service._update(self, new_state)
-        if 'pressure' in new_state:
+        if 'pressure' in new_state.keys():
             new_val = new_state['pressure']
             if new_val != self._value:
                 self._pub_event('changed', self._value, new_val)

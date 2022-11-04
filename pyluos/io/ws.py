@@ -1,6 +1,7 @@
 import os
 import socket
 import websocket
+import struct
 
 import sys
 if sys.version_info >= (3, 0):
@@ -16,7 +17,6 @@ def resolve_hostname(hostname, port):
     # to enforce we only search for IPV4 address
     # and avoid a 5s timeout in the websocket on the ESP
     # See https://github.com/esp8266/Arduino/issues/2110
-
     addrinfo = socket.getaddrinfo(hostname, port,
                                   socket.AF_INET, 0,
                                   socket.SOL_TCP)
@@ -32,7 +32,7 @@ class Ws(IOHandler):
             socket.inet_pton(socket.AF_INET, host)
             return True
         except socket.error:
-            return host.endswith('.local')
+            return host.endswith('.local') or (host == "localhost")
 
     @classmethod
     def available_hosts(cls):
@@ -47,8 +47,8 @@ class Ws(IOHandler):
     def __init__(self, host, port=9342):
         host = resolve_hostname(host, port)
 
-        self._ws = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._ws.connect((host, port))
+        self._ws = websocket.WebSocket()
+        self._ws.connect("ws://" + str(host) + ":" + str(port)+"/ws")
 
         self._msg = queue.Queue(500)
         self._running = True
@@ -68,7 +68,7 @@ class Ws(IOHandler):
         return data
 
     def write(self, data):
-        self._ws.send(data + '\r'.encode() + '\n'.encode())
+        self._ws.send(data)
 
     def close(self):
         self._running = False
@@ -92,8 +92,7 @@ class Ws(IOHandler):
         buff = b''
 
         while self._running:
-            s = self._ws.recv(4096)
-
+            s = self._ws.recv()
             buff = buff + s
             while self._running:
                 line, buff = extract_line(buff)

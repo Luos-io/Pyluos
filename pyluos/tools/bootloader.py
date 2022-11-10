@@ -253,6 +253,30 @@ def erase_flash(device, topic, nodes_to_program):
                         print(u"\r\n  ╰> Flash memory of node ", response['node'], " erased.")
         state = device._poll_once()
 
+    # retry sending failed messages
+    for node in failed_nodes:
+        send_node_command(device, node, topic, BOOTLOADER_ERASE)
+        print(u"\r\n  ╰> Retry erase memory of node ", node)
+        init_time = time.time()
+        state = device._poll_once()
+        while len(failed_nodes):
+            if(time.time() - init_time > ERASE_TIMEOUT):
+                return_value = False
+                break
+
+            # check if it is a response message
+            if 'bootloader' in state:  
+                for response in state['bootloader']:
+                    if (response['response'] == BOOTLOADER_ERASE_RESP):
+                    # this node responded, delete it from the failed nodes list
+                        if response['node'] in failed_nodes:
+                            failed_nodes.remove(response['node'])
+                            print(u"\r\n  ╰> Flash memory of node ", response['node'], " erased.")
+            state = device._poll_once()
+
+    if not len(failed_nodes):
+        return_value = True
+
     waiting_bg.terminate()
     return return_value, failed_nodes
 
@@ -358,6 +382,32 @@ def send_frame_from_binary(device, topic, frame_size, file_offset, nodes_to_prog
                         failed_nodes.remove(response['node'])
         # wait for next message
         state = device._poll_once()
+
+    for node in failed_nodes:
+        # retry sending failed messages
+        send_data_node(device, node, BOOTLOADER_BIN_CHUNK, frame_size, data_bytes)
+        state = device._poll_once()
+        print(u"\r\n  ╰> Retry sending binary message to node ", node)
+        init_time = time.time()
+        while len(failed_nodes):
+            # check for timeout of nodes
+            if(time.time() - init_time > PROGRAM_TIMEOUT):
+                return_value = False
+                break
+
+            # check if it is a response message
+            if 'bootloader' in state:
+                for response in state['bootloader']:
+                    if (response['response'] == BOOTLOADER_BIN_CHUNK_RESP):
+                        # the node responsed, remove it for fails list
+                        if response['node'] in failed_nodes:
+                            failed_nodes.remove(response['node'])
+            # wait for next message
+            state = device._poll_once()
+
+    if not len(failed_nodes):
+        return_value = True
+
     return return_value, failed_nodes
 
 # *******************************************************************************
@@ -373,6 +423,25 @@ def send_data(device, topic, command, size, data):
                 'size': [size],
                 'type': command,
                 'topic': topic,
+            },
+        }
+    }
+    # send json command
+    device._write(json.dumps(bootloader_cmd).encode() + '\n'.encode() + data)
+
+# *******************************************************************************
+# @brief send binary data with a header to a specific node
+# @param
+# @return None
+# *******************************************************************************
+def send_data_node(device, node, command, size, data):
+    # create a json file with the list of the nodes to program
+    bootloader_cmd = {
+        'bootloader': {
+            'command': {
+                'size': [size],
+                'type': command,
+                'node': node,
             },
         }
     }
@@ -410,6 +479,31 @@ def send_binary_end(device, topic, nodes_to_program):
                         timeout -= RESP_TIMEOUT
                         failed_nodes.remove(response['node'])
         state = device._poll_once()
+
+    for node in failed_nodes:
+        # retry sending failed messages
+        send_node_command(device, node, topic, BOOTLOADER_BIN_END)
+        print(u"\r\n  ╰> Retry sending end message to node ", node)
+        state = device._poll_once()
+        init_time = time.time()
+        while len(failed_nodes):
+            # check for timeout of nodes
+            if(time.time() - init_time > RESP_TIMEOUT):
+                return_value = False
+                break
+
+            # check if it is a response message
+            if 'bootloader' in state:
+                for response in state['bootloader']:
+                    if (response['response'] == BOOTLOADER_BIN_END_RESP):
+                        # the node responsed, remove it for fails list
+                        if response['node'] in failed_nodes:
+                            failed_nodes.remove(response['node'])
+            # wait for next message
+            state = device._poll_once()
+
+    if not len(failed_nodes):
+        return_value = True
 
     return return_value, failed_nodes
 
@@ -474,6 +568,41 @@ def check_crc(device, topic, nodes_to_program):
                         print(u"  ╰> waited :", hex(source_crc), ", received :", hex(node_crc))
                         return_value = False
         state = device._poll_once()
+
+    for node in failed_nodes:
+        # retry sending failed messages
+        send_node_command(device, node, topic, BOOTLOADER_CRC_TEST)
+        print(u"\r\n  ╰> Retry sending crc demand to node ", node)
+        state = device._poll_once()
+        init_time = time.time()
+        while len(failed_nodes):
+            # check for timeout of nodes
+            if(time.time() - init_time > RESP_TIMEOUT):
+                return_value = False
+                break
+
+            # check if it is a response message
+            if 'bootloader' in state:
+                for response in state['bootloader']:
+                    if (response['response'] == BOOTLOADER_CRC_RESP):
+                        source_crc = int.from_bytes(compute_crc(), byteorder='big')
+                        node_crc = response['crc_value']
+                        node_id = response['node']
+                            # crc properly received 
+                        if (source_crc == node_crc):
+                            print(u"  ╰> CRC test for node", node_id, " : OK.")
+                            if node_id in failed_nodes:
+                                timeout -= RESP_TIMEOUT
+                                failed_nodes.remove(node_id)
+                        else:
+                            # not a good crc
+                            print(u"  ╰> CRC test for node", node_id, ": NOK.")
+                            print(u"  ╰> waited :", hex(source_crc), ", received :", hex(node_crc))
+                            return_value = False
+            state = device._poll_once()
+
+    if not len(failed_nodes):
+        return_value = True
 
     return return_value, failed_nodes
 

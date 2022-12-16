@@ -16,6 +16,7 @@ class IOHandler(object):
     def read(self, trials=5):
         try:
             data = self.recv()
+            return self.loads(data)
         except Exception as e:
             logging.getLogger(__name__).debug('Msg read failed: {}'.format(str(e)))
             if trials == 0:
@@ -51,7 +52,7 @@ IOs = [Serial, Ws]
 def io_from_host(host, *args, **kwargs):
     for cls in IOs:
         if cls.is_host_compatible(host):
-            return cls(host=host, *args, **kwargs)
+            return cls(host=host)
 
     raise ValueError('No corresponding IO found (among {}).'.format(discover_hosts))
 

@@ -107,7 +107,6 @@ class Service(object):
         return self._luos_revision
 
     @property
-    @property
     def luos_statistics(self):
         """Get service statistics with a timeout of 1 second."""
 

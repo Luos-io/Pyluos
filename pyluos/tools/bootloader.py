@@ -243,7 +243,7 @@ def erase_flash(device, topic, nodes_to_program):
             return_value = False
             break
         # check if it is a response message
-        if 'bootloader' in state:  
+        if 'bootloader' in state:
             for response in state['bootloader']:
                 if (response['response'] == BOOTLOADER_ERASE_RESP):
                     # this node responded, delete it from the failed nodes list
@@ -265,7 +265,7 @@ def erase_flash(device, topic, nodes_to_program):
                 break
 
             # check if it is a response message
-            if 'bootloader' in state:  
+            if 'bootloader' in state:
                 for response in state['bootloader']:
                     if (response['response'] == BOOTLOADER_ERASE_RESP):
                     # this node responded, delete it from the failed nodes list
@@ -540,7 +540,7 @@ def check_crc(device, topic, nodes_to_program):
 
     # send crc command
     send_topic_command(device, topic, BOOTLOADER_CRC_TEST)
-    
+
     state = device._poll_once()
     # wait bin_end response
     init_time = time.time()
@@ -556,7 +556,7 @@ def check_crc(device, topic, nodes_to_program):
                     source_crc = int.from_bytes(compute_crc(), byteorder='big')
                     node_crc = response['crc_value']
                     node_id = response['node']
-                        # crc properly received 
+                        # crc properly received
                     if (source_crc == node_crc):
                         print(u"  ╰> CRC test for node", node_id, " : OK.")
                         if node_id in failed_nodes:
@@ -588,7 +588,7 @@ def check_crc(device, topic, nodes_to_program):
                         source_crc = int.from_bytes(compute_crc(), byteorder='big')
                         node_crc = response['crc_value']
                         node_id = response['node']
-                            # crc properly received 
+                            # crc properly received
                         if (source_crc == node_crc):
                             print(u"  ╰> CRC test for node", node_id, " : OK.")
                             if node_id in failed_nodes:
@@ -684,7 +684,7 @@ def luos_flash(args):
     time.sleep(0.4)
 
     print("\n** Programming nodes **")
-    
+
     # go to header state if node is ready
     for node in nodes_to_program:
         print("--> Check if node", node, " is ready.")
@@ -715,7 +715,7 @@ def luos_flash(args):
         total_fails.extend(failed_nodes)
         machine_state = True
         print("Flash of node: ", failed_nodes, "failed!")
-    
+
     # inform the node of the end of the loading
     print("--> Programmation finished, waiting for acknowledge.")
     machine_state, failed_nodes = send_binary_end(device, topic, nodes_to_program)

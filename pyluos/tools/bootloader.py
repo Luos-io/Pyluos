@@ -69,13 +69,14 @@ def find_network(device):
     while ('routing_table' not in state):
         if ('route_table' in state):
             print('version of luos not supported')
-            return
+            return None
         state = device._poll_once()
         if (time.time()-startTime > 1):
             retry = retry +1
             if retry > 5:
                 # detection is not working
-                sys.exit("Detection failed.")
+                print('Detection failed.')
+                return None
             device._send({'detection': {}})
             startTime = time.time()
 
@@ -635,8 +636,8 @@ def luos_flash(args):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
-            sys.exit()
-            return
+            print('Please specify a port to access the network.')
+            return BOOTLOADER_FLASH_PORT_ERROR
 
     # state used to check each step
     machine_state = True
@@ -648,7 +649,7 @@ def luos_flash(args):
     try:
         f = open(FILEPATH, mode="rb")
     except IOError:
-        sys.exit("Cannot open :", FILEPATH)
+        print("Cannot open :", FILEPATH)
         return BOOTLOADER_FLASH_BINARY_ERROR
     else:
         f.close()
@@ -658,13 +659,16 @@ def luos_flash(args):
 
     # find routing table
     state = find_network(device)
+    if state is None:
+        return BOOTLOADER_DETECT_ERROR
 
     # searching nodes to program in network
     (nodes_to_reboot, nodes_to_program) = create_target_list(args, state)
 
     # check if we have available node to program
     if not nodes_to_program:
-        sys.exit("No target found :\n" + str(device.nodes))
+        print("No target found :\n" + str(device.nodes))
+        return BOOTLOADER_DETECT_ERROR
 
     # reboot all nodes in bootloader mode
     print("** Reboot all nodes in bootloader mode **")
@@ -679,6 +683,8 @@ def luos_flash(args):
     # find routing table in boot mode
     # its necessary to give ids to bootloader services
     state = find_network(device)
+    if state is None:
+        return BOOTLOADER_DETECT_ERROR
 
     # wait before next step
     time.sleep(0.4)
@@ -766,8 +772,8 @@ def luos_detect(args):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
-            sys.exit()
-            return
+            print('Please specify a port to access the network.')
+            return BOOTLOADER_DETECT_ERROR
 
     # detect network
     device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate))
@@ -790,8 +796,7 @@ def luos_reset(args):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
-            sys.exit()
-            return
+            return BOOTLOADER_DETECT_ERROR
 
 
     # send rescue command

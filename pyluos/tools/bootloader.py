@@ -622,13 +622,6 @@ def reboot_network(device, topic, nodes_to_reboot):
 # @return None
 # *******************************************************************************
 def luos_flash(args):
-    print('Luos flash subcommand with parameters :')
-    print('\t--baudrate : ', args.baudrate)
-    print('\t--gate : ', args.gate)
-    print('\t--target : ', args.target)
-    print('\t--binary : ', args.binary)
-    print('\t--port : ', args.port)
-
     topic = 1
 
     if not (args.port):
@@ -637,6 +630,15 @@ def luos_flash(args):
         except:
             sys.exit()
             return
+
+    baudrate = os.getenv('LUOS_BAUDRATE', args.baudrate)
+
+    print('Luos flash subcommand with parameters :')
+    print('\t--baudrate : ', baudrate)
+    print('\t--gate : ', args.gate)
+    print('\t--target : ', args.target)
+    print('\t--binary : ', args.binary)
+    print('\t--port : ', args.port)
 
     # state used to check each step
     machine_state = True
@@ -654,7 +656,7 @@ def luos_flash(args):
         f.close()
 
     # init device
-    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate), background_task=False)
+    device = Device(args.port, baudrate=baudrate, background_task=False)
 
     # find routing table
     state = find_network(device)
@@ -759,9 +761,6 @@ def luos_flash(args):
 # @return None
 # *******************************************************************************
 def luos_detect(args):
-    print('Luos detect subcommand on port : ', args.port)
-    print('\tLuos detect subcommand at baudrate : ', args.baudrate)
-
     if not (args.port):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
@@ -769,8 +768,13 @@ def luos_detect(args):
             sys.exit()
             return
 
+    baudrate = os.getenv('LUOS_BAUDRATE', args.baudrate)
+
+    print('Luos detect subcommand on port : ', args.port)
+    print('\tLuos detect subcommand at baudrate : ', baudrate)
+
     # detect network
-    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate))
+    device = Device(args.port, baudrate=baudrate)
     # print network to user
     print(device.nodes)
     device.close()

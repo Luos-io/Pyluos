@@ -787,9 +787,6 @@ def luos_detect(args):
 # @return None
 # *******************************************************************************
 def luos_reset(args):
-    print('Luos discover subcommand on port : ', args.port)
-    print('\tLuos discover subcommand at baudrate : ', args.baudrate)
-
     if not (args.port):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
@@ -797,10 +794,14 @@ def luos_reset(args):
             sys.exit()
             return
 
+    baudrate = os.getenv('LUOS_BAUDRATE', args.baudrate)
+
+    print('Luos discover subcommand on port : ', args.port)
+    print('\tLuos discover subcommand at baudrate : ', args.baudrate)
 
     # send rescue command
     print('Send reset command.')
-    port = serial.Serial(args.port, os.getenv('LUOS_BAUDRATE', args.baudrate), timeout=0.05)
+    port = serial.Serial(args.port, baudrate, timeout=0.05)
     rst_cmd = {
         'bootloader': {
             'command': {
@@ -815,7 +816,7 @@ def luos_reset(args):
     port.close()
 
     # detect network
-    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate), background_task=False)
+    device = Device(args.port, baudrate=baudrate, background_task=False)
 
     print(device.nodes)
     device.close()

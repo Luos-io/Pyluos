@@ -52,7 +52,7 @@ IOs = [Serial, Ws]
 def io_from_host(host, *args, **kwargs):
     for cls in IOs:
         if cls.is_host_compatible(host):
-            return cls(host=host)
+            return cls(host=host, **kwargs)
 
     raise ValueError('No corresponding IO found (among {}).'.format(discover_hosts))
 

@@ -613,9 +613,9 @@ def check_crc(device, topic, nodes_to_program):
 # *******************************************************************************
 def reboot_network(device, topic, nodes_to_reboot):
     for node in nodes_to_reboot:
-                send_node_command(device, node, topic, BOOTLOADER_STOP)
-                # delay to let gate send commands
-                time.sleep(0.01)
+        send_node_command(device, node, topic, BOOTLOADER_STOP)
+        # delay to let gate send commands
+        time.sleep(0.01)
 # *******************************************************************************
 # @brief command used to flash luos nodes
 # @param flash function arguments : -g, -t, -b

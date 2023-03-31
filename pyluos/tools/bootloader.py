@@ -623,13 +623,6 @@ def reboot_network(device, topic, nodes_to_reboot):
 # @return None
 # *******************************************************************************
 def luos_flash(args):
-    print('Luos flash subcommand with parameters :')
-    print('\t--baudrate : ', args.baudrate)
-    print('\t--gate : ', args.gate)
-    print('\t--target : ', args.target)
-    print('\t--binary : ', args.binary)
-    print('\t--port : ', args.port)
-
     topic = 1
 
     if not (args.port):
@@ -638,6 +631,15 @@ def luos_flash(args):
         except:
             print('Please specify a port to access the network.')
             return BOOTLOADER_FLASH_PORT_ERROR
+
+    baudrate = os.getenv('LUOS_BAUDRATE', args.baudrate)
+
+    print('Luos flash subcommand with parameters :')
+    print('\t--baudrate : ', baudrate)
+    print('\t--gate : ', args.gate)
+    print('\t--target : ', args.target)
+    print('\t--binary : ', args.binary)
+    print('\t--port : ', args.port)
 
     # state used to check each step
     machine_state = True
@@ -655,7 +657,7 @@ def luos_flash(args):
         f.close()
 
     # init device
-    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate), background_task=False)
+    device = Device(args.port, baudrate=baudrate, background_task=False)
 
     # find routing table
     state = find_network(device)
@@ -765,9 +767,6 @@ def luos_flash(args):
 # @return None
 # *******************************************************************************
 def luos_detect(args):
-    print('Luos detect subcommand on port : ', args.port)
-    print('\tLuos detect subcommand at baudrate : ', args.baudrate)
-
     if not (args.port):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
@@ -775,8 +774,13 @@ def luos_detect(args):
             print('Please specify a port to access the network.')
             return BOOTLOADER_DETECT_ERROR
 
+    baudrate = os.getenv('LUOS_BAUDRATE', args.baudrate)
+
+    print('Luos detect subcommand on port : ', args.port)
+    print('\tLuos detect subcommand at baudrate : ', baudrate)
+
     # detect network
-    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate))
+    device = Device(args.port, baudrate=baudrate)
     # print network to user
     print(device.nodes)
     device.close()
@@ -789,19 +793,20 @@ def luos_detect(args):
 # @return None
 # *******************************************************************************
 def luos_reset(args):
-    print('Luos discover subcommand on port : ', args.port)
-    print('\tLuos discover subcommand at baudrate : ', args.baudrate)
-
     if not (args.port):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
             return BOOTLOADER_DETECT_ERROR
 
+    baudrate = os.getenv('LUOS_BAUDRATE', args.baudrate)
+
+    print('Luos discover subcommand on port : ', args.port)
+    print('\tLuos discover subcommand at baudrate : ', args.baudrate)
 
     # send rescue command
     print('Send reset command.')
-    port = serial.Serial(args.port, os.getenv('LUOS_BAUDRATE', args.baudrate), timeout=0.05)
+    port = serial.Serial(args.port, baudrate, timeout=0.05)
     rst_cmd = {
         'bootloader': {
             'command': {
@@ -816,7 +821,7 @@ def luos_reset(args):
     port.close()
 
     # detect network
-    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate), background_task=False)
+    device = Device(args.port, baudrate=baudrate, background_task=False)
 
     print(device.nodes)
     device.close()

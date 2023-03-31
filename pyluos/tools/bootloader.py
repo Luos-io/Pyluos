@@ -69,13 +69,14 @@ def find_network(device):
     while ('routing_table' not in state):
         if ('route_table' in state):
             print('version of luos not supported')
-            return
+            return None
         state = device._poll_once()
         if (time.time()-startTime > 1):
             retry = retry +1
             if retry > 5:
                 # detection is not working
-                sys.exit("Detection failed.")
+                print('Detection failed.')
+                return None
             device._send({'detection': {}})
             startTime = time.time()
 
@@ -243,7 +244,7 @@ def erase_flash(device, topic, nodes_to_program):
             return_value = False
             break
         # check if it is a response message
-        if 'bootloader' in state:  
+        if 'bootloader' in state:
             for response in state['bootloader']:
                 if (response['response'] == BOOTLOADER_ERASE_RESP):
                     # this node responded, delete it from the failed nodes list
@@ -265,7 +266,7 @@ def erase_flash(device, topic, nodes_to_program):
                 break
 
             # check if it is a response message
-            if 'bootloader' in state:  
+            if 'bootloader' in state:
                 for response in state['bootloader']:
                     if (response['response'] == BOOTLOADER_ERASE_RESP):
                     # this node responded, delete it from the failed nodes list
@@ -540,7 +541,7 @@ def check_crc(device, topic, nodes_to_program):
 
     # send crc command
     send_topic_command(device, topic, BOOTLOADER_CRC_TEST)
-    
+
     state = device._poll_once()
     # wait bin_end response
     init_time = time.time()
@@ -556,7 +557,7 @@ def check_crc(device, topic, nodes_to_program):
                     source_crc = int.from_bytes(compute_crc(), byteorder='big')
                     node_crc = response['crc_value']
                     node_id = response['node']
-                        # crc properly received 
+                        # crc properly received
                     if (source_crc == node_crc):
                         print(u"  ╰> CRC test for node", node_id, " : OK.")
                         if node_id in failed_nodes:
@@ -588,7 +589,7 @@ def check_crc(device, topic, nodes_to_program):
                         source_crc = int.from_bytes(compute_crc(), byteorder='big')
                         node_crc = response['crc_value']
                         node_id = response['node']
-                            # crc properly received 
+                            # crc properly received
                         if (source_crc == node_crc):
                             print(u"  ╰> CRC test for node", node_id, " : OK.")
                             if node_id in failed_nodes:
@@ -613,30 +614,32 @@ def check_crc(device, topic, nodes_to_program):
 # *******************************************************************************
 def reboot_network(device, topic, nodes_to_reboot):
     for node in nodes_to_reboot:
-                send_node_command(device, node, topic, BOOTLOADER_STOP)
-                # delay to let gate send commands
-                time.sleep(0.01)
+        send_node_command(device, node, topic, BOOTLOADER_STOP)
+        # delay to let gate send commands
+        time.sleep(0.01)
 # *******************************************************************************
 # @brief command used to flash luos nodes
 # @param flash function arguments : -g, -t, -b
 # @return None
 # *******************************************************************************
 def luos_flash(args):
-    print('Luos flash subcommand with parameters :')
-    print('\t--baudrate : ', args.baudrate)
-    print('\t--gate : ', args.gate)
-    print('\t--target : ', args.target)
-    print('\t--binary : ', args.binary)
-    print('\t--port : ', args.port)
-
     topic = 1
 
     if not (args.port):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
-            sys.exit()
-            return
+            print('Please specify a port to access the network.')
+            return BOOTLOADER_FLASH_PORT_ERROR
+
+    baudrate = os.getenv('LUOS_BAUDRATE', args.baudrate)
+
+    print('Luos flash subcommand with parameters :')
+    print('\t--baudrate : ', baudrate)
+    print('\t--gate : ', args.gate)
+    print('\t--target : ', args.target)
+    print('\t--binary : ', args.binary)
+    print('\t--port : ', args.port)
 
     # state used to check each step
     machine_state = True
@@ -648,23 +651,26 @@ def luos_flash(args):
     try:
         f = open(FILEPATH, mode="rb")
     except IOError:
-        sys.exit("Cannot open :", FILEPATH)
+        print("Cannot open :", FILEPATH)
         return BOOTLOADER_FLASH_BINARY_ERROR
     else:
         f.close()
 
     # init device
-    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate), background_task=False)
+    device = Device(args.port, baudrate=baudrate, background_task=False)
 
     # find routing table
     state = find_network(device)
+    if state is None:
+        return BOOTLOADER_DETECT_ERROR
 
     # searching nodes to program in network
     (nodes_to_reboot, nodes_to_program) = create_target_list(args, state)
 
     # check if we have available node to program
     if not nodes_to_program:
-        sys.exit("No target found :\n" + str(device.nodes))
+        print("No target found :\n" + str(device.nodes))
+        return BOOTLOADER_DETECT_ERROR
 
     # reboot all nodes in bootloader mode
     print("** Reboot all nodes in bootloader mode **")
@@ -679,12 +685,14 @@ def luos_flash(args):
     # find routing table in boot mode
     # its necessary to give ids to bootloader services
     state = find_network(device)
+    if state is None:
+        return BOOTLOADER_DETECT_ERROR
 
     # wait before next step
     time.sleep(0.4)
 
     print("\n** Programming nodes **")
-    
+
     # go to header state if node is ready
     for node in nodes_to_program:
         print("--> Check if node", node, " is ready.")
@@ -715,7 +723,7 @@ def luos_flash(args):
         total_fails.extend(failed_nodes)
         machine_state = True
         print("Flash of node: ", failed_nodes, "failed!")
-    
+
     # inform the node of the end of the loading
     print("--> Programmation finished, waiting for acknowledge.")
     machine_state, failed_nodes = send_binary_end(device, topic, nodes_to_program)
@@ -759,18 +767,20 @@ def luos_flash(args):
 # @return None
 # *******************************************************************************
 def luos_detect(args):
-    print('Luos detect subcommand on port : ', args.port)
-    print('\tLuos detect subcommand at baudrate : ', args.baudrate)
-
     if not (args.port):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
-            sys.exit()
-            return
+            print('Please specify a port to access the network.')
+            return BOOTLOADER_DETECT_ERROR
+
+    baudrate = os.getenv('LUOS_BAUDRATE', args.baudrate)
+
+    print('Luos detect subcommand on port : ', args.port)
+    print('\tLuos detect subcommand at baudrate : ', baudrate)
 
     # detect network
-    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate))
+    device = Device(args.port, baudrate=baudrate)
     # print network to user
     print(device.nodes)
     device.close()
@@ -783,20 +793,20 @@ def luos_detect(args):
 # @return None
 # *******************************************************************************
 def luos_reset(args):
-    print('Luos discover subcommand on port : ', args.port)
-    print('\tLuos discover subcommand at baudrate : ', args.baudrate)
-
     if not (args.port):
         try:
             args.port= serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))[0]
         except:
-            sys.exit()
-            return
+            return BOOTLOADER_DETECT_ERROR
 
+    baudrate = os.getenv('LUOS_BAUDRATE', args.baudrate)
+
+    print('Luos discover subcommand on port : ', args.port)
+    print('\tLuos discover subcommand at baudrate : ', args.baudrate)
 
     # send rescue command
     print('Send reset command.')
-    port = serial.Serial(args.port, os.getenv('LUOS_BAUDRATE', args.baudrate), timeout=0.05)
+    port = serial.Serial(args.port, baudrate, timeout=0.05)
     rst_cmd = {
         'bootloader': {
             'command': {
@@ -811,7 +821,7 @@ def luos_reset(args):
     port.close()
 
     # detect network
-    device = Device(args.port, baudrate=os.getenv('LUOS_BAUDRATE', args.baudrate), background_task=False)
+    device = Device(args.port, baudrate=baudrate, background_task=False)
 
     print(device.nodes)
     device.close()

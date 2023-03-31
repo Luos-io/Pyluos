@@ -44,13 +44,13 @@ class Ws(IOHandler):
             if os.system('ping -c 1 -W1 -t1 {} > /dev/null 2>&1'.format(ip)) == 0
         ]
 
-    def __init__(self, host, port=9342):
+    def __init__(self, host, port=9342, baudrate=None):
         host = resolve_hostname(host, port)
 
         self._ws = websocket.WebSocket()
         self._ws.connect("ws://" + str(host) + ":" + str(port)+"/ws")
 
-        self._msg = queue.Queue(500)
+        self._msg = queue.Queue(4096)
         self._running = True
 
         self._poll_loop = Thread(target=self._poll)

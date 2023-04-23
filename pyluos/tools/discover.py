@@ -16,20 +16,26 @@ def serial_discover(baudrate=1000000):
     for serial_host in serial_hosts:
         print("Search a Gate on port " + str(serial_host))
         try:
-            port = serial.Serial(serial_host, baudrate, timeout=0.2)
+            port = serial.Serial(serial_host, baudrate, timeout=0.2, write_timeout=1)
             time.sleep(0.1)
         except:
             continue
 
         if port is not None:
             s = b'{}'
-            port.write(b'\x7E' + struct.pack('<H', len(s)) + s + b'\x81')
+            try:
+                port.write(b'\x7E' + struct.pack('<H', len(s)) + s + b'\x81')
+            except:
+                pass
             time.sleep(0.01)
             port.readline()
             port.flush()
             time.sleep(0.01)
             s = b'{\"discover\": {}}'
-            port.write(b'\x7E' + struct.pack('<H', len(s)) + s + b'\x81')
+            try:
+                port.write(b'\x7E' + struct.pack('<H', len(s)) + s + b'\x81')
+            except:
+                pass
             state = port.readline()
             gateResponse = False
             if 'gate'.encode() in state:

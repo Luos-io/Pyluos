@@ -38,45 +38,37 @@ class nodeList(list):
         prefill = ''
         prechild = False
         for pre, fill, node in RenderTree(self[0], style=DoubleStyle()):
-            child = []
+            # Draw the input part
             if (node.parent == None):
                 branch = "  ┃  "
-                for i,x in enumerate(node.port_table):
-                    child.append(i)
             else:
-                l_port_id = '?'
-                for i,x in enumerate(node.parent.port_table):
-                    if (x == node.id):
-                        l_port_id = str(i)
-                r_port_id = node.port_table.index(min(node.port_table))
-                for i,x in enumerate(node.port_table):
-                    if ((i != r_port_id) and (x != 65535)):
-                        child.append(i)
-                branch = str(l_port_id) + ">┃" + str(r_port_id) + " "
+                branch = "═■┫  "
+
+            # Draw the node body
             prefill = (prefill[:len(fill)]) if len(prefill) > len(fill) else prefill
             s +='{:<{fillsize}s}'.format(prefill, fillsize=len(fill))
             if (prechild == True):
-                position = -4
-                s = s[:position] + '║' + s[position+1:]
-            s += "  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n"
-            tmpstr = "%s╭node %s" % (branch, node.id)
-            s += pre + '{:^10s}'.format(tmpstr)
-            if (node.certified == True):
-                s += '{:^41s}'.format("Certified") + "┃\n"
-            else:
-                s += '{:^41s}'.format("/!\\ Not certified") + "┃\n"
-            s += fill + "  ┃  │  " + '{:<20s}{:<20s}{:<5s}'.format("Type", "Alias", "ID")+ "┃\n"
+                s = s[:-4] + '║' + s[-4+1:]
+            s += '{:<54s}'.format("  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n")
+            tmpstr = '{:<52s}'.format("%s╭────────────────── Node %s ──────────────────" % (branch, node.id))
+
+            if (len(pre)>0):
+                pre = pre[:-1] + "═"
+            s += pre + tmpstr + '{:>3s}'.format("┃\n")
+            s += fill + "  ┃  │  " + '{:<20s}{:<20s}{:<4s}'.format("Type", "Alias", "ID") + '{:>3s}'.format("┃\n")
             for y,elem in enumerate(node.services):
                 if (y == (len(node.services)-1)):
-                    s += fill + "  ┃  ╰> " + '{:<20s}{:<20s}{:<5d}'.format(elem.type, elem.alias, elem.id)+ "┃\n"
+                    s += fill + "  ┃  ╰> " + '{:<20s}{:<20s}{:<4d}'.format(elem.type, elem.alias, elem.id) + '{:>3s}'.format("┃\n")
                 else:
-                    s += fill + "  ┃  ├> " + '{:<20s}{:<20s}{:<5d}'.format(elem.type, elem.alias, elem.id) + "┃\n"
-            if (not child):
-                s += fill + " >┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"
-                prechild = False
-            else:
-                s += fill + "╔>┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+                    s += fill + "  ┃  ├> " + '{:<20s}{:<20s}{:<4d}'.format(elem.type, elem.alias, elem.id) + '{:>3s}'.format("┃\n")
+
+            # Draw the output part
+            if (node.children):
+                s += fill + "╔■┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"
                 prechild = True
+            else:
+                s += fill + "  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n"
+                prechild = False
             prefill = fill
         return s
 
@@ -160,7 +152,7 @@ class Device(object):
         retry = 0
         while ('routing_table' not in state):
             if ('route_table' in state):
-                self.logger.info("Watch out the Luos revision you are using on your board is too old to work with this revision on pyluos.\n Please consider updating Luos on your boards")
+                self.logger.info("Watch out the Luos revision you are using on your board is too old to work with this revision of pyluos.\n Please consider updating Luos on your boards")
                 return
             state = self._poll_once()
             if (time.time()-startTime > 1):
@@ -175,17 +167,17 @@ class Device(object):
         self._nodes = []
         for i, node in enumerate(state['routing_table']):
             if ('node_id' not in node):
-                self.logger.info("Watch out the Luos revision you are using on your board is too old to work with this revision on pyluos.\n Please consider updating Luos on your boards")
+                self.logger.info("Watch out the Luos revision you are using on your board is too old to work with this revision of pyluos.\n Please consider updating Luos on your boards")
             parent_elem = None
-            # find a parent and create a link
-            if (min(node["port_table"]) < node["services"][0]["id"]):
-                parent_id = min(node["port_table"])
+            # find a parent and create the link
+            if (node["con"]["parent"][0] != 0):
+                parent_id = node["con"]["parent"][0]
                 for elem in self._nodes:
                     if (elem.id == parent_id):
                         parent_elem = elem
                         break;
             # create the node
-            self._nodes.append(AnyNode(id=node["node_id"], certified=node["certified"], parent=parent_elem, port_table=node["port_table"]))
+            self._nodes.append(AnyNode(id=node["node_id"], parent=parent_elem, connection=node["con"]))
 
             filtered_services = contList([mod for mod in node["services"]
                                 if 'type' in mod and mod['type'] in name2mod.keys()])

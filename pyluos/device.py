@@ -22,6 +22,7 @@ from anytree import AnyNode, RenderTree, DoubleStyle
 def run_from_unittest():
     return 'unittest' in sys.services
 
+
 class contList(list):
     def __repr__(self):
         s = '-------------------------------------------------\n'
@@ -30,6 +31,7 @@ class contList(list):
         for elem in self:
             s += '{:<20s}{:<20s}{:<5d}\n'.format(elem.type, elem.alias, elem.id)
         return s
+
 
 class nodeList(list):
     def __repr__(self):
@@ -46,18 +48,18 @@ class nodeList(list):
 
             # Draw the node body
             prefill = (prefill[:len(fill)]) if len(prefill) > len(fill) else prefill
-            s +='{:<{fillsize}s}'.format(prefill, fillsize=len(fill))
+            s += '{:<{fillsize}s}'.format(prefill, fillsize=len(fill))
             if (prechild == True):
-                s = s[:-4] + '║' + s[-4+1:]
+                s = s[:-4] + '║' + s[-4 + 1:]
             s += '{:<54s}'.format("  ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n")
             tmpstr = '{:<52s}'.format("%s╭────────────────── Node %s ──────────────────" % (branch, node.id))
 
-            if (len(pre)>0):
+            if (len(pre) > 0):
                 pre = pre[:-1] + "═"
             s += pre + tmpstr + '{:>3s}'.format("┃\n")
             s += fill + "  ┃  │  " + '{:<20s}{:<20s}{:<4s}'.format("Type", "Alias", "ID") + '{:>3s}'.format("┃\n")
-            for y,elem in enumerate(node.services):
-                if (y == (len(node.services)-1)):
+            for y, elem in enumerate(node.services):
+                if (y == (len(node.services) - 1)):
                     s += fill + "  ┃  ╰> " + '{:<20s}{:<20s}{:<4d}'.format(elem.type, elem.alias, elem.id) + '{:>3s}'.format("┃\n")
                 else:
                     s += fill + "  ┃  ├> " + '{:<20s}{:<20s}{:<4d}'.format(elem.type, elem.alias, elem.id) + '{:>3s}'.format("┃\n")
@@ -85,7 +87,6 @@ class Device(object):
                  log_conf=_base_log_conf,
                  test_mode=False,
                  background_task=True,
-                 telemetry=True,
                  *args, **kwargs):
         if IO is not None:
             self._io = IO(host=host, *args, **kwargs)
@@ -98,7 +99,6 @@ class Device(object):
                 config = json.load(f)
             logging.config.dictConfig(config)
 
-        self.telemetry = telemetry
         self.logger = logging.getLogger(__name__)
         self.logger.info('Connected to "{}".'.format(host))
 
@@ -113,7 +113,7 @@ class Device(object):
         self._running = True
         self._pause = False
 
-        if(background_task == True):
+        if (background_task == True):
             # Setup both poll/push synchronization loops.
             self._poll_bg = threading.Thread(target=self._poll_and_up)
             self._poll_bg.daemon = True
@@ -155,8 +155,8 @@ class Device(object):
                 self.logger.info("Watch out the Luos revision you are using on your board is too old to work with this revision of pyluos.\n Please consider updating Luos on your boards")
                 return
             state = self._poll_once()
-            if (time.time()-startTime > 1):
-                retry = retry +1
+            if (time.time() - startTime > 1):
+                retry = retry + 1
                 if retry > 5:
                     # detection is not working
                     sys.exit("Detection failed.")
@@ -175,12 +175,12 @@ class Device(object):
                 for elem in self._nodes:
                     if (elem.id == parent_id):
                         parent_elem = elem
-                        break;
+                        break
             # create the node
             self._nodes.append(AnyNode(id=node["node_id"], parent=parent_elem, connection=node["con"]))
 
             filtered_services = contList([mod for mod in node["services"]
-                                if 'type' in mod and mod['type'] in name2mod.keys()])
+                                          if 'type' in mod and mod['type'] in name2mod.keys()])
             # Create a list of services in the node
             self._nodes[i].services = [
                 name2mod[mod['type']](id=mod['id'],
@@ -197,25 +197,6 @@ class Device(object):
         self._cmd = defaultdict(lambda: defaultdict(lambda: None))
         self._cmd_data = []
         self._binary = []
-
-        if (self.telemetry == True):
-            from pyluos.version import version
-            self.logger.info('Sending telemetry...')
-            luos_telemetry = {"telemetry_type": "pyluos",
-                  "mac": hex(uuid.getnode()),
-                  "system": sys.platform,
-                  "unix_time": int(time.time()),
-                  "pyluos_rev": version,
-                  "routing_table":state['routing_table']}
-            try:
-                r = requests.post("https://monorepo-services.vercel.app/api/telemetry",
-                           data=luos_telemetry)
-                if not r:
-                    print("Telemetry request failed : error " + str(r.status_code))
-            except:
-                print("Telemetry request failed.")
-        else:
-            self.logger.info("Telemetry disabled, please consider enabling it by removing the 'telemetry=False' argument of your Device creation.")
 
         # We push our current state to make sure that
         # both our model and the hardware are synced.
@@ -239,30 +220,30 @@ class Device(object):
 
     def _poll_and_up(self):
         while self._running:
-            if not self._pause :
+            if not self._pause:
                 state = self._poll_once()
                 if self._state != []:
                     self._update(state)
                     self._push_once()
-            else :
+            else:
                 time.sleep(0.1)
 
     # Update our model with the new state.
     def _update(self, new_state):
-        if 'dead_service' in new_state.keys() :
-            #we have lost a service put a flag on this service
+        if 'dead_service' in new_state.keys():
+            # we have lost a service put a flag on this service
             alias = new_state['dead_service']
             if hasattr(self, alias):
                 getattr(self, alias)._kill()
             if (self._freedomLink != None):
                 self._freedomLink._kill(alias)
-        if 'assert' in new_state.keys() :
+        if 'assert' in new_state.keys():
             # A node assert, print assert informations
             if (('node_id' in new_state['assert']) and ('file' in new_state['assert']) and ('line' in new_state['assert'])):
                 s = "************************* ASSERT *************************\n"
                 s += "*  Node " + str(new_state['assert']['node_id']) + " assert in file " + new_state['assert']['file'] + " line " + str(new_state['assert']['line'])
                 s += "\n**********************************************************"
-                print (s)
+                print(s)
             if (self._freedomLink != None):
                 self._freedomLink._assert(alias)
         if 'services' not in new_state.keys():
@@ -288,15 +269,14 @@ class Device(object):
     def _push_once(self):
         with self._cmd_lock:
             if self._cmd:
-                self._write( json.dumps({'services': self._cmd}).encode())
+                self._write(json.dumps({'services': self._cmd}).encode())
                 self._cmd = defaultdict(lambda: defaultdict(lambda: None))
             for cmd, binary in zip(self._cmd_data, self._binary):
                 time.sleep(0.01)
-                self._write( json.dumps({'services': cmd}).encode() + '\n'.encode() + binary)
+                self._write(json.dumps({'services': cmd}).encode() + '\n'.encode() + binary)
 
             self._cmd_data = []
             self._binary = []
-
 
     def _send(self, msg):
         with self._send_lock:

@@ -26,11 +26,3 @@ Luos proposes organized and effective development practices, guaranteeing develo
 
 * → Try on your own with the [get started](https://www.luos.io/tutorials/get-started)
 * → Consult the full [documentation](https://www.luos.io/docs)
-
-## Disclaimer
-This library send some anonymous information to Luos allowing to improve Pyluos experience.
-To disable the telemetry please add `telemetry=False` parameter at Device creation.
-For example:
-```python
-device = Device('/dev/cu.usbserial-DN2EUDGP', telemetry=False)
-```

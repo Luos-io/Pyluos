@@ -162,6 +162,8 @@ class Device(object):
                     sys.exit("Detection failed.")
                 self._send({'detection': {}})
                 startTime = time.time()
+        # Save routing table data
+        self._routing_table = state
         # Create nodes
         self._services = []
         self._nodes = []

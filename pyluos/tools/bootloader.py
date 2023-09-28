@@ -37,6 +37,8 @@ BOOTLOADER_ERROR_SIZE = "error_size"
 OKGREEN = '\r\033[92m'
 FAIL = '\r\033[91m'
 ENDC = '\033[0m'
+UNDERLINE = '\r\033[4m'
+BOLD = '\r\033[1m'
 
 FILEPATH = None
 NB_SAMPLE_BY_FRAME_MAX = 127
@@ -262,6 +264,7 @@ def erase_flash(device, topic, nodes_to_program):
         # timeout for exiting loop in case of fails
         if (time.time() - init_time > timeout):
             return_value = False
+            print(FAIL + u"\r   ╰> Erase flash of node ", failed_nodes, "FAILED %" + ENDC)
             break
         # check if it is a response message
         if 'bootloader' in state:
@@ -675,18 +678,18 @@ def luos_flash(args):
 
     baudrate = os.getenv('LUOS_BAUDRATE', args.baudrate)
 
-    print('Luos flash subcommand with parameters :')
+    print("\n" + UNDERLINE + "Luos flash subcommand with parameters:" + ENDC)
     print('\t--baudrate : ', baudrate)
     print('\t--gate : ', args.gate)
     print('\t--target : ', args.target)
     print('\t--binary : ', args.binary)
     print('\t--port : ', args.port)
 
-    # state used to check each step
+    # State used to check each step
     machine_state = True
-    # list of all the nodes that may fail in each step
+    # List of all the nodes that may fail in each step
     total_fails = []
-    # update firmware path
+    # Update firmware path
     global FILEPATH
     FILEPATH = args.binary
     try:
@@ -697,57 +700,62 @@ def luos_flash(args):
     else:
         f.close()
 
-    # init device
+    # Init device
     device = Device(args.port, baudrate=baudrate, background_task=False)
 
-    # find routing table
-    state = find_network(device)
+    # Get routing table JSON
+    state = device._routing_table
     if state is None:
         return BOOTLOADER_DETECT_ERROR
 
-    # searching nodes to program in network
+    # Searching nodes to program in network
     (nodes_to_reboot, nodes_to_program) = create_target_list(args, state)
 
-    # check if we have available node to program
+    # Check if we have available node to program
     if not nodes_to_program:
         print(FAIL + "No target found :\n" + str(device.nodes) + ENDC)
         return BOOTLOADER_DETECT_ERROR
 
-    # reboot all nodes in bootloader mode
-    print("\n** Reboot all nodes in bootloader mode **")
+    # Reboot all nodes in bootloader mode
+    print("\n" + BOLD + "Reboot all nodes in bootloader mode:" + ENDC)
     for node in nodes_to_reboot:
         send_node_command(device, node, topic, BOOTLOADER_START)
-        # delay to let gate send commands
+        # Delay to let the gate send the commands
         time.sleep(0.01)
 
-    # wait before next step
+    # Delay to let the gate send the last command
     time.sleep(0.1)
 
-    # find routing table in boot mode
-    # its necessary to give ids to bootloader services
+    # Find bootloaders in the routing table
     state = find_network(device)
     if state is None:
+        print(FAIL + "   ╰> Reboot in bootloader mode failed." + ENDC)
         return BOOTLOADER_DETECT_ERROR
+    else:
+        print(OKGREEN + "   ╰> Reboot in bootloader mode succeed." + ENDC)
 
-    # wait before next step
+    # Wait before the next step
     time.sleep(0.4)
 
-    print("\n** Programming nodes **")
-
-    # go to header state if node is ready
+    print("\n" + BOLD + "Programming nodes:" + ENDC)
+    # Go to header state if node is ready
     for node in nodes_to_program:
         print("─> Check if node", node, " is ready.")
         machine_state = send_ready_cmd(device, node, topic)
         if not machine_state:
             total_fails.append(node)
             machine_state = True
-            print(FAIL + "Node ", node, "failed to update!" + ENDC)
+            print(FAIL + "   ╰> Node ", node, "programming failed." + ENDC)
         time.sleep(0.01)
 
     for node in total_fails:
         nodes_to_program.remove(node)
 
-    # erase node flash memory
+    if not len(nodes_to_program):
+        print(BOLD + FAIL + "Programming failed on all targets." + ENDC)
+        return BOOTLOADER_FLASH_ERROR
+
+    # Erase node flash memory
     print("─> Erase flash memory.")
     machine_state, failed_nodes = erase_flash(device, topic, nodes_to_program)
     if not machine_state:
@@ -755,7 +763,11 @@ def luos_flash(args):
             nodes_to_program.remove(fail)
         total_fails.extend(failed_nodes)
         machine_state = True
-        print(FAIL + "Node ", failed_nodes, " flash erasing failed!" + ENDC)
+        print(FAIL + "   ╰> Node ", failed_nodes, " flash erasing failed!" + ENDC)
+
+    if not len(nodes_to_program):
+        print(BOLD + FAIL + "Programming failed on all targets." + ENDC)
+        return BOOTLOADER_FLASH_ERROR
 
     # send binary data
     print("─> Send binary data.")
@@ -763,7 +775,7 @@ def luos_flash(args):
     if not machine_state:
         total_fails.extend(failed_nodes)
         machine_state = True
-        print(FAIL + "Node ", failed_nodes, "update failed!" + ENDC)
+        print(FAIL + "Node ", failed_nodes, "programming failed." + ENDC)
 
     # inform the node of the end of the loading
     print("─> Programmation finished, waiting for acknowledge.")
@@ -793,13 +805,13 @@ def luos_flash(args):
     time.sleep(0.1)
     # reboot all nodes in application mode
     if len(total_fails) == 0:
-        print("\n** Reboot all nodes in application mode **")
+        print(OKGREEN + BOLD + "Programming succeed." + ENDC)
         reboot_network(device, topic, nodes_to_reboot)
         device.close()
         return BOOTLOADER_SUCCESS
     else:
         device.close()
-        print(FAIL + "Nodes ", total_fails, " update failed, please reboot and retry." + ENDC)
+        print(FAIL + "Nodes ", total_fails, " programming failed, please reboot and retry." + ENDC)
         return BOOTLOADER_FLASH_ERROR
 
 # *******************************************************************************

@@ -155,7 +155,7 @@ class Device(object):
                 self.logger.info("Watch out the Luos revision you are using on your board is too old to work with this revision of pyluos.\n Please consider updating Luos on your boards")
                 return
             state = self._poll_once()
-            if (time.time() - startTime > 1):
+            if (time.time() - startTime > 5):
                 retry = retry + 1
                 if retry > 5:
                     # detection is not working

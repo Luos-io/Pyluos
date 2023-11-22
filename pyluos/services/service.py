@@ -74,11 +74,10 @@ class Service(object):
 
     def _kill(self):
         self._killed = True
-        print("service", self.alias, "have been excluded from the network due to no responses.")
 
     def _push_value(self, key, new_val):
         if (self._killed):
-            print("service", self.alias, "is excluded.")
+            print("service", self.alias, "have been excluded, you can no longer acess it.")
         else:
             if isinstance(new_val, float):
                 self._delegate.update_cmd(self.alias, key, float(str("%.3f" % new_val)))
@@ -87,7 +86,7 @@ class Service(object):
 
     def _push_data(self, key, new_val, data):
         if (self._killed):
-            print("service", self.alias, "is excluded.")
+            print("service", self.alias, "have been excluded, you can no longer acess it.")
         else:
             self._delegate.update_data(self.alias, key, new_val, data)
 

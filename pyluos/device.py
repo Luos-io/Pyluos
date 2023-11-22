@@ -233,12 +233,38 @@ class Device(object):
     # Update our model with the new state.
     def _update(self, new_state):
         if 'dead_service' in new_state.keys():
-            # we have lost a service put a flag on this service
-            alias = new_state['dead_service']
-            if hasattr(self, alias):
-                getattr(self, alias)._kill()
-            if (self._freedomLink != None):
-                self._freedomLink._kill(alias)
+            # We have lost a service put a flag on this service
+            service_id = new_state['dead_service']
+            # Find the service.
+            for service in self._services:
+                if (service.id == service_id):
+                    s = "************************* EXCLUSION *************************\n"
+                    s += "*  Service " + str(service.alias) + " have been excluded from the network due to no responses."
+                    s += "\n*************************************************************"
+                    print(s)
+                    if (self._freedomLink != None):
+                        self._freedomLink._kill(service.alias)
+                    service._kill()
+                    break
+
+        if 'dead_node' in new_state.keys():
+            # We have lost a node put a flag on all node services
+            node_id = new_state['dead_node']
+            for node in self._nodes:
+                if (node.id == node_id):
+                    s = "************************* EXCLUSION *************************\n"
+                    s += "*  Node " + str(service.alias) + "have been excluded from the network due to no responses."
+                    s += "\nThis exclude all services from this node :"
+                    for service in node.services:
+                        if (self._freedomLink != None):
+                            self._freedomLink._kill(service.alias)
+                        service._kill()
+                        s += "\n*  Service " + str(service.alias) + " have been excluded from the network due to no responses."
+                    
+                    s += "\n*************************************************************"
+                    print(s)
+                    break
+
         if 'assert' in new_state.keys():
             # A node assert, print assert informations
             if (('node_id' in new_state['assert']) and ('file' in new_state['assert']) and ('line' in new_state['assert'])):
@@ -246,6 +272,13 @@ class Device(object):
                 s += "*  Node " + str(new_state['assert']['node_id']) + " assert in file " + new_state['assert']['file'] + " line " + str(new_state['assert']['line'])
                 s += "\n**********************************************************"
                 print(s)
+                # Consider this service as dead.
+                # Find the service from it's node id.
+                for node in self._nodes:
+                    if (node.id == new_state['assert']['node_id']):
+                        for service in node.services:
+                            service._kill()
+                        break
             if (self._freedomLink != None):
                 self._freedomLink._assert(alias)
         if 'services' not in new_state.keys():

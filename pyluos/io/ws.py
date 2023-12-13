@@ -12,6 +12,7 @@ else:
 from threading import Event, Thread
 from . import IOHandler
 
+
 def resolve_hostname(hostname, port):
     # We do our own mDNS resolution
     # to enforce we only search for IPV4 address
@@ -48,7 +49,7 @@ class Ws(IOHandler):
         host = resolve_hostname(host, port)
 
         self._ws = websocket.WebSocket()
-        self._ws.connect("ws://" + str(host) + ":" + str(port)+"/ws")
+        self._ws.connect("ws://" + str(host) + ":" + str(port) + "/ws")
 
         self._msg = queue.Queue(4096)
         self._running = True

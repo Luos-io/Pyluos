@@ -5,16 +5,21 @@ from ..io.serial_io import Serial
 import serial
 import struct
 import argparse
+OKGREEN = '\r\033[92m'
+FAIL = '\r\033[91m'
+ENDC = '\033[0m'
+
 
 def serial_ports():
     return Serial.available_hosts()
 
+
 def serial_discover(baudrate=1000000):
     serial_hosts = serial_ports()
     available_serial = []
-    print("Searching for a gate available")
+    print("\n\033[4mSearching for available Gates:\033[0m")
     for serial_host in serial_hosts:
-        print("Search a Gate on port " + str(serial_host))
+        print("\t- Search a Gate on port " + str(serial_host))
         try:
             port = serial.Serial(serial_host, baudrate, timeout=0.2)
             time.sleep(0.1)
@@ -46,10 +51,10 @@ def serial_discover(baudrate=1000000):
             port.reset_output_buffer()
             port.close()
 
-    if available_serial :
+    if available_serial:
         return available_serial
     else:
-        print("... No gate detected")
+        print(FAIL + "... No gate detected" + ENDC)
         return []
 
 def main():
@@ -63,9 +68,9 @@ def main():
     gate_list = serial_discover(os.getenv('LUOS_BAUDRATE', args.baudrate))
 
     if gate_list:
-        print("Available Luos gate on port : " + str(gate_list))
+        print(OKGREEN + "Available Luos gate on port : " + str(gate_list) + ENDC)
     else:
-        print("No gate detected")
+        print(FAIL + "No gate detected" + ENDC)
 
 
 if __name__ == '__main__':

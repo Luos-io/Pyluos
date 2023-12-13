@@ -21,6 +21,7 @@ Event = namedtuple('Event', ('name', 'old_value', 'new_value'))
 
 READ_TIMEOUT = 0.3
 
+
 class Service(object):
     possible_events = set()
 
@@ -31,6 +32,7 @@ class Service(object):
         self.type = type
         self.alias = alias
         self.refresh_freq = 0.0
+        self.max_refresh_time = 0.0
         self._update_time = 0.01
         self._delegate = device
         self._value = None
@@ -42,7 +44,7 @@ class Service(object):
         self._luos_revision = "Unknown"
         self._robus_revision = "Unknown"
         self._killed = False
-        self._last_update = time.time()
+        self._last_update = []
         self._luos_statistics = {}
 
     def __repr__(self):
@@ -54,9 +56,14 @@ class Service(object):
         if not isinstance(new_state, dict):
             new_state = {new_state: ""}
 
-        if ((time.time() - self._last_update) != 0):
-            self.refresh_freq = ((200.0 * self.refresh_freq) + (1.0 / (time.time() - self._last_update))) / 201.0
-            self._last_update = time.time()
+        self._last_update.append(time.time())
+        if (len(self._last_update) > 1):
+            self.max_refresh_time = max(self.max_refresh_time, self._last_update[-1] - self._last_update[-2])
+        if (self._last_update[0] < time.time() - 1.0):
+            while (self._last_update[0] < time.time() - 10.0):
+                self._last_update.pop(0)
+            self.refresh_freq = (len(self._last_update) / 10.0) * 0.05 + 0.95 * self.refresh_freq
+
         if 'revision' in new_state.keys():
             self._firmware_revision = new_state['revision']
         if 'luos_revision' in new_state.keys():
@@ -67,21 +74,20 @@ class Service(object):
 
     def _kill(self):
         self._killed = True
-        print ("service", self.alias, "have been excluded from the network due to no responses.")
 
     def _push_value(self, key, new_val):
-        if (self._killed) :
-            print("service", self.alias,"is excluded.")
-        else :
-            if isinstance(new_val, float) :
+        if (self._killed):
+            print("service", self.alias, "have been excluded, you can no longer acess it.")
+        else:
+            if isinstance(new_val, float):
                 self._delegate.update_cmd(self.alias, key, float(str("%.3f" % new_val)))
-            else :
+            else:
                 self._delegate.update_cmd(self.alias, key, new_val)
 
     def _push_data(self, key, new_val, data):
-        if (self._killed) :
-            print("service", self.alias,"is excluded.")
-        else :
+        if (self._killed):
+            print("service", self.alias, "have been excluded, you can no longer acess it.")
+        else:
             self._delegate.update_data(self.alias, key, new_val, data)
 
     @property
@@ -146,7 +152,7 @@ class Service(object):
     @update_time.setter
     def update_time(self, time):
         self._push_value('update_time', time)
-        self._update_time= time
+        self._update_time = time
 
     # Events cb handling
 

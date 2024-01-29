@@ -1,6 +1,6 @@
 import logging
 
-from .device import Device
+from .device import Device, map_custom_service
 from .services import *
 
 nh = logging.NullHandler()

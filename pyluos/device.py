@@ -22,6 +22,8 @@ from anytree import AnyNode, RenderTree, DoubleStyle
 def run_from_unittest():
     return 'unittest' in sys.services
 
+def map_custom_service(service_type, service_class):
+    name2mod[service_type] = service_class
 
 class contList(list):
     def __repr__(self):
@@ -180,9 +182,15 @@ class Device(object):
                         break
             # create the node
             self._nodes.append(AnyNode(id=node["node_id"], parent=parent_elem, connection=node["con"]))
-
             filtered_services = contList([mod for mod in node["services"]
                                           if 'type' in mod and mod['type'] in name2mod.keys()])
+            # list unrecognized services and print a warning
+            unrecognized_services = [mod for mod in node["services"]
+                                        if 'type' in mod and mod['type'] not in name2mod.keys()]
+            if (len(unrecognized_services) > 0):
+                self.logger.warning("Unrecognized services have been detected on node %d" % node["node_id"])
+                for mod in unrecognized_services:
+                    self.logger.warning("  - service %s of type %s" % (mod['alias'], mod['type']))
             # Create a list of services in the node
             self._nodes[i].services = [
                 name2mod[mod['type']](id=mod['id'],
@@ -211,6 +219,7 @@ class Device(object):
     @property
     def nodes(self):
         return nodeList(self._nodes)
+
 
     # Poll state from hardware.
     def _poll_once(self):

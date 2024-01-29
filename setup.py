@@ -31,7 +31,8 @@ setup(name='pyluos',
                         'anytree',
                         'crc8',
                         'ipython',
-                        'requests'
+                        'requests',
+                        'simple_websocket_server==0.4.2'
                         ],
       extras_require={
           'tests': ['pytest', 'flake8'],
@@ -44,7 +45,9 @@ setup(name='pyluos',
               'pyluos-usb2ws = pyluos.tools.usb2ws:main',
               'pyluos-bootloader = pyluos.tools.bootloader:main',
               'pyluos-shell = pyluos.tools.shell:main',
-              'pyluos-discover = pyluos.tools.discover:main'
+              'pyluos-discover = pyluos.tools.discover:main',
+              'pyluos-ws-broker = pyluos.tools.ws_broker:main',
+              'pyluos-robus-broker = pyluos.tools.robus_broker:main'
           ],
       },
       )

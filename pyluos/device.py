@@ -290,10 +290,10 @@ class Device(object):
                         break
             if (self._freedomLink != None):
                 self._freedomLink._assert(alias)
-        if 'services' not in new_state.keys():
+        if 's' not in new_state.keys():
             return
 
-        for alias, mod in new_state['services'].items():
+        for alias, mod in new_state['s'].items():
             if hasattr(self, alias):
                 getattr(self, alias)._update(mod)
             if (self._freedomLink != None):
@@ -313,11 +313,11 @@ class Device(object):
     def _push_once(self):
         with self._cmd_lock:
             if self._cmd:
-                self._write(json.dumps({'services': self._cmd}).encode())
+                self._write(json.dumps({'s': self._cmd}).encode())
                 self._cmd = defaultdict(lambda: defaultdict(lambda: None))
             for cmd, binary in zip(self._cmd_data, self._binary):
                 time.sleep(0.01)
-                self._write(json.dumps({'services': cmd}).encode() + '\n'.encode() + binary)
+                self._write(json.dumps({'s': cmd}).encode() + '\n'.encode() + binary)
 
             self._cmd_data = []
             self._binary = []

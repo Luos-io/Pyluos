@@ -32,7 +32,8 @@ setup(name='pyluos',
                         'crc8',
                         'ipython',
                         'requests',
-                        'simple_websocket_server==0.4.2'
+                        'simple_websocket_server==0.4.2',
+                        'mergedeep'
                         ],
       extras_require={
           'tests': ['pytest', 'flake8'],

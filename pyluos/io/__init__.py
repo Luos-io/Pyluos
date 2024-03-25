@@ -1,5 +1,6 @@
 import json
 import logging
+from mergedeep import merge, Strategy
 
 
 class IOHandler(object):
@@ -16,7 +17,17 @@ class IOHandler(object):
     def read(self, trials=5):
         try:
             data = self.recv()
-            return self.loads(data)
+            if data is None:
+                return {}
+            table = data.splitlines()
+            if len(table) > 1:
+                # load the Json of each substring
+                jsn = [self.loads(sub_data) for sub_data in table]
+                # merge all the Json data
+                result = merge({}, *jsn, strategy=Strategy.ADDITIVE)
+                return result
+            else:
+                return self.loads(data)
         except Exception as e:
             logging.getLogger(__name__).debug('Msg read failed: {}'.format(str(e)))
             if trials == 0:

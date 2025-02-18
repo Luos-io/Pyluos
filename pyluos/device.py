@@ -88,6 +88,7 @@ class Device(object):
                  IO=None,
                  log_conf=_base_log_conf,
                  background_task=True,
+                 push_despite_empty_state=False,
                  *args, **kwargs):
         if IO is not None:
             self._io = IO(host=host, *args, **kwargs)
@@ -102,6 +103,8 @@ class Device(object):
 
         self.logger = logging.getLogger(__name__)
         self.logger.info('Connected to "{}".'.format(host))
+
+        self.__push_despite_empty_state = push_despite_empty_state
 
         self._send_lock = threading.Lock()
         self._cmd_lock = threading.Lock()
@@ -236,6 +239,7 @@ class Device(object):
                 state = self._poll_once()
                 if state:
                     self._update(state)
+                if state or self.__push_despite_empty_state:
                     self._push_once()
             else:
                 time.sleep(0.1)

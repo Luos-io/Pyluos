@@ -87,7 +87,6 @@ class Device(object):
     def __init__(self, host,
                  IO=None,
                  log_conf=_base_log_conf,
-                 test_mode=False,
                  background_task=True,
                  *args, **kwargs):
         if IO is not None:

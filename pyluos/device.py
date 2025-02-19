@@ -87,7 +87,6 @@ class Device(object):
     def __init__(self, host,
                  IO=None,
                  log_conf=_base_log_conf,
-                 test_mode=False,
                  background_task=True,
                  *args, **kwargs):
         if IO is not None:
@@ -237,7 +236,7 @@ class Device(object):
                 state = self._poll_once()
                 if state:
                     self._update(state)
-                    self._push_once()
+                self._push_once()
             else:
                 time.sleep(0.1)
 

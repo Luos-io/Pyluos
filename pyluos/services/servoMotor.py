@@ -62,6 +62,7 @@ class ServoMotor(Service):
         self._target_rot_position = 0.0
         self._target_trans_speed = 0.0
         self._target_trans_position = 0.0
+        self._target_torque = 0.0
 
         # report modes
         self._rot_position = 0.0
@@ -389,6 +390,35 @@ class ServoMotor(Service):
             self._push_data(np.array(s, dtype=np.float32))
         else :
             self._push_value("target_trans_position", s)
+
+    # torque
+    @property
+    def target_torque(self):
+        if (self._config[ServoMotor._MODE_TORQUE] != True):
+            print("torque mode could be not enabled in the service please use 'device.service.torque_mode = True' to enable it")
+        return self._target_torque
+
+    @target_torque.setter
+    def target_torque(self, s):
+        self._target_torque = s
+        self._push_value("target_torque", s)
+
+    @property
+    def torque_mode(self):
+        return self._config[ServoMotor._MODE_TORQUE]
+
+    @torque_mode.setter
+    def torque_mode(self, enable):
+        self._config[ServoMotor._MODE_TORQUE] = True if enable != 0  else False
+        if (enable == True) :
+            self._config[ServoMotor._MODE_LINEAR_POSITION] = False
+            self._config[ServoMotor._MODE_POWER] = False
+            self._config[ServoMotor._MODE_ANGULAR_POSITION] = False
+            self._config[ServoMotor._MODE_ANGULAR_SPEED ] = False
+            self._config[ServoMotor._MODE_LINEAR_SPEED] = False
+        self._push_value('parameters', self._convert_config())
+        time.sleep(0.01)
+
 
     @property
     def trans_position_mode(self):

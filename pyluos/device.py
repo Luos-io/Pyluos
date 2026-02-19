@@ -22,6 +22,8 @@ from anytree import AnyNode, RenderTree, DoubleStyle
 def run_from_unittest():
     return 'unittest' in sys.services
 
+def map_custom_service(service_type, service_class):
+    name2mod[service_type] = service_class
 
 class contList(list):
     def __repr__(self):
@@ -85,7 +87,6 @@ class Device(object):
     def __init__(self, host,
                  IO=None,
                  log_conf=_base_log_conf,
-                 test_mode=False,
                  background_task=True,
                  *args, **kwargs):
         if IO is not None:
@@ -109,7 +110,7 @@ class Device(object):
         self._setup()
         self.logger.info('Device setup.')
 
-        self._last_update = time.time()
+        self._last_update = 0.0
         self._running = True
         self._pause = False
 
@@ -142,14 +143,12 @@ class Device(object):
         self._pause = False
 
     def _setup(self):
-        self.logger.info('Sending detection signal.')
-        self._send({})
-        time.sleep(0.01)
+        startTime = time.time()
+        retry = 0
+        self.logger.info(f'Sending detection signal ({retry=})')
         self._send({'detection': {}})
         self.logger.info('Waiting for routing table...')
-        startTime = time.time()
         state = self._poll_once()
-        retry = 0
         while ('routing_table' not in state):
             if ('route_table' in state):
                 self.logger.info("Watch out the Luos revision you are using on your board is too old to work with this revision of pyluos.\n Please consider updating Luos on your boards")
@@ -160,6 +159,7 @@ class Device(object):
                 if retry > 5:
                     # detection is not working
                     sys.exit("Detection failed.")
+                self.logger.info(f'Sending detection signal ({retry=})')
                 self._send({'detection': {}})
                 startTime = time.time()
         # Save routing table data
@@ -180,9 +180,15 @@ class Device(object):
                         break
             # create the node
             self._nodes.append(AnyNode(id=node["node_id"], parent=parent_elem, connection=node["con"]))
-
             filtered_services = contList([mod for mod in node["services"]
                                           if 'type' in mod and mod['type'] in name2mod.keys()])
+            # list unrecognized services and print a warning
+            unrecognized_services = [mod for mod in node["services"]
+                                        if 'type' in mod and mod['type'] not in name2mod.keys()]
+            if (len(unrecognized_services) > 0):
+                self.logger.warning("Unrecognized services have been detected on node %d" % node["node_id"])
+                for mod in unrecognized_services:
+                    self.logger.warning("  - service %s of type %s" % (mod['alias'], mod['type']))
             # Create a list of services in the node
             self._nodes[i].services = [
                 name2mod[mod['type']](id=mod['id'],
@@ -212,21 +218,25 @@ class Device(object):
     def nodes(self):
         return nodeList(self._nodes)
 
+    @property
+    def last_update(self) -> float:
+        """The last_update property."""
+        return self._last_update
+
     # Poll state from hardware.
     def _poll_once(self):
-        self._state = self._io.read()
-        if self._state != []:
-            self._state['timestamp'] = time.time()
-            return self._state
-        return []
+        state = self._io.read()
+        if state:
+            state['timestamp'] = time.time()
+        return state
 
     def _poll_and_up(self):
         while self._running:
             if not self._pause:
                 state = self._poll_once()
-                if self._state != []:
+                if state:
                     self._update(state)
-                    self._push_once()
+                self._push_once()
             else:
                 time.sleep(0.1)
 
@@ -260,7 +270,7 @@ class Device(object):
                             self._freedomLink._kill(service.alias)
                         service._kill()
                         s += "\n*  Service " + str(service.alias) + " have been excluded from the network due to no responses."
-                    
+
                     s += "\n*************************************************************"
                     print(s)
                     break
@@ -281,16 +291,16 @@ class Device(object):
                         break
             if (self._freedomLink != None):
                 self._freedomLink._assert(alias)
-        if 'services' not in new_state.keys():
+        if 's' not in new_state.keys():
             return
 
-        for alias, mod in new_state['services'].items():
+        for alias, mod in new_state['s'].items():
             if hasattr(self, alias):
                 getattr(self, alias)._update(mod)
             if (self._freedomLink != None):
                 self._freedomLink._update(alias, mod)
 
-        self._last_update = time.time()
+        self._last_update = float(new_state["timestamp"])
 
     def update_cmd(self, alias, key, val):
         with self._cmd_lock:
@@ -304,11 +314,11 @@ class Device(object):
     def _push_once(self):
         with self._cmd_lock:
             if self._cmd:
-                self._write(json.dumps({'services': self._cmd}).encode())
+                self._write(json.dumps({'s': self._cmd}).encode())
                 self._cmd = defaultdict(lambda: defaultdict(lambda: None))
             for cmd, binary in zip(self._cmd_data, self._binary):
                 time.sleep(0.01)
-                self._write(json.dumps({'services': cmd}).encode() + '\n'.encode() + binary)
+                self._write(json.dumps({'s': cmd}).encode() + '\n'.encode() + binary)
 
             self._cmd_data = []
             self._binary = []

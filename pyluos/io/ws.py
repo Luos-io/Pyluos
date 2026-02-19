@@ -63,7 +63,7 @@ class Ws(IOHandler):
 
     def recv(self):
         try:
-            data = self._msg.get(True, 1)
+            data = self._msg.get(True, 0.01)
         except queue.Empty:
             data = None
         return data
@@ -73,7 +73,7 @@ class Ws(IOHandler):
 
     def close(self):
         self._running = False
-        self._poll_loop.join()
+        self._poll_loop.join(timeout = 2)
         self._ws.close()
 
     def _poll(self):
@@ -94,6 +94,8 @@ class Ws(IOHandler):
 
         while self._running:
             s = self._ws.recv()
+            if isinstance(s, str):
+                return
             buff = buff + s
             while self._running:
                 line, buff = extract_line(buff)

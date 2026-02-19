@@ -41,7 +41,7 @@ class Serial(IOHandler):
 
     def __init__(self, host, baudrate=None):
         if baudrate is None:
-            baudrate = os.getenv('LUOS_BAUDRATE', 1000000)
+            baudrate = os.getenv('LUOS_BAUDRATE', 3000000)
 
         self._serial = _serial.Serial(host, baudrate)
         self._serial.flush()
@@ -75,7 +75,7 @@ class Serial(IOHandler):
 
     def close(self):
         self._running = False
-        self._poll_loop.join()
+        self._poll_loop.join(timeout = 1)
 
         self._serial.close()
 

@@ -1,4 +1,5 @@
 from .service import Service
+import time
 
 
 class Load(Service):

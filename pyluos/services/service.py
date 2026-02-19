@@ -44,7 +44,8 @@ class Service(object):
         self._luos_revision = "Unknown"
         self._robus_revision = "Unknown"
         self._killed = False
-        self._last_update = []
+        self._last_update = [time.time()]
+        self._tracked_property = ""
         self._luos_statistics = {}
 
     def __repr__(self):
@@ -56,13 +57,21 @@ class Service(object):
         if not isinstance(new_state, dict):
             new_state = {new_state: ""}
 
-        self._last_update.append(time.time())
-        if (len(self._last_update) > 1):
-            self.max_refresh_time = max(self.max_refresh_time, self._last_update[-1] - self._last_update[-2])
-        if (self._last_update[0] < time.time() - 1.0):
-            while (self._last_update[0] < time.time() - 10.0):
-                self._last_update.pop(0)
-            self.refresh_freq = (len(self._last_update) / 10.0) * 0.05 + 0.95 * self.refresh_freq
+        # Check if we alredy have a property to track or if we didn't receive any property since 2 seconds
+        if (self._tracked_property == "") or (self._last_update[-1] < time.time() - 2.0):
+            # the property we track is void or not available anymore, we have to get one of the property received.
+            for key in new_state.keys():
+                self._tracked_property = key
+                self._last_update.append(time.time())
+                break
+        elif (self._tracked_property in new_state.keys()):
+            self._last_update.append(time.time())
+            if (len(self._last_update) > 1):
+                self.max_refresh_time = max(self.max_refresh_time, self._last_update[-1] - self._last_update[-2])
+            if (self._last_update[0] < time.time() - 1.0):
+                while (self._last_update[0] < time.time() - 10.0):
+                    self._last_update.pop(0)
+                self.refresh_freq = (len(self._last_update) / 10.0) * 0.05 + 0.95 * self.refresh_freq
 
         if 'revision' in new_state.keys():
             self._firmware_revision = new_state['revision']
